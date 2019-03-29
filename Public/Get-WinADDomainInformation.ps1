@@ -152,16 +152,14 @@ function Get-WinADDomainInformation {
         $Data.DomainDNSA = $Data.DomainDNSData.A
     }
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainFSMO, [ActiveDirectory]::DomainTrusts, [ActiveDirectory]::DomainTrustsClean )) {
-        Write-Verbose "Getting domain information - $Domain DomainFSMO"
-        # required for multiple use cases FSMO/DomainTrusts
-        $Data.DomainFSMO = [ordered] @{
-            'PDC Emulator'          = $Data.DomainInformation.PDCEmulator
-            'RID Master'            = $Data.DomainInformation.RIDMaster
-            'Infrastructure Master' = $Data.DomainInformation.InfrastructureMaster
-        }
+        $Data.DomainFSMO = Get-WinADDomainFSMO -Domain $Domain -DomainInformation $Data.DomainInformation
     }
-    $Data.DomainTrustsClean = Get-WinADDomainTrustsClean -Domain $Domain -TypesRequired $TypesRequired
-    $Data.DomainTrusts = Get-WinADDomainTrusts -DomainPDC $Data.DomainFSMO.'PDC Emulator' -Trusts $Data.DomainTrustsClean -Domain $Domain -TypesRequired $TypesRequired
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainTrustsClean, [ActiveDirectory]::DomainTrusts)) {
+        $Data.DomainTrustsClean = Get-WinADDomainTrustsClean -Domain $Domain
+    }
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainTrusts)) {
+        $Data.DomainTrusts = Get-WinADDomainTrusts -DomainPDC $Data.DomainFSMO.'PDC Emulator' -Trusts $Data.DomainTrustsClean -Domain $Domain
+    }
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @(
             [ActiveDirectory]::DomainGroupPolicies,
             [ActiveDirectory]::DomainGroupPoliciesDetails,
