@@ -28,7 +28,7 @@ function Get-WinADDomainInformation {
         $ForestSchemaUsers = Get-WinADForestSchemaPropertiesUsers
     }
 
-    $CurrentDate = Get-Date
+    #$CurrentDate = Get-Date
 
     $Data = [ordered] @{ }
     $Data.DomainRootDSE = Get-WinADRootDSE -Domain $Domain
@@ -130,7 +130,7 @@ function Get-WinADDomainInformation {
 
             $DnsRecords = "_kerberos._tcp.$Domain", "_ldap._tcp.$Domain"
             foreach ($DnsRecord in $DnsRecords) {
-                $Value = Resolve-DnsName -Name $DnsRecord -Type SRV -Verbose:$false -ErrorAction SilentlyContinue | Select *
+                $Value = Resolve-DnsName -Name $DnsRecord -Type SRV -Verbose:$false -ErrorAction SilentlyContinue | Select-Object *
                 if ($null -eq $Value) { Write-Warning 'Getting domain information - DomainDNSSRV / DomainDNSA - Failed!' }
                 foreach ($V in $Value) {
                     if ($V.QueryType -eq 'SRV') {
@@ -609,10 +609,8 @@ function Get-WinADDomainInformation {
         Write-Verbose "Getting domain information - $Domain DomainGroupsMembersRecursive"
         $Data.DomainGroupsMembersRecursive = Get-WinGroupMembers -Groups $Data.DomainGroups -Domain $Domain -ADCatalog $Data.DomainUsersFullList, $Data.DomainComputersFullList, $Data.DomainGroupsFullList -ADCatalogUsers $Data.DomainUsersFullList -Option Recursive
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainGroupsPriviliged, [ActiveDirectory]::DomainGroupMembersRecursivePriviliged)) {
-        Write-Verbose "Getting domain information - $Domain DomainGroupsPriviliged"
-        $PrivilegedGroupsSID = "S-1-5-32-544", "S-1-5-32-548", "S-1-5-32-549", "S-1-5-32-550", "S-1-5-32-551", "S-1-5-32-552", "S-1-5-32-556", "S-1-5-32-557", "S-1-5-32-573", "S-1-5-32-578", "S-1-5-32-580", "$($Data.DomainInformation.DomainSID)-512", "$($Data.DomainInformation.DomainSID)-518", "$($Data.DomainInformation.DomainSID)D-519", "$($Data.DomainInformation.DomainSID)-520"
-        $Data.DomainGroupsPriviliged = $Data.DomainGroups | Where-Object { $PrivilegedGroupsSID -contains $_.'Group SID' }
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainGroupsPriviliged)) {
+        $Data.DomainGroupsPriviliged = Get-DomainGroupsPriviliged -DomainGroups $Data.DomainGroups -DomainInformation $Data.DomainInformation
     }
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainGroupsSpecial, [ActiveDirectory]::DomainGroupMembersRecursiveSpecial)) {
         Write-Verbose "Getting domain information - $Domain DomainGroupsSpecial"

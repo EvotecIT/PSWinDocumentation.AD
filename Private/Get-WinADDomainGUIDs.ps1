@@ -23,7 +23,7 @@ function Get-WinADDomainGUIDs {
     }
 
 #>
-    $GUID = @{ }
+    $GUID = @{}
     $Schema = Get-ADObject -SearchBase $RootDSE.schemaNamingContext -LDAPFilter '(schemaIDGUID=*)' -Properties name, schemaIDGUID
     foreach ($S in $Schema) {
         if ($GUID.Keys -notcontains $S.schemaIDGUID ) {
