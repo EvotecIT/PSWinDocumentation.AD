@@ -14,7 +14,7 @@ function Get-WinADDomainPasswordQuality {
         Write-Verbose "Get-WinADDomainPasswordQuality - File path doesn't exists, using hashes set to $UseHashes"
         return $null
     }
-    if ($DomainInformation -eq $null) {
+    if ($null -eq $DomainInformation) {
         Write-Verbose "Get-WinADDomainPasswordQuality - No DomainInformation given, no alternative approach either. Terminating password quality check."
         return $null
     }

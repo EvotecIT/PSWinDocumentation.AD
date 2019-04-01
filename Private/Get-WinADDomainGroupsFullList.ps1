@@ -1,7 +1,7 @@
 function Get-WinADDomainGroupsFullList {
     [CmdletBinding()]
     param(
-        [string] $Domain
+        [string] $Domain = $Env:USERDNSDOMAIN
     )
     Write-Verbose "Getting domain information - $Domain DomainGroupsFullList"
     $TimeUsers = Start-TimeLog

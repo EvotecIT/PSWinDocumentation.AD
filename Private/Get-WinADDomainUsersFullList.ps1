@@ -1,7 +1,7 @@
 function Get-WinADDomainUsersFullList {
     [CmdletBinding()]
     param(
-        [string] $Domain,
+        [string] $Domain = $Env:USERDNSDOMAIN,
         [switch] $Extended,
         [Array] $ForestSchemaUsers
     )

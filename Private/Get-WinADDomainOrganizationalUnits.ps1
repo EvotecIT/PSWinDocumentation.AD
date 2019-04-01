@@ -1,7 +1,7 @@
 function Get-WinADDomainOrganizationalUnits {
     [CmdletBinding()]
     param(
-        [string] $Domain,
+        [string] $Domain = $Env:USERDNSDOMAIN,
         [Array] $OrgnaizationalUnits
     )
     Write-Verbose -Message "Getting domain information - $Domain DomainOrganizationalUnits"

@@ -1,7 +1,7 @@
 function Get-WinADRootDSE {
     [CmdletBinding()]
     param(
-        [string] $Domain
+        [string] $Domain = $Env:USERDNSDOMAIN
     )
     $Time = Start-TimeLog
     try {

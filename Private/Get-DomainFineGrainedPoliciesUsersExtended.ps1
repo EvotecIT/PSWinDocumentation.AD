@@ -3,7 +3,7 @@ function Get-DomainFineGrainedPoliciesUsersExtended {
         $DomainFineGrainedPolicies,
         $DomainUsersFullList,
         $DomainGroupsFullList,
-        [string] $Domain
+        [string] $Domain = $Env:USERDNSDOMAIN
 
     )
     $Time = Start-TimeLog

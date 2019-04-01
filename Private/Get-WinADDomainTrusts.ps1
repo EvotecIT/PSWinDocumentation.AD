@@ -1,7 +1,7 @@
 function Get-WinADDomainTrusts {
     [CmdletBinding()]
     param(
-        [string] $Domain,
+        [string] $Domain = $Env:USERDNSDOMAIN,
         [string] $DomainPDC,
         [Array] $Trusts
     )

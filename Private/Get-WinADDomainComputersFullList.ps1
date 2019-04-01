@@ -1,7 +1,7 @@
 function Get-WinADDomainComputersFullList {
     [cmdletbinding()]
     param(
-        [string] $Domain,
+        [string] $Domain = $Env:USERDNSDOMAIN,
         [Array] $ForestSchemaComputers
     )
     Write-Verbose "Getting domain information - $Domain DomainComputersFullList"
@@ -25,7 +25,7 @@ function Get-WinADDomainComputersFullList {
             }
         )
     }
-    [string[]] $ExcludeProperty = '*Certificate', 'PropertyNames', '*Properties', 'PropertyCount', 'Certificates', 'nTSecurityDescriptor'
+    # [string[]] $ExcludeProperty = '*Certificate', 'PropertyNames', '*Properties', 'PropertyCount', 'Certificates', 'nTSecurityDescriptor'
 
     Get-ADComputer -Server $Domain -Filter * -ResultPageSize 500000 -Properties $Properties -ErrorAction SilentlyContinue #| Select-Object -Property $Properties -ExcludeProperty $ExcludeProperty
 

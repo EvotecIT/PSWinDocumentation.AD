@@ -2,7 +2,7 @@ function Get-WinGroupMembers {
     [CmdletBinding()]
     param(
         [System.Object[]] $Groups,
-        [string] $Domain,
+        [string] $Domain = $Env:USERDNSDOMAIN,
         [System.Object[]] $ADCatalog,
         [System.Object[]] $ADCatalogUsers,
         [ValidateSet("Recursive", "Standard")][String] $Option

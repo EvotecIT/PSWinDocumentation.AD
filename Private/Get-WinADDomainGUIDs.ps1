@@ -1,7 +1,7 @@
 function Get-WinADDomainGUIDs {
     [cmdletbinding()]
     param(
-        [string] $Domain,
+        [string] $Domain = $Env:USERDNSDOMAIN,
         [Microsoft.ActiveDirectory.Management.ADEntity] $RootDSE
     )
     $Time = Start-TimeLog

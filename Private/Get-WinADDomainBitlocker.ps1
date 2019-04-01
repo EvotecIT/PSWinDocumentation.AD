@@ -1,6 +1,6 @@
 function Get-WinADDomainBitlocker {
     param(
-        [string] $Domain,
+        [string] $Domain = $Env:USERDNSDOMAIN,
         [Array] $Computers
     )
     $Properties = @(
@@ -8,7 +8,7 @@ function Get-WinADDomainBitlocker {
         'OperatingSystem',
         'DistinguishedName'
     )
-    [DateTime] $CurrentDate = Get-Date
+    #[DateTime] $CurrentDate = Get-Date
 
     if ($null -eq $Computers) {
         $Computers = Get-ADComputer -Filter * -Properties $Properties -Server $Domain

@@ -3,7 +3,7 @@ function Get-WinGroups {
     param (
         [System.Object[]] $Groups,
         [System.Object[]] $Users,
-        [string] $Domain
+        [string] $Domain = $Env:USERDNSDOMAIN
     )
     $ReturnGroups = foreach ($Group in $Groups) {
         $User = $Users | & { process { if ($_.DistinguishedName -eq $Group.ManagedBy ) { $_ } } } # | Where-Object { $_.DistinguishedName -eq $Group.ManagedBy }

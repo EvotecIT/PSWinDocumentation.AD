@@ -6,7 +6,7 @@ function Get-ADObjectFromDistingusishedName {
         [string] $Type = '',
         [string] $Splitter # ', ' # Alternative for example [System.Environment]::NewLine
     )
-    if ($DistinguishedName -eq $null) {
+    if ($null -eq $DistinguishedName) {
         return
     }
     $FoundObjects = foreach ($Catalog in $ADCatalog) {

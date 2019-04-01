@@ -1,7 +1,7 @@
 function Get-WinADDomainFSMO {
     [CmdletBinding()]
     param(
-        [string] $Domain,
+        [string] $Domain = $Env:USERDNSDOMAIN,
         $DomainInformation
     )
     Write-Verbose "Getting domain information - $Domain DomainFSMO"

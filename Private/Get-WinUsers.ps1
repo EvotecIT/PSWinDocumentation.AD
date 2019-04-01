@@ -4,7 +4,7 @@ function Get-WinUsers {
         [System.Object[]] $Users,
         [System.Object[]] $ADCatalog,
         [System.Object[]] $ADCatalogUsers,
-        [string] $Domain
+        [string] $Domain = $Env:USERDNSDOMAIN
     )
     [DateTime] $CurrentDate = Get-Date # [DateTime]::Today
     $UserList = foreach ($U in $Users) {
@@ -18,7 +18,7 @@ function Get-WinUsers {
             'EmailAddress'                      = $U.EmailAddress
             'PasswordExpired'                   = $U.PasswordExpired
             'PasswordLastSet'                   = $U.PasswordLastSet
-            'Password Last Changed'             = if ($U.PasswordLastSet -ne $Null) { "$(-$($U.PasswordLastSet - $CurrentDate).Days) days" } else { 'N/A'}
+            'Password Last Changed'             = if ($null -ne $U.PasswordLastSet) { "$(-$($U.PasswordLastSet - $CurrentDate).Days) days" } else { 'N/A'}
             'PasswordNotRequired'               = $U.PasswordNotRequired
             'PasswordNeverExpires'              = $U.PasswordNeverExpires
             'Enabled'                           = $U.Enabled

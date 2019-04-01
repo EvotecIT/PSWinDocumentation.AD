@@ -1,7 +1,7 @@
 function Get-WinADDomainLAPS {
     [CmdletBinding()]
     param(
-        [string] $Domain,
+        [string] $Domain = $Env:USERDNSDOMAIN,
         [Array] $Computers
     )
     $Properties = @(
@@ -27,4 +27,3 @@ function Get-WinADDomainLAPS {
         }
     }
 }
-

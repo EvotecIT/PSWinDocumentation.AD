@@ -2,7 +2,7 @@ function Get-WinADDomainRIDs {
     [CmdletBinding()]
     param(
         [Microsoft.ActiveDirectory.Management.ADDomain] $DomainInformation,
-        [string] $Domain
+        [string] $Domain = $Env:USERDNSDOMAIN
     )
     # Critical for RID Pool Depletion: https://blogs.technet.microsoft.com/askds/2011/09/12/managing-rid-pool-depletion/
     $Time = Start-TimeLog

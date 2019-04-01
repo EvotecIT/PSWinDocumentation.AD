@@ -1,7 +1,7 @@
 function Get-WinADDomainTrustsClean {
     [CmdletBinding()]
     param(
-        [string] $Domain,
+        [string] $Domain = $Env:USERDNSDOMAIN,
         [Array] $TypesRequired
     )
     Write-Verbose "Getting domain information - $Domain DomainTrustsClean"

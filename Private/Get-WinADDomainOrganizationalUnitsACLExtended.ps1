@@ -2,7 +2,7 @@ function Get-WinADDomainOrganizationalUnitsACLExtended {
     [cmdletbinding()]
     param(
         $DomainOrganizationalUnitsClean,
-        [string] $Domain,
+        [string] $Domain = $Env:USERDNSDOMAIN,
         [string] $NetBiosName,
         [string] $RootDomainNamingContext,
         $GUID
