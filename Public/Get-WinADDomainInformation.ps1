@@ -33,10 +33,9 @@ function Get-WinADDomainInformation {
     $Data = [ordered] @{ }
     $Data.DomainRootDSE = Get-WinADRootDSE -Domain $Domain
     Write-Verbose "Getting domain information - $Domain DomainInformation"
-    $Data.DomainInformation = $(Get-ADDomain -Server $Domain)
-
+    $Data.DomainInformation = Get-WinADDomain -Domain $Domain
     if ($null -eq $Data.DomainInformation -or $null -eq $Data.DomainRootDSE) {
-
+        return
     }
 
     $Data.DomainGroupsFullList = Get-WinADDomainGroupsFullList -Domain $Domain

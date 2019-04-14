@@ -11,7 +11,10 @@ function Get-ADObjectFromDistingusishedName {
     }
     $FoundObjects = foreach ($Catalog in $ADCatalog) {
         foreach ($Object in $DistinguishedName) {
-            $ADObject = $Catalog | & { process { if ($_.DistinguishedName -eq $Object ) { $_ } } }  #| Where-Object { $_.DistinguishedName -eq $Object }
+            #$ADObject = $Catalog | & { process { if ($_.DistinguishedName -eq $Object ) { $_ } } }  #| Where-Object { $_.DistinguishedName -eq $Object }
+            $ADObject = foreach ($_ in $Catalog) {
+                if ($_.DistinguishedName -eq $Object ) { $_ }
+            }
             if ($ADObject) {
                 if ($Type -eq '') {
                     #Write-Verbose 'Get-ADObjectFromDistingusishedName - Whole object'

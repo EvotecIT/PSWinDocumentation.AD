@@ -14,7 +14,7 @@ function Get-WinADDomainRIDs {
     $rID = [ordered] @{ }
     $rID.'rIDs Master' = $DomainInformation.RIDMaster
 
-    $Property = get-adobject "cn=rid manager$,cn=system,$($DomainInformation.DistinguishedName)" -Property RidAvailablePool -Server $rID.'rIDs Master'
+    $Property = Get-ADObject "cn=rid manager$,cn=system,$($DomainInformation.DistinguishedName)" -Property RidAvailablePool -Server $rID.'rIDs Master'
     [int32]$totalSIDS = $($Property.RidAvailablePool) / ([math]::Pow(2, 32))
     [int64]$temp64val = $totalSIDS * ([math]::Pow(2, 32))
     [int32]$currentRIDPoolCount = $($Property.RidAvailablePool) - $temp64val

@@ -6,8 +6,10 @@ function Get-WinGroups {
         [string] $Domain = $Env:USERDNSDOMAIN
     )
     $ReturnGroups = foreach ($Group in $Groups) {
-        $User = $Users | & { process { if ($_.DistinguishedName -eq $Group.ManagedBy ) { $_ } } } # | Where-Object { $_.DistinguishedName -eq $Group.ManagedBy }
-
+        #$User = $Users | & { process { if ($_.DistinguishedName -eq $Group.ManagedBy ) { $_ } } } # | Where-Object { $_.DistinguishedName -eq $Group.ManagedBy }
+        $User = foreach ($_ in $Users) {
+            if ($_.DistinguishedName -eq $Group.ManagedBy) { $_ }
+        }
         [PsCustomObject][ordered] @{
             'Group Name'            = $Group.Name
             #'Group Display Name' = $Group.DisplayName

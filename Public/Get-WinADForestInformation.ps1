@@ -16,6 +16,9 @@ function Get-WinADForestInformation {
 
     $Data = [ordered] @{ }
     $Data.Forest = Get-WinADForest
+    if ($null -eq $Data.Forest) {
+        return
+    }
     $Data.RootDSE = Get-WinADRootDSE
     Write-Verbose 'Getting forest information - ForestName & ForestNameDN & Domains list'
     $Data.ForestName = $Data.Forest.Name
@@ -101,7 +104,7 @@ function Get-WinADForestInformation {
             -ForestSchemaComputers $Data.ForestSchemaPropertiesComputers  `
             -ForestSchemaUsers $Data.ForestSchemaPropertiesUsers
     }
-    return $Data
     $EndTimeAll = Stop-TimeLog -Time $TimeToGenerateForest
     Write-Verbose "Getting all information - Time to generate: $EndTimeAll"
+    return $Data
 }
