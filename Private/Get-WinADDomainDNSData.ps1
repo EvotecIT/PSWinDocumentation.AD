@@ -11,13 +11,13 @@
         $Value
     }
     $ReturnData = @{}
-    $ReturnData.DNSSrv = foreach ($V in $DNSData) {
+    $ReturnData.Srv = foreach ($V in $DNSData) {
         if ($V.QueryType -eq 'SRV') {
             $V | Select-Object Target, NameTarget, Priority, Weight, Port, Name
         }
     }
 
-    $ReturnData.DnsA = foreach ($V in $DNSData) {
+    $ReturnData.A = foreach ($V in $DNSData) {
         if ($V.QueryType -ne 'SRV') {
             $V | Select-Object Address, IPAddress, IP4Address, Name, Type, DataLength, TTL
         }
