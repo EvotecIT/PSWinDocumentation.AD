@@ -2,16 +2,15 @@ function Get-WinADAccounts {
     [CmdletBinding()]
     param(
         [Object] $UserNameList,
-        [Object[]] $ADCatalog
+        [Array[]] $ADCatalog
     )
-    $Accounts = New-ArrayList
-    foreach ($User in $UserNameList) {
+    $Accounts = foreach ($User in $UserNameList) {
         foreach ($Catalog in $ADCatalog) {
             #$Element = $Catalog | & { process { if ($_.SamAccountName -eq $User ) { $_ } } }  #| Where-Object { $_.SamAccountName -eq $User }
-            $Element = foreach ($_ in $Catalog) {
+            foreach ($_ in $Catalog) {
                 if ($_.SamAccountName -eq $User ) { $_ }
             }
-            Add-ToArrayAdvanced -Element $Element -List $Accounts -SkipNull
+            #Add-ToArrayAdvanced -Element $Element -List $Accounts -SkipNull
         }
     }
     return $Accounts

@@ -1,7 +1,7 @@
 function Get-WinADDomain {
     [CmdletBinding()]
     param(
-        $Domain
+        [string] $Domain = $Env:USERDNSDOMAIN
     )
     $Time = Start-TimeLog
     Write-Verbose 'Getting forest information - Forest'

@@ -6,6 +6,7 @@ function Get-WinADDomainPasswordQuality {
         [string] $FilePath,
         [switch] $UseHashes
     )
+
     if ([string]::IsNullOrEmpty($FilePath)) {
         Write-Verbose "Get-WinADDomainPasswordQuality - File path not given, using hashes set to $UseHashes"
         return $null
@@ -154,10 +155,9 @@ function Get-WinADDomainPasswordQuality {
             "LastLogonDate", "Created", "Modified", "Protected", "Primary Group", "Member Of", "Domain"
     }
     $Data.DomainPasswordDuplicatePasswordGroups = Invoke-Command -ScriptBlock {
-        $Value = @()
         $DuplicateGroups = $Data.PasswordQuality.DuplicatePasswordGroups.ToArray()
         $Count = 0
-        foreach ($DuplicateGroup in $DuplicateGroups) {
+        $Value = foreach ($DuplicateGroup in $DuplicateGroups) {
             $Count++
             $Name = "Duplicate $Count"
             foreach ($User in $DuplicateGroup) {
@@ -169,21 +169,17 @@ function Get-WinADDomainPasswordQuality {
                 $FullUserInformation = foreach ($_ in $DomainInformation.DomainUsersAll) {
                     if ($_.SamAccountName -eq $User) { $_ }
                 }
-
                 #$FullComputerInformation = $DomainInformation.DomainComputersAll | Where-Object { $_.SamAccountName -eq $User }
                 $FullComputerInformation = foreach ($_ in $DomainInformation.DomainComputersAll) {
                     if ($_.SamAccountName -eq $User) { $_ }
                 }
-
-
                 if ($FullUserInformation) {
                     $MergedObject = Merge-Objects -Object1 $FoundUser -Object2 $FullUserInformation
                 }
                 if ($FullComputerInformation) {
                     $MergedObject = Merge-Objects -Object1 $MergedObject -Object2 $FullComputerInformation
                 }
-                $Value += $MergedObject
-
+                $MergedObject
             }
         }
         # Added 'Duplicate Group' to standard output of names - without it, it doesn't make sense

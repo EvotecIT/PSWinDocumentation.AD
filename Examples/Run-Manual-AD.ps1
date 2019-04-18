@@ -1,7 +1,12 @@
 Clear-Host
-Import-Module PSWinDocumentation.AD
+Import-Module .\PSWinDocumentation.AD.psd1 -Force
 
 $Forest = Get-WinADForestInformation -Verbose
+$Forest.FoundDomains.'ad.evotec.xyz'.DomainDNSData.SRV
+$Forest.FoundDomains.'ad.evotec.xyz'.DomainDNSData.A
+return
+
+# Below some options are show how to get specific information.
 
 $User = $Forest.FoundDomains.'ad.evotec.xyz'.DomainUsers[20] | Select *
 $User | Select-Object DisplayName, PasswordLastSet

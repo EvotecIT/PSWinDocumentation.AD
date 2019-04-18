@@ -1,17 +1,17 @@
-function Get-DomainFineGrainedPoliciesUsersExtended {
+function Get-WinADDomainFineGrainedPoliciesUsersExtended {
+    [CmdletBinding()]
     param(
-        $DomainFineGrainedPolicies,
-        $DomainUsersFullList,
-        $DomainGroupsFullList,
-        [string] $Domain = $Env:USERDNSDOMAIN
-
+        [Array] $DomainFineGrainedPolicies,
+        [Array] $DomainUsersFullList,
+        [Array] $DomainGroupsFullList,
+        [string] $Domain = ($Env:USERDNSDOMAIN).ToLower()
     )
     $Time = Start-TimeLog
     Write-Verbose "Getting domain information - $Domain DomainFineGrainedPoliciesUsersExtended"
     $PolicyUsers = @(
         foreach ($Policy in $DomainFineGrainedPolicies) {
             $Users = foreach ($U in $Policy.'Applies To') {
-                Get-ADObjectFromDistingusishedName -ADCatalog $Data.DomainUsersFullList -DistinguishedName $U
+                Get-ADObjectFromDistingusishedName -ADCatalog $DomainUsersFullList -DistinguishedName $U
             }
             foreach ($User in $Users) {
                 [pscustomobject][ordered] @{
@@ -32,8 +32,8 @@ function Get-DomainFineGrainedPoliciesUsersExtended {
                     'PasswordNeverExpires'              = $User.PasswordNeverExpires
                     'Enabled'                           = $User.Enabled
                     'MemberSID'                         = $Member.SID.Value
-                    'Manager'                           = (Get-ADObjectFromDistingusishedName -ADCatalog $Data.DomainUsersFullList -DistinguishedName $User.Manager).Name
-                    'ManagerEmail'                      = (Get-ADObjectFromDistingusishedName -ADCatalog $Data.DomainUsersFullList -DistinguishedName $User.Manager).EmailAddress
+                    'Manager'                           = (Get-ADObjectFromDistingusishedName -ADCatalog $DomainUsersFullList -DistinguishedName $User.Manager).Name
+                    'ManagerEmail'                      = (Get-ADObjectFromDistingusishedName -ADCatalog $DomainUsersFullList -DistinguishedName $User.Manager).EmailAddress
                     'DateExpiry'                        = Convert-ToDateTime -Timestring $($Object."msDS-UserPasswordExpiryTimeComputed") # -Verbose
                     "DaysToExpire"                      = (Convert-TimeToDays -StartTime ($CurrentDate) -EndTime (Convert-ToDateTime -Timestring $($User."msDS-UserPasswordExpiryTimeComputed")))
                     "AccountExpirationDate"             = $User.AccountExpirationDate
@@ -57,12 +57,12 @@ function Get-DomainFineGrainedPoliciesUsersExtended {
                 }
             }
             $Groups = foreach ($U in $Policy.'Applies To') {
-                Get-ADObjectFromDistingusishedName -ADCatalog $Data.DomainGroupsFullList -DistinguishedName $U
+                Get-ADObjectFromDistingusishedName -ADCatalog $DomainGroupsFullList -DistinguishedName $U
             }
             foreach ($Group in $Groups) {
                 $GroupMembership = Get-ADGroupMember -Server $Domain -Identity $Group.SID -Recursive
                 foreach ($Member in $GroupMembership) {
-                    $Object = (Get-ADObjectFromDistingusishedName -ADCatalog $Data.DomainUsersFullList -DistinguishedName $Member.DistinguishedName)
+                    $Object = (Get-ADObjectFromDistingusishedName -ADCatalog $DomainUsersFullList -DistinguishedName $Member.DistinguishedName)
                     [pscustomobject][ordered] @{
                         'Policy Name'                       = $Policy.Name
                         Name                                = $Group.Name
@@ -81,8 +81,8 @@ function Get-DomainFineGrainedPoliciesUsersExtended {
                         'PasswordNeverExpires'              = $Object.PasswordNeverExpires
                         'Enabled'                           = $Object.Enabled
                         'MemberSID'                         = $Member.SID.Value
-                        'Manager'                           = (Get-ADObjectFromDistingusishedName -ADCatalog $Data.DomainUsersFullList -DistinguishedName $Object.Manager).Name
-                        'ManagerEmail'                      = (Get-ADObjectFromDistingusishedName -ADCatalog $Data.DomainUsersFullList -DistinguishedName $Object.Manager).EmailAddress
+                        'Manager'                           = (Get-ADObjectFromDistingusishedName -ADCatalog $DomainUsersFullList -DistinguishedName $Object.Manager).Name
+                        'ManagerEmail'                      = (Get-ADObjectFromDistingusishedName -ADCatalog $DomainUsersFullList -DistinguishedName $Object.Manager).EmailAddress
                         'DateExpiry'                        = Convert-ToDateTime -Timestring $($Object."msDS-UserPasswordExpiryTimeComputed") # -Verbose
                         "DaysToExpire"                      = (Convert-TimeToDays -StartTime ($CurrentDate) -EndTime (Convert-ToDateTime -Timestring $($Object."msDS-UserPasswordExpiryTimeComputed")))
                         "AccountExpirationDate"             = $Object.AccountExpirationDate

@@ -1,7 +1,7 @@
 function Get-DomainGroupsPriviliged {
     [cmdletbinding()]
     param(
-        $DomainInformation,
+        [Microsoft.ActiveDirectory.Management.ADDomain] $DomainInformation,
         $DomainGroups
     )
     $Time = Start-TimeLog

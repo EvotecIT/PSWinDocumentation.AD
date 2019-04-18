@@ -76,11 +76,11 @@ function Get-WinADForestInformation {
     }
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::ForestSubnets1)) {
         Write-Verbose 'Getting forest information - Forest Subnets1'
-        $Data.ForestSubnets1 = Get-WinADForestSubnets1 -ForestSubnets $ForestSubnets
+        $Data.ForestSubnets1 = Get-WinADForestSubnets1 -ForestSubnets $Data.ForestSubnets
     }
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::ForestSubnets2)) {
         Write-Verbose 'Getting forest information - Forest Subnets2'
-        $Data.ForestSubnets2 = Get-WinADForestSubnets2 -ForestSubnets $ForestSubnets
+        $Data.ForestSubnets2 = Get-WinADForestSubnets2 -ForestSubnets $Data.ForestSubnets
     }
     ## Forest Site Links
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::ForestSiteLinks)) {

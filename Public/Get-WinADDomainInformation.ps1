@@ -2,7 +2,7 @@ function Get-WinADDomainInformation {
     [CmdletBinding()]
     param (
         [string] $Domain,
-        [Object] $TypesRequired,
+        [ActiveDirectory[]] $TypesRequired,
         [string] $PathToPasswords,
         [string] $PathToPasswordsHashes,
         [switch] $Extended,
@@ -123,30 +123,7 @@ function Get-WinADDomainInformation {
 
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainDNSSRV, [ActiveDirectory]::DomainDNSA )) {
         Write-Verbose "Getting domain information - $Domain DomainDNSSRV / DomainDNSA"
-        $Data.DomainDNSData = Invoke-Command -ScriptBlock {
-            $DnsSrv = @()
-            $DnsA = @()
-
-            $DnsRecords = "_kerberos._tcp.$Domain", "_ldap._tcp.$Domain"
-            foreach ($DnsRecord in $DnsRecords) {
-                $Value = Resolve-DnsName -Name $DnsRecord -Type SRV -Verbose:$false -ErrorAction SilentlyContinue | Select-Object *
-                if ($null -eq $Value) { Write-Warning 'Getting domain information - DomainDNSSRV / DomainDNSA - Failed!' }
-                foreach ($V in $Value) {
-                    if ($V.QueryType -eq 'SRV') {
-                        $DnsSrv += $V
-                    } else {
-                        $DnsA += $V
-                    }
-                }
-            }
-            $ReturnData = @{
-                # QueryType, Target, NameTarget, Priority, Weight, Port, Name, Type, CharacterSet, Section
-                SRV = $DnsSrv | Select-Object Target, NameTarget, Priority, Weight, Port, Name # Type, QueryType, CharacterSet, Section
-                # Address, IPAddress, QueryType, IP4Address, Name, Type, CharacterSet, Section, DataLength, TTL
-                A   = $DnsA | Select-Object Address, IPAddress, IP4Address, Name, Type, DataLength, TTL # QueryType, CharacterSet, Section
-            }
-            return $ReturnData
-        }
+        $Data.DomainDNSData = Get-WinADDomainDNSData -Domain $Domain
         $Data.DomainDNSSrv = $Data.DomainDNSData.SRV
         $Data.DomainDNSA = $Data.DomainDNSData.A
     }
@@ -270,14 +247,12 @@ function Get-WinADDomainInformation {
         $Data.DomainOrganizationalUnitsClean = $(Get-ADOrganizationalUnit -Server $Domain -Properties * -Filter * )
         $Data.DomainOrganizationalUnits = Get-WinADDomainOrganizationalUnits -Domain $Domain -OrgnaizationalUnits $Data.DomainOrganizationalUnitsClean
         Write-Verbose -Message "Getting domain information - $Domain DomainOrganizationalUnitsDN"
-        $Data.DomainOrganizationalUnitsDN = Invoke-Command -ScriptBlock {
-            $OUs = @(
-                $Data.DomainInformation.DistinguishedName
-                $Data.DomainOrganizationalUnitsClean.DistinguishedName
-                $Data.DomainContainers.DistinguishedName
-            )
-            return $OUs
-        }
+        $Data.DomainOrganizationalUnitsDN = @(
+            $Data.DomainInformation.DistinguishedName
+            $Data.DomainOrganizationalUnitsClean.DistinguishedName
+            $Data.DomainContainers.DistinguishedName
+        )
+
 
         <#
         $OrganizationalUnitACL = Get-WinADDomainOrganizationalUnitsACL `
@@ -422,65 +397,17 @@ function Get-WinADDomainInformation {
     }
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainFineGrainedPolicies)) {
         Write-Verbose "Getting domain information - $Domain DomainFineGrainedPolicies"
-        $Data.DomainFineGrainedPolicies = Invoke-Command -ScriptBlock {
-            $FineGrainedPoliciesData = Get-ADFineGrainedPasswordPolicy -Filter * -Server $Domain
-            $FineGrainedPolicies = foreach ($Policy in $FineGrainedPoliciesData) {
-                [PSCustomObject][ordered] @{
-                    'Name'                          = $Policy.Name
-                    'Complexity Enabled'            = $Policy.ComplexityEnabled
-                    'Lockout Duration'              = $Policy.LockoutDuration
-                    'Lockout Observation Window'    = $Policy.LockoutObservationWindow
-                    'Lockout Threshold'             = $Policy.LockoutThreshold
-                    'Max Password Age'              = $Policy.MaxPasswordAge
-                    'Min Password Length'           = $Policy.MinPasswordLength
-                    'Min Password Age'              = $Policy.MinPasswordAge
-                    'Password History Count'        = $Policy.PasswordHistoryCount
-                    'Reversible Encryption Enabled' = $Policy.ReversibleEncryptionEnabled
-                    'Precedence'                    = $Policy.Precedence
-                    'Applies To'                    = $Policy.AppliesTo # get all groups / usrs and convert to data TODO
-                    'Distinguished Name'            = $Policy.DistinguishedName
-                }
-            }
-            return $FineGrainedPolicies #Format-TransposeTable $FineGrainedPolicies
-        }
+        $Data.DomainFineGrainedPolicies = Get-WinADDomainFineGrainedPolicies -Domain $Domain
     }
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainFineGrainedPoliciesUsers)) {
         Write-Verbose "Getting domain information - $Domain DomainFineGrainedPoliciesUsers"
-        $Data.DomainFineGrainedPoliciesUsers = Invoke-Command -ScriptBlock {
-            $PolicyUsers = @()
-            foreach ($Policy in $Data.DomainFineGrainedPolicies) {
-                $Users = @()
-                $Groups = @()
-                foreach ($U in $Policy.'Applies To') {
-                    $Users += Get-ADObjectFromDistingusishedName -ADCatalog $Data.DomainUsersFullList -DistinguishedName $U
-                    $Groups += Get-ADObjectFromDistingusishedName -ADCatalog $Data.DomainGroupsFullList -DistinguishedName $U
-                }
-                foreach ($User in $Users) {
-                    $PolicyUsers += [pscustomobject] @{
-                        'Policy Name'  = $Policy.Name
-                        Name           = $User.Name
-                        SamAccountName = $User.SamAccountName
-                        Type           = $User.ObjectClass
-                        SID            = $User.SID
-                    }
-                }
-                foreach ($Group in $Groups) {
-                    $PolicyUsers += [pscustomobject] @{
-                        'Policy Name'  = $Policy.Name
-                        Name           = $Group.Name
-                        SamAccountName = $Group.SamAccountName
-                        Type           = $Group.ObjectClass
-                        SID            = $Group.SID
-                    }
-                }
-            }
-            #Get-AdFineGrainedPassowrdPolicySubject
-            #Get-AdresultantPasswordPolicy -Identity <user>
-            return $PolicyUsers
-        }
+        $Data.DomainFineGrainedPoliciesUsers = Get-WinADDomainFineGrainedPoliciesUsers `
+            -DomainFineGrainedPolicies $Data.DomainFineGrainedPolicies `
+            -DomainUsersFullList $Data.DomainUsersFullList `
+            -DomainGroupsFullList $Data.DomainGroupsFullList
     }
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainFineGrainedPoliciesUsersExtended)) {
-        $Data.DomainFineGrainedPoliciesUsersExtended = Get-DomainFineGrainedPoliciesUsersExtended `
+        $Data.DomainFineGrainedPoliciesUsersExtended = Get-WinADDomainFineGrainedPoliciesUsersExtended `
             -DomainFineGrainedPolicies $Data.DomainFineGrainedPoliciesUsers `
             -DomainUsersFullList $Data.DomainUsersFullList `
             -DomainGroupsFullList $Data.DomainGroupsFullList `
