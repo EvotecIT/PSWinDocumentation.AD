@@ -2,7 +2,7 @@ function Get-WinADDomainInformation {
     [CmdletBinding()]
     param (
         [string] $Domain,
-        [ActiveDirectory[]] $TypesRequired,
+        [PSWinDocumentation.ActiveDirectory[]] $TypesRequired,
         [string] $PathToPasswords,
         [string] $PathToPasswordsHashes,
         [switch] $Extended,
@@ -15,7 +15,7 @@ function Get-WinADDomainInformation {
     }
     if ($null -eq $TypesRequired) {
         Write-Verbose 'Get-WinADDomainInformation - TypesRequired is null. Getting all.'
-        $TypesRequired = Get-Types -Types ([ActiveDirectory])
+        $TypesRequired = Get-Types -Types ([PSWinDocumentation.ActiveDirectory])
     } # Gets all types
     $TimeToGenerate = Start-TimeLog
 
@@ -43,103 +43,103 @@ function Get-WinADDomainInformation {
     $Data.DomainComputersFullList = Get-WinADDomainComputersFullList -Domain $Domain -ForestSchemaComputers $ForestSchemaComputers
 
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @(
-            [ActiveDirectory]::DomainComputersAll,
-            [ActiveDirectory]::DomainComputersAllCount,
-            [ActiveDirectory]::DomainServers,
-            [ActiveDirectory]::DomainServersCount,
-            [ActiveDirectory]::DomainComputers,
-            [ActiveDirectory]::DomainComputersCount,
-            [ActiveDirectory]::DomainComputersUnknown,
-            [ActiveDirectory]::DomainComputersUnknownCount
+            [PSWinDocumentation.ActiveDirectory]::DomainComputersAll,
+            [PSWinDocumentation.ActiveDirectory]::DomainComputersAllCount,
+            [PSWinDocumentation.ActiveDirectory]::DomainServers,
+            [PSWinDocumentation.ActiveDirectory]::DomainServersCount,
+            [PSWinDocumentation.ActiveDirectory]::DomainComputers,
+            [PSWinDocumentation.ActiveDirectory]::DomainComputersCount,
+            [PSWinDocumentation.ActiveDirectory]::DomainComputersUnknown,
+            [PSWinDocumentation.ActiveDirectory]::DomainComputersUnknownCount
         )) {
         Write-Verbose "Getting domain information - $Domain DomainComputersAll"
         $Data.DomainComputersAll = $Data.DomainComputersFullList | Select-Object SamAccountName, Enabled, OperatingSystem, PasswordLastSet, IPv4Address, IPv6Address, Name, DNSHostName, ManagedBy, OperatingSystemVersion, OperatingSystemHotfix, OperatingSystemServicePack , PasswordNeverExpires, PasswordNotRequired, UserPrincipalName, LastLogonDate, LockedOut, LogonCount, CanonicalName, SID, Created, Modified, Deleted, MemberOf
     }
-    if ($TypesRequired -contains [ActiveDirectory]::DomainComputersAllCount) {
+    if ($TypesRequired -contains [PSWinDocumentation.ActiveDirectory]::DomainComputersAllCount) {
         Write-Verbose "Getting domain information - $Domain DomainComputersAllCount"
         $Data.DomainComputersAllCount = $Data.DomainComputersAll | Group-Object -Property OperatingSystem | Select-Object @{ L = 'System Name'; Expression = { if ($_.Name -ne '') { $_.Name } else { 'Unknown' } } } , @{ L = 'System Count'; Expression = { $_.Count } }
     }
-    if ($TypesRequired -contains [ActiveDirectory]::DomainServers) {
+    if ($TypesRequired -contains [PSWinDocumentation.ActiveDirectory]::DomainServers) {
         Write-Verbose "Getting domain information - $Domain DomainServers"
         $Data.DomainServers = $Data.DomainComputersAll  | & { process { if ($_.OperatingSystem -like 'Windows Server*') { $_ } } } #| Where-Object { $_.OperatingSystem -like 'Windows Server*' }
     }
-    if ($TypesRequired -contains [ActiveDirectory]::DomainServersCount) {
+    if ($TypesRequired -contains [PSWinDocumentation.ActiveDirectory]::DomainServersCount) {
         Write-Verbose "Getting domain information - $Domain DomainServersCount"
         $Data.DomainServersCount = $Data.DomainServers | Group-Object -Property OperatingSystem | Select-Object @{ L = 'System Name'; Expression = { if ($_.Name -ne '') { $_.Name } else { 'N/A' } } } , @{ L = 'System Count'; Expression = { $_.Count } }
     }
-    if ($TypesRequired -contains [ActiveDirectory]::DomainComputers) {
+    if ($TypesRequired -contains [PSWinDocumentation.ActiveDirectory]::DomainComputers) {
         Write-Verbose "Getting domain information - $Domain DomainComputers"
         $Data.DomainComputers = $Data.DomainComputersAll | & { process { if ($_.OperatingSystem -notlike 'Windows Server*' -and $null -ne $_.OperatingSystem) { $_ } } }   #    | Where-Object { $_.OperatingSystem -notlike 'Windows Server*' -and $_.OperatingSystem -ne $null }
     }
-    if ($TypesRequired -contains [ActiveDirectory]::DomainComputersCount) {
+    if ($TypesRequired -contains [PSWinDocumentation.ActiveDirectory]::DomainComputersCount) {
         Write-Verbose "Getting domain information - $Domain DomainComputersCount"
         $Data.DomainComputersCount = $Data.DomainComputers | Group-Object -Property OperatingSystem | Select-Object @{ L = 'System Name'; Expression = { if ($_.Name -ne '') { $_.Name } else { 'N/A' } } } , @{ L = 'System Count'; Expression = { $_.Count } }
     }
 
-    if ($TypesRequired -contains [ActiveDirectory]::DomainComputersUnknown) {
+    if ($TypesRequired -contains [PSWinDocumentation.ActiveDirectory]::DomainComputersUnknown) {
         Write-Verbose "Getting domain information - $Domain DomainComputersUnknown"
         $Data.DomainComputersUnknown = $Data.DomainComputersAll | & { process { if ( $null -eq $_.OperatingSystem ) { $_ } } } # | Where-Object { $_.OperatingSystem -eq $null }
     }
-    if ($TypesRequired -contains [ActiveDirectory]::DomainComputersUnknownCount) {
+    if ($TypesRequired -contains [PSWinDocumentation.ActiveDirectory]::DomainComputersUnknownCount) {
         Write-Verbose "Getting domain information - $Domain DomainComputersUnknownCount"
         $Data.DomainComputersUnknownCount = $Data.DomainComputersUnknown | Group-Object -Property OperatingSystem | Select-Object @{ L = 'System Name'; Expression = { if ($_.Name -ne '') { $_.Name } else { 'Unknown' } } } , @{ L = 'System Count'; Expression = { $_.Count } }
     }
 
-    if ($TypesRequired -contains [ActiveDirectory]::DomainRIDs) {
+    if ($TypesRequired -contains [PSWinDocumentation.ActiveDirectory]::DomainRIDs) {
         $Data.DomainRIDs = Get-WinADDomainRIDs -DomainInformation $Data.DomainInformation -Domain $Domain
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired @([ActiveDirectory]::DomainGUIDS, [ActiveDirectory]::DomainOrganizationalUnitsBasicACL, [ActiveDirectory]::DomainOrganizationalUnitsExtended)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired @([PSWinDocumentation.ActiveDirectory]::DomainGUIDS, [PSWinDocumentation.ActiveDirectory]::DomainOrganizationalUnitsBasicACL, [PSWinDocumentation.ActiveDirectory]::DomainOrganizationalUnitsExtended)) {
         $Data.DomainGUIDS = Get-WinADDomainGUIDs -RootDSE $Data.DomainRootDSE -Domain $Domain
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainAuthenticationPolicies)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainAuthenticationPolicies)) {
         Write-Verbose "Getting domain information - $Domain DomainAuthenticationPolicies"
         $Data.DomainAuthenticationPolicies = $(Get-ADAuthenticationPolicy -Server $Domain -LDAPFilter '(name=AuthenticationPolicy*)')
     }
 
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainAuthenticationPolicySilos)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainAuthenticationPolicySilos)) {
         Write-Verbose "Getting domain information - $Domain DomainAuthenticationPolicySilos"
         $Data.DomainAuthenticationPolicySilos = $(Get-ADAuthenticationPolicySilo -Server $Domain -Filter 'Name -like "*AuthenticationPolicySilo*"')
     }
 
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainCentralAccessPolicies)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainCentralAccessPolicies)) {
         Write-Verbose "Getting domain information - $Domain DomainCentralAccessPolicies"
         $Data.DomainCentralAccessPolicies = $(Get-ADCentralAccessPolicy -Server $Domain -Filter * )
     }
 
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainCentralAccessRules)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainCentralAccessRules)) {
         Write-Verbose "Getting domain information - $Domain DomainCentralAccessRules"
         $Data.DomainCentralAccessRules = $(Get-ADCentralAccessRule -Server $Domain -Filter * )
     }
 
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainClaimTransformPolicies)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainClaimTransformPolicies)) {
         Write-Verbose "Getting domain information - $Domain DomainClaimTransformPolicies"
         $Data.DomainClaimTransformPolicies = $(Get-ADClaimTransformPolicy -Server $Domain -Filter * )
     }
 
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainClaimTypes)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainClaimTypes)) {
         Write-Verbose "Getting domain information - $Domain DomainClaimTypes"
         $Data.DomainClaimTypes = $(Get-ADClaimType -Server $Domain -Filter * )
     }
 
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainDNSSRV, [ActiveDirectory]::DomainDNSA )) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainDNSSRV, [PSWinDocumentation.ActiveDirectory]::DomainDNSA )) {
         Write-Verbose "Getting domain information - $Domain DomainDNSSRV / DomainDNSA"
         $Data.DomainDNSData = Get-WinADDomainDNSData -Domain $Domain
         $Data.DomainDNSSrv = $Data.DomainDNSData.SRV
         $Data.DomainDNSA = $Data.DomainDNSData.A
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainFSMO, [ActiveDirectory]::DomainTrusts, [ActiveDirectory]::DomainTrustsClean )) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainFSMO, [PSWinDocumentation.ActiveDirectory]::DomainTrusts, [PSWinDocumentation.ActiveDirectory]::DomainTrustsClean )) {
         $Data.DomainFSMO = Get-WinADDomainFSMO -Domain $Domain -DomainInformation $Data.DomainInformation
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainTrustsClean, [ActiveDirectory]::DomainTrusts)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainTrustsClean, [PSWinDocumentation.ActiveDirectory]::DomainTrusts)) {
         $Data.DomainTrustsClean = Get-WinADDomainTrustsClean -Domain $Domain
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainTrusts)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainTrusts)) {
         $Data.DomainTrusts = Get-WinADDomainTrusts -DomainPDC $Data.DomainFSMO.'PDC Emulator' -Trusts $Data.DomainTrustsClean -Domain $Domain
     }
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @(
-            [ActiveDirectory]::DomainGroupPolicies,
-            [ActiveDirectory]::DomainGroupPoliciesDetails,
-            [ActiveDirectory]::DomainGroupPoliciesACL
+            [PSWinDocumentation.ActiveDirectory]::DomainGroupPolicies,
+            [PSWinDocumentation.ActiveDirectory]::DomainGroupPoliciesDetails,
+            [PSWinDocumentation.ActiveDirectory]::DomainGroupPoliciesACL
         )) {
         Write-Verbose "Getting domain information - $Domain DomainGroupPolicies"
         $Data.DomainGroupPoliciesClean = $(Get-GPO -Domain $Domain -All)
@@ -211,13 +211,13 @@ function Get-WinADDomainInformation {
             return $Output
         }
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainBitlocker)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainBitlocker)) {
         #$Data.DomainBitlocker = Get-WinADDomainBitlocker -Domain $Domain -Computers $Data.DomainComputersFullList
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainLAPS)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainLAPS)) {
         $Data.DomainLAPS = Get-WinADDomainLAPS -Domain $Domain -Computers $Data.DomainComputersFullList
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainDefaultPasswordPolicy)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainDefaultPasswordPolicy)) {
         Write-Verbose -Message "Getting domain information - $Domain DomainDefaultPasswordPolicy"
         $Data.DomainDefaultPasswordPolicy = Invoke-Command -ScriptBlock {
             $Policy = $(Get-ADDefaultDomainPasswordPolicy -Server $Domain)
@@ -236,12 +236,12 @@ function Get-WinADDomainInformation {
         }
     }
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @(
-            [ActiveDirectory]::DomainOrganizationalUnits,
-            [ActiveDirectory]::DomainContainers,
-            [ActiveDirectory]::DomainOrganizationalUnitsDN,
-            [ActiveDirectory]::DomainOrganizationalUnitsACL,
-            [ActiveDirectory]::DomainOrganizationalUnitsBasicACL,
-            [ActiveDirectory]::DomainOrganizationalUnitsExtended
+            [PSWinDocumentation.ActiveDirectory]::DomainOrganizationalUnits,
+            [PSWinDocumentation.ActiveDirectory]::DomainContainers,
+            [PSWinDocumentation.ActiveDirectory]::DomainOrganizationalUnitsDN,
+            [PSWinDocumentation.ActiveDirectory]::DomainOrganizationalUnitsACL,
+            [PSWinDocumentation.ActiveDirectory]::DomainOrganizationalUnitsBasicACL,
+            [PSWinDocumentation.ActiveDirectory]::DomainOrganizationalUnitsExtended
         )) {
         Write-Verbose -Message "Getting domain information - $Domain DomainOrganizationalUnits Clean"
         $Data.DomainOrganizationalUnitsClean = $(Get-ADOrganizationalUnit -Server $Domain -Properties * -Filter * )
@@ -338,14 +338,14 @@ function Get-WinADDomainInformation {
         #>
     }
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @(
-            [ActiveDirectory]::DomainUsers,
-            [ActiveDirectory]::DomainUsersAll,
-            [ActiveDirectory]::DomainUsersSystemAccounts,
-            [ActiveDirectory]::DomainUsersNeverExpiring,
-            [ActiveDirectory]::DomainUsersNeverExpiringInclDisabled,
-            [ActiveDirectory]::DomainUsersExpiredInclDisabled,
-            [ActiveDirectory]::DomainUsersExpiredExclDisabled,
-            [ActiveDirectory]::DomainUsersCount
+            [PSWinDocumentation.ActiveDirectory]::DomainUsers,
+            [PSWinDocumentation.ActiveDirectory]::DomainUsersAll,
+            [PSWinDocumentation.ActiveDirectory]::DomainUsersSystemAccounts,
+            [PSWinDocumentation.ActiveDirectory]::DomainUsersNeverExpiring,
+            [PSWinDocumentation.ActiveDirectory]::DomainUsersNeverExpiringInclDisabled,
+            [PSWinDocumentation.ActiveDirectory]::DomainUsersExpiredInclDisabled,
+            [PSWinDocumentation.ActiveDirectory]::DomainUsersExpiredExclDisabled,
+            [PSWinDocumentation.ActiveDirectory]::DomainUsersCount
         )) {
 
         $Data.DomainUsers = Invoke-Command -ScriptBlock {
@@ -375,7 +375,7 @@ function Get-WinADDomainInformation {
             'Users System Accounts'               = Get-ObjectCount -Object $Data.DomainUsersSystemAccounts
         }
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainControllers )) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainControllers )) {
         Write-Verbose "Getting domain information - $Domain DomainControllers"
         $Data.DomainControllersClean = $(Get-ADDomainController -Server $Domain -Filter * )
         $Data.DomainControllers = Invoke-Command -ScriptBlock {
@@ -395,18 +395,18 @@ function Get-WinADDomainInformation {
             }
         }
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainFineGrainedPolicies)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainFineGrainedPolicies)) {
         Write-Verbose "Getting domain information - $Domain DomainFineGrainedPolicies"
         $Data.DomainFineGrainedPolicies = Get-WinADDomainFineGrainedPolicies -Domain $Domain
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainFineGrainedPoliciesUsers)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainFineGrainedPoliciesUsers)) {
         Write-Verbose "Getting domain information - $Domain DomainFineGrainedPoliciesUsers"
         $Data.DomainFineGrainedPoliciesUsers = Get-WinADDomainFineGrainedPoliciesUsers `
             -DomainFineGrainedPolicies $Data.DomainFineGrainedPolicies `
             -DomainUsersFullList $Data.DomainUsersFullList `
             -DomainGroupsFullList $Data.DomainGroupsFullList
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainFineGrainedPoliciesUsersExtended)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainFineGrainedPoliciesUsersExtended)) {
         $Data.DomainFineGrainedPoliciesUsersExtended = Get-WinADDomainFineGrainedPoliciesUsersExtended `
             -DomainFineGrainedPolicies $Data.DomainFineGrainedPoliciesUsers `
             -DomainUsersFullList $Data.DomainUsersFullList `
@@ -523,77 +523,77 @@ function Get-WinADDomainInformation {
          #>
     }
 
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainGroups, [ActiveDirectory]::DomainGroupsSpecial)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainGroups, [PSWinDocumentation.ActiveDirectory]::DomainGroupsSpecial)) {
         Write-Verbose "Getting domain information - $Domain DomainGroups"
         $Data.DomainGroups = Get-WinGroups -Groups $Data.DomainGroupsFullList -Users $Data.DomainUsersFullList -Domain $Domain
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainGroups, [ActiveDirectory]::DomainGroupsMembers)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainGroups, [PSWinDocumentation.ActiveDirectory]::DomainGroupsMembers)) {
         Write-Verbose "Getting domain information - $Domain DomainGroupsMembers"
         $Data.DomainGroupsMembers = Get-WinGroupMembers -Groups $Data.DomainGroups -Domain $Domain -ADCatalog $Data.DomainUsersFullList, $Data.DomainComputersFullList, $Data.DomainGroupsFullList -ADCatalogUsers $Data.DomainUsersFullList -Option Standard
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainGroups, [ActiveDirectory]::DomainGroupsMembersRecursive)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainGroups, [PSWinDocumentation.ActiveDirectory]::DomainGroupsMembersRecursive)) {
         Write-Verbose "Getting domain information - $Domain DomainGroupsMembersRecursive"
         $Data.DomainGroupsMembersRecursive = Get-WinGroupMembers -Groups $Data.DomainGroups -Domain $Domain -ADCatalog $Data.DomainUsersFullList, $Data.DomainComputersFullList, $Data.DomainGroupsFullList -ADCatalogUsers $Data.DomainUsersFullList -Option Recursive
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainGroupsPriviliged)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainGroupsPriviliged)) {
         $Data.DomainGroupsPriviliged = Get-DomainGroupsPriviliged -DomainGroups $Data.DomainGroups -DomainInformation $Data.DomainInformation
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainGroupsSpecial, [ActiveDirectory]::DomainGroupMembersRecursiveSpecial)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainGroupsSpecial, [PSWinDocumentation.ActiveDirectory]::DomainGroupMembersRecursiveSpecial)) {
         Write-Verbose "Getting domain information - $Domain DomainGroupsSpecial"
         $Data.DomainGroupsSpecial = $Data.DomainGroups | Where-Object { ($_.'Group SID').Length -eq 12 }
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainGroupsSpecialMembers, [ActiveDirectory]::DomainGroupsSpecialMembersRecursive)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainGroupsSpecialMembers, [PSWinDocumentation.ActiveDirectory]::DomainGroupsSpecialMembersRecursive)) {
         Write-Verbose "Getting domain information - $Domain DomainGroupMembersSpecialRecursive"
         $Data.DomainGroupsSpecialMembers = $Data.DomainGroupsMembers | Where-Object { ($_.'Group SID').Length -eq 12 } | Select-Object * #-Exclude Group*, 'High Privileged Group'
         Write-Verbose "Getting domain information - $Domain DomainGroupsSpecialMembersRecursive"
         $Data.DomainGroupsSpecialMembersRecursive = $Data.DomainGroupsMembersRecursive | Where-Object { ($_.'Group SID').Length -eq 12 } | Select-Object * #-Exclude Group*, 'High Privileged Group'
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainGroupsPriviligedMembers, [ActiveDirectory]::DomainGroupsPriviligedMembersRecursive)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainGroupsPriviligedMembers, [PSWinDocumentation.ActiveDirectory]::DomainGroupsPriviligedMembersRecursive)) {
         Write-Verbose "Getting domain information - $Domain DomainGroupsPriviligedMembers"
         $Data.DomainGroupsPriviligedMembers = $Data.DomainGroupsMembers | Where-Object { $Data.DomainGroupsPriviliged.'Group SID' -contains ($_.'Group SID') } | Select-Object * #-Exclude Group*, 'High Privileged Group'
         Write-Verbose "Getting domain information - $Domain DomainGroupsPriviligedMembersRecursive"
         $Data.DomainGroupsPriviligedMembersRecursive = $Data.DomainGroupsMembersRecursive | Where-Object { $Data.DomainGroupsPriviliged.'Group SID' -contains ($_.'Group SID') } | Select-Object * #-Exclude Group*, 'High Privileged Group'
     }
     ## Users per one group only.
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainAdministrators, [ActiveDirectory]::DomainGroupsMembers)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainAdministrators, [PSWinDocumentation.ActiveDirectory]::DomainGroupsMembers)) {
         Write-Verbose "Getting domain information - $Domain DomainAdministrators"
         $Data.DomainAdministrators = $Data.DomainGroupsMembers | Where-Object { $_.'Group SID' -eq $('{0}-512' -f $Data.DomainInformation.DomainSID.Value) } | Select-Object * -Exclude Group*, 'High Privileged Group'
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainAdministratorsRecursive, [ActiveDirectory]::DomainGroupsMembersRecursive)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainAdministratorsRecursive, [PSWinDocumentation.ActiveDirectory]::DomainGroupsMembersRecursive)) {
         Write-Verbose "Getting domain information - $Domain DomainAdministratorsRecursive"
         $Data.DomainAdministratorsRecursive = $Data.DomainGroupsMembersRecursive | Where-Object { $_.'Group SID' -eq $('{0}-512' -f $Data.DomainInformation.DomainSID.Value) } | Select-Object * -Exclude Group*, 'High Privileged Group'
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainEnterpriseAdministrators, [ActiveDirectory]::DomainGroupsMembers)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainEnterpriseAdministrators, [PSWinDocumentation.ActiveDirectory]::DomainGroupsMembers)) {
         Write-Verbose "Getting domain information - $Domain DomainEnterpriseAdministrators"
         $Data.DomainEnterpriseAdministrators = $Data.DomainGroupsMembers | Where-Object { $_.'Group SID' -eq $('{0}-519' -f $Data.DomainInformation.DomainSID.Value) } | Select-Object * -Exclude Group*, 'High Privileged Group'
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainEnterpriseAdministratorsRecursive, [ActiveDirectory]::DomainGroupsMembersRecursive)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainEnterpriseAdministratorsRecursive, [PSWinDocumentation.ActiveDirectory]::DomainGroupsMembersRecursive)) {
         Write-Verbose "Getting domain information - $Domain DomainEnterpriseAdministratorsRecursive"
         $Data.DomainEnterpriseAdministratorsRecursive = $Data.DomainGroupsMembersRecursive | Where-Object { $_.'Group SID' -eq $('{0}-519' -f $Data.DomainInformation.DomainSID.Value) } | Select-Object * -Exclude Group*, 'High Privileged Group'
     }
 
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @(
-            [ActiveDirectory]::DomainPasswordDataUsers,
-            [ActiveDirectory]::DomainPasswordDataPasswords,
-            [ActiveDirectory]::DomainPasswordClearTextPassword,
-            [ActiveDirectory]::DomainPasswordLMHash,
-            [ActiveDirectory]::DomainPasswordEmptyPassword,
-            [ActiveDirectory]::DomainPasswordWeakPassword,
-            [ActiveDirectory]::DomainPasswordWeakPasswordEnabled,
-            [ActiveDirectory]::DomainPasswordWeakPasswordDisabled,
-            [ActiveDirectory]::DomainPasswordWeakPasswordList,
-            [ActiveDirectory]::DomainPasswordDefaultComputerPassword,
-            [ActiveDirectory]::DomainPasswordPasswordNotRequired,
-            [ActiveDirectory]::DomainPasswordPasswordNeverExpires,
-            [ActiveDirectory]::DomainPasswordAESKeysMissing,
-            [ActiveDirectory]::DomainPasswordPreAuthNotRequired,
-            [ActiveDirectory]::DomainPasswordDESEncryptionOnly,
-            [ActiveDirectory]::DomainPasswordDelegatableAdmins,
-            [ActiveDirectory]::DomainPasswordDuplicatePasswordGroups,
-            [ActiveDirectory]::DomainPasswordStats,
-            [ActiveDirectory]::DomainPasswordHashesWeakPassword,
-            [ActiveDirectory]::DomainPasswordHashesWeakPasswordEnabled,
-            [ActiveDirectory]::DomainPasswordHashesWeakPasswordDisabled
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordDataUsers,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordDataPasswords,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordClearTextPassword,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordLMHash,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordEmptyPassword,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPassword,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordEnabled,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordDisabled,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordList,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordDefaultComputerPassword,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordPasswordNotRequired,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordPasswordNeverExpires,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordAESKeysMissing,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordPreAuthNotRequired,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordDESEncryptionOnly,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordDelegatableAdmins,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordDuplicatePasswordGroups,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordStats,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPassword,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordEnabled,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordDisabled
         )) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordDataUsers - This will take a while if set!"
         $TimeToProcess = Start-TimeLog
@@ -611,26 +611,26 @@ function Get-WinADDomainInformation {
     }
 
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @(
-            [ActiveDirectory]::DomainPasswordDataPasswords,
-            [ActiveDirectory]::DomainPasswordClearTextPassword,
-            [ActiveDirectory]::DomainPasswordLMHash,
-            [ActiveDirectory]::DomainPasswordEmptyPassword,
-            [ActiveDirectory]::DomainPasswordWeakPassword,
-            [ActiveDirectory]::DomainPasswordWeakPasswordEnabled,
-            [ActiveDirectory]::DomainPasswordWeakPasswordDisabled,
-            [ActiveDirectory]::DomainPasswordWeakPasswordList,
-            [ActiveDirectory]::DomainPasswordDefaultComputerPassword,
-            [ActiveDirectory]::DomainPasswordPasswordNotRequired,
-            [ActiveDirectory]::DomainPasswordPasswordNeverExpires,
-            [ActiveDirectory]::DomainPasswordAESKeysMissing,
-            [ActiveDirectory]::DomainPasswordPreAuthNotRequired,
-            [ActiveDirectory]::DomainPasswordDESEncryptionOnly,
-            [ActiveDirectory]::DomainPasswordDelegatableAdmins,
-            [ActiveDirectory]::DomainPasswordDuplicatePasswordGroups,
-            [ActiveDirectory]::DomainPasswordStats,
-            [ActiveDirectory]::DomainPasswordHashesWeakPassword,
-            [ActiveDirectory]::DomainPasswordHashesWeakPasswordEnabled,
-            [ActiveDirectory]::DomainPasswordHashesWeakPasswordDisabled
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordDataPasswords,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordClearTextPassword,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordLMHash,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordEmptyPassword,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPassword,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordEnabled,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordDisabled,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordList,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordDefaultComputerPassword,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordPasswordNotRequired,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordPasswordNeverExpires,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordAESKeysMissing,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordPreAuthNotRequired,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordDESEncryptionOnly,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordDelegatableAdmins,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordDuplicatePasswordGroups,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordStats,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPassword,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordEnabled,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordDisabled
         )) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordDataPasswords - This will take a while if set!"
         Write-Verbose "Getting domain password information - $Domain Passwords Path: $PathToPasswords"
@@ -639,9 +639,9 @@ function Get-WinADDomainInformation {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordDataPasswords - Time: $($TimeToProcess | Stop-TimeLog)"
     }
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @(
-            [ActiveDirectory]::DomainPasswordHashesWeakPassword,
-            [ActiveDirectory]::DomainPasswordHashesWeakPasswordEnabled,
-            [ActiveDirectory]::DomainPasswordHashesWeakPasswordDisabled
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPassword,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordEnabled,
+            [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordDisabled
         )) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordDataPasswordsHashes - This will take a while if set!"
         Write-Verbose "Getting domain password information - $Domain Passwords Hashes Path: $PathToPasswordsHashes"
@@ -657,79 +657,79 @@ function Get-WinADDomainInformation {
         $PasswordsQuality = $null
     }
 
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [ActiveDirectory]::DomainPasswordClearTextPassword)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [PSWinDocumentation.ActiveDirectory]::DomainPasswordClearTextPassword)) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordClearTextPassword"
         $Data.DomainPasswordClearTextPassword = $PasswordsQuality.DomainPasswordClearTextPassword
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [ActiveDirectory]::DomainPasswordLMHash)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [PSWinDocumentation.ActiveDirectory]::DomainPasswordLMHash)) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordLMHash"
         $Data.DomainPasswordLMHash = $PasswordsQuality.DomainPasswordLMHash
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [ActiveDirectory]::DomainPasswordEmptyPassword)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [PSWinDocumentation.ActiveDirectory]::DomainPasswordEmptyPassword)) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordEmptyPassword"
         $Data.DomainPasswordEmptyPassword = $PasswordsQuality.DomainPasswordEmptyPassword
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [ActiveDirectory]::DomainPasswordWeakPassword)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPassword)) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordWeakPassword"
         $Data.DomainPasswordWeakPassword = $Data.DomainPasswordDataPasswords.DomainPasswordWeakPassword
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [ActiveDirectory]::DomainPasswordWeakPasswordEnabled)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordEnabled)) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordWeakPasswordEnabled"
         $Data.DomainPasswordWeakPasswordEnabled = $Data.DomainPasswordDataPasswords.DomainPasswordWeakPasswordEnabled
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [ActiveDirectory]::DomainPasswordWeakPasswordDisabled)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordDisabled)) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordWeakPasswordDisabled"
         $Data.DomainPasswordWeakPasswordDisabled = $Data.DomainPasswordDataPasswords.DomainPasswordWeakPasswordDisabled
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [ActiveDirectory]::DomainPasswordWeakPasswordList)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordList)) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordWeakPasswordList"
         $Data.DomainPasswordWeakPasswordList = $Data.DomainPasswordDataPasswords.DomainPasswordWeakPasswordList
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [ActiveDirectory]::DomainPasswordDefaultComputerPassword)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [PSWinDocumentation.ActiveDirectory]::DomainPasswordDefaultComputerPassword)) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordDefaultComputerPassword"
         $Data.DomainPasswordDefaultComputerPassword = $PasswordsQuality.DomainPasswordDefaultComputerPassword
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [ActiveDirectory]::DomainPasswordPasswordNotRequired)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [PSWinDocumentation.ActiveDirectory]::DomainPasswordPasswordNotRequired)) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordPasswordNotRequired"
         $Data.DomainPasswordPasswordNotRequired = $PasswordsQuality.DomainPasswordPasswordNotRequired
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [ActiveDirectory]::DomainPasswordPasswordNeverExpires)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [PSWinDocumentation.ActiveDirectory]::DomainPasswordPasswordNeverExpires)) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordPasswordNeverExpires"
         $Data.DomainPasswordPasswordNeverExpires = $PasswordsQuality.DomainPasswordPasswordNeverExpires
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [ActiveDirectory]::DomainPasswordAESKeysMissing)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [PSWinDocumentation.ActiveDirectory]::DomainPasswordAESKeysMissing)) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordAESKeysMissing"
         $Data.DomainPasswordAESKeysMissing = $PasswordsQuality.DomainPasswordAESKeysMissing
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [ActiveDirectory]::DomainPasswordPreAuthNotRequired)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [PSWinDocumentation.ActiveDirectory]::DomainPasswordPreAuthNotRequired)) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordPreAuthNotRequired"
         $Data.DomainPasswordPreAuthNotRequired = $PasswordsQuality.DomainPasswordPreAuthNotRequired
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [ActiveDirectory]::DomainPasswordDESEncryptionOnly)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [PSWinDocumentation.ActiveDirectory]::DomainPasswordDESEncryptionOnly)) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordDESEncryptionOnly"
         $Data.DomainPasswordDESEncryptionOnly = $PasswordsQuality.DomainPasswordDESEncryptionOnly
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [ActiveDirectory]::DomainPasswordDelegatableAdmins)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [PSWinDocumentation.ActiveDirectory]::DomainPasswordDelegatableAdmins)) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordDelegatableAdmins"
         $Data.DomainPasswordDelegatableAdmins = $PasswordsQuality.DomainPasswordDelegatableAdmins
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [ActiveDirectory]::DomainPasswordDuplicatePasswordGroups)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [PSWinDocumentation.ActiveDirectory]::DomainPasswordDuplicatePasswordGroups)) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordDuplicatePasswordGroups"
         $Data.DomainPasswordDuplicatePasswordGroups = $PasswordsQuality.DomainPasswordDuplicatePasswordGroups
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [ActiveDirectory]::DomainPasswordHashesWeakPassword)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPassword)) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordHashesWeakPassword"
         $Data.DomainPasswordHashesWeakPassword = $Data.DomainPasswordDataPasswordsHashes.DomainPasswordWeakPassword
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [ActiveDirectory]::DomainPasswordHashesWeakPasswordEnabled)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordEnabled)) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordHashesWeakPasswordEnabled"
         $Data.DomainPasswordHashesWeakPasswordEnabled = $Data.DomainPasswordDataPasswordsHashes.DomainPasswordWeakPasswordEnabled
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [ActiveDirectory]::DomainPasswordHashesWeakPasswordDisabled)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordDisabled)) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordHashesWeakPasswordDisabled"
         $Data.DomainPasswordHashesWeakPasswordDisabled = $Data.DomainPasswordDataPasswordsHashes.DomainPasswordWeakPasswordDisabled
     }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [ActiveDirectory]::DomainPasswordStats)) {
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @( [PSWinDocumentation.ActiveDirectory]::DomainPasswordStats)) {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordStats"
         $Data.DomainPasswordStats = Invoke-Command -ScriptBlock {
             $Stats = [ordered] @{ }
@@ -739,13 +739,13 @@ function Get-WinADDomainInformation {
             $Stats.'Weak Passwords' = Get-ObjectCount -Object $PasswordsQuality.DomainPasswordWeakPassword
             $Stats.'Weak Passwords Enabled' = Get-ObjectCount -Object $PasswordsQuality.DomainPasswordWeakPasswordEnabled
             $Stats.'Weak Passwords Disabled' = Get-ObjectCount -Object $PasswordsQuality.DomainPasswordWeakPasswordDisabled
-            if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainPasswordHashesWeakPassword)) {
+            if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPassword)) {
                 $Stats.'Weak Passwords (HASH)' = Get-ObjectCount -Object $Data.DomainPasswordDataPasswordsHashes.DomainPasswordHashesWeakPassword
             }
-            if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainPasswordHashesWeakPasswordEnabled)) {
+            if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordEnabled)) {
                 $Stats.'Weak Passwords (HASH) Enabled' = Get-ObjectCount -Object $Data.DomainPasswordDataPasswordsHashes.DomainPasswordHashesWeakPasswordEnabled
             }
-            if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([ActiveDirectory]::DomainPasswordHashesWeakPasswordDisabled)) {
+            if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordDisabled)) {
                 $Stats.'Weak Passwords (HASH) Disabled' = Get-ObjectCount -Object $Data.DomainPasswordDataPasswordsHashes.DomainPasswordHashesWeakPasswordDisabled
             }
             $Stats.'Default Computer Passwords' = Get-ObjectCount -Object $PasswordsQuality.DomainPasswordDefaultComputerPassword
