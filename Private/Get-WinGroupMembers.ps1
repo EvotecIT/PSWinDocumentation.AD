@@ -7,6 +7,7 @@ function Get-WinGroupMembers {
         [System.Object[]] $ADCatalogUsers,
         [ValidateSet("Recursive", "Standard")][String] $Option
     )
+    [DateTime] $CurrentDate = Get-Date
     if ($Option -eq 'Recursive') {
         [Array] $GroupMembersRecursive = foreach ($Group in $Groups) {
             try {
@@ -38,7 +39,7 @@ function Get-WinGroupMembers {
                     'Manager'                           = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalogUsers -DistinguishedName $Object.Manager).Name
                     'ManagerEmail'                      = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalogUsers -DistinguishedName $Object.Manager).EmailAddress
                     'DateExpiry'                        = Convert-ToDateTime -Timestring $($Object."msDS-UserPasswordExpiryTimeComputed") # -Verbose
-                    "DaysToExpire"                      = (Convert-TimeToDays -StartTime GET-DATE -EndTime (Convert-ToDateTime -Timestring $($Object."msDS-UserPasswordExpiryTimeComputed")))
+                    "DaysToExpire"                      = (Convert-TimeToDays -StartTime $CurrentDate -EndTime (Convert-ToDateTime -Timestring $($Object."msDS-UserPasswordExpiryTimeComputed")))
                     "AccountExpirationDate"             = $Object.AccountExpirationDate
                     "AccountLockoutTime"                = $Object.AccountLockoutTime
                     "AllowReversiblePasswordEncryption" = $Object.AllowReversiblePasswordEncryption
@@ -91,7 +92,7 @@ function Get-WinGroupMembers {
                     'Manager'                           = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalogUsers -DistinguishedName $Object.Manager).Name
                     'ManagerEmail'                      = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalogUsers -DistinguishedName $Object.Manager).EmailAddress
                     'DateExpiry'                        = Convert-ToDateTime -Timestring $($Object."msDS-UserPasswordExpiryTimeComputed") #-Verbose
-                    "DaysToExpire"                      = (Convert-TimeToDays -StartTime GET-DATE -EndTime (Convert-ToDateTime -Timestring $($Object."msDS-UserPasswordExpiryTimeComputed")))
+                    "DaysToExpire"                      = (Convert-TimeToDays -StartTime $CurrentDate -EndTime (Convert-ToDateTime -Timestring $($Object."msDS-UserPasswordExpiryTimeComputed")))
                     "AccountExpirationDate"             = $Object.AccountExpirationDate
                     "AccountLockoutTime"                = $Object.AccountLockoutTime
                     "AllowReversiblePasswordEncryption" = $Object.AllowReversiblePasswordEncryption

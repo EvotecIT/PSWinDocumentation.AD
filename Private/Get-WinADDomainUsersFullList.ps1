@@ -62,7 +62,7 @@ function Get-WinADDomainUsersFullList {
         )
     }
 
-    [string[]] $ExcludeProperty = '*Certificate', 'PropertyNames', '*Properties', 'PropertyCount', 'Certificates', 'nTSecurityDescriptor'
+    #[string[]] $ExcludeProperty = '*Certificate', 'PropertyNames', '*Properties', 'PropertyCount', 'Certificates', 'nTSecurityDescriptor'
 
     Get-ADUser -Server $Domain -ResultPageSize 500000 -Filter * -Properties $Properties #| Select-Object -Property $Properties -ExcludeProperty $ExcludeProperty
 

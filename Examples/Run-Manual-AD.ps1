@@ -2,6 +2,9 @@ Clear-Host
 Import-Module .\PSWinDocumentation.AD.psd1 -Force
 
 #$Forest = Get-WinADForestInformation -Verbose
+$Forest.FoundDomains.'ad.evotec.xyz'
+
+return
 #$Forest.FoundDomains.'ad.evotec.xyz'
 $Forest.FoundDomains.'ad.evotec.xyz'.DomainDNSA
 return

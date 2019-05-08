@@ -20,9 +20,11 @@ Add-Type -TypeDefinition @"
             ForestSubnets2,
             ForestSiteLinks,
             ForestDomainControllers,
+            ForestRootDSE,
+            ForestSchemaPropertiesUsers,
+            ForestSchemaPropertiesComputers,
 
             // Domain Information - Section Main
-
             DomainRootDSE,
             DomainRIDs,
             DomainAuthenticationPolicies, // Not yet tested

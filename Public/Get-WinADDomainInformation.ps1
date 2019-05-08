@@ -7,7 +7,8 @@ function Get-WinADDomainInformation {
         [string] $PathToPasswordsHashes,
         [switch] $Extended,
         [Array] $ForestSchemaComputers,
-        [Array] $ForestSchemaUsers
+        [Array] $ForestSchemaUsers,
+        [switch] $PasswordQuality
     )
     if ([string]::IsNullOrEmpty($Domain)) {
         Write-Warning 'Get-WinADDomainInformation - $Domain parameter is empty. Try your domain name like ad.evotec.xyz. Skipping for now...'
@@ -635,7 +636,15 @@ function Get-WinADDomainInformation {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordDataPasswords - This will take a while if set!"
         Write-Verbose "Getting domain password information - $Domain Passwords Path: $PathToPasswords"
         $TimeToProcess = Start-TimeLog
-        $Data.DomainPasswordDataPasswords = Get-WinADDomainPasswordQuality -FilePath $PathToPasswords -DomainInformation $Data -Verbose:$false -PasswordQualityUsers $Data.DomainPasswordDataUsers
+        $Data.DomainPasswordDataPasswords = Get-WinADDomainPasswordQuality `
+            -FilePath $PathToPasswords `
+            -DomainComputersAll $Data.DomainComputersAll `
+            -DomainUsersAll $Data.DomainUsersAll `
+            -DomainDistinguishedName $Data.DomainInformation.DistinguishedName `
+            -DnsRoot $DomainInformation.DnsRoot `
+            -Verbose:$false `
+            -PasswordQualityUsers $Data.DomainPasswordDataUsers `
+            -PasswordQuality:$PasswordQuality
         Write-Verbose "Getting domain password information - $Domain DomainPasswordDataPasswords - Time: $($TimeToProcess | Stop-TimeLog)"
     }
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @(
@@ -646,7 +655,15 @@ function Get-WinADDomainInformation {
         Write-Verbose "Getting domain password information - $Domain DomainPasswordDataPasswordsHashes - This will take a while if set!"
         Write-Verbose "Getting domain password information - $Domain Passwords Hashes Path: $PathToPasswordsHashes"
         $TimeToProcess = Start-TimeLog
-        $Data.DomainPasswordDataPasswordsHashes = Get-WinADDomainPasswordQuality -FilePath $PathToPasswordsHashes -DomainInformation $Data -UseHashes -Verbose:$false -PasswordQualityUsers $Data.DomainPasswordDataUsers
+        $Data.DomainPasswordDataPasswordsHashes = Get-WinADDomainPasswordQuality `
+            -FilePath $PathToPasswordsHashes `
+            -DomainComputersAll $Data.DomainComputersAll `
+            -DomainUsersAll $Data.DomainUsersAll `
+            -DomainDistinguishedName $Data.DomainInformation.DistinguishedName `
+            -DnsRoot $DomainInformation.DnsRoot `
+            -UseHashes `
+            -Verbose:$false `
+            -PasswordQualityUsers $Data.DomainPasswordDataUsers
         Write-Verbose "Getting domain password information - $Domain DomainPasswordDataPasswordsHashes - Time: $($TimeToProcess | Stop-TimeLog)"
     }
     if ($Data.DomainPasswordDataPasswords) {

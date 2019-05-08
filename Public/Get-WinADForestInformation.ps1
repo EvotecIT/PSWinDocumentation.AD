@@ -4,9 +4,12 @@ function Get-WinADForestInformation {
         [PSWinDocumentation.ActiveDirectory[]] $TypesRequired,
         [switch] $RequireTypes,
         [string] $PathToPasswords,
-        [string] $PathToPasswordsHashes
+        [string] $PathToPasswordsHashes,
+        [switch] $PasswordQuality
     )
-    Write-Verbose "Getting all information"
+
+
+    Write-Verbose "Get-WinADForestInformation - Getting information"
     $TimeToGenerateForest = Start-TimeLog
     if ($null -eq $TypesRequired) {
         # Gets all types
@@ -14,24 +17,41 @@ function Get-WinADForestInformation {
         $TypesRequired = Get-Types -Types ([PSWinDocumentation.ActiveDirectory])
     }
 
-    $Data = [ordered] @{ }
-    $Data.Forest = Get-WinADForest
-    if ($null -eq $Data.Forest) {
+    $Forest = Get-WinADForest
+    if ($null -eq $Forest) {
+        Write-Warning "Get-WinADForestInformation - Failed to get information."
         return
     }
-    $Data.RootDSE = Get-WinADRootDSE
-    Write-Verbose 'Getting forest information - ForestName & ForestNameDN & Domains list'
-    $Data.ForestName = $Data.Forest.Name
-    $Data.ForestNameDN = $Data.RootDSE.defaultNamingContext
-    $Data.Domains = $Data.Forest.Domains
 
-    $Data.ForestSchemaPropertiesComputers = Get-WinADForestSchemaPropertiesComputers
-    $Data.ForestSchemaPropertiesUsers = Get-WinADForestSchemaPropertiesUsers
-
-
+    # Start of building data
+    $Data = [ordered] @{}
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::ForestRootDSE, [PSWinDocumentation.ActiveDirectory]::ForestInformation)) {
+        $Data.RootDSE = Get-WinADRootDSE
+    }
+    # This is tempporary data that should be removed at some point
+    #if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::ForestName)) {
+    #    Write-Verbose 'Getting forest information - ForestName'
+    #    $Data.ForestName = $Data.Forest.Name
+    #}
+    #if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::ForestNameDN)) {
+    #   Write-Verbose 'Getting forest information - ForestNameDN'
+    #    $Data.ForestNameDN = $Data.RootDSE.defaultNamingContext
+    #}
+    # This is utilized for FoundDomains property
+    # if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::ForestRootDSE)) {
+    #     Write-Verbose 'Getting forest information - Domains list'
+    #     $Data.Domains = $Data.Forest.Domains
+    # }
+    # This is Forest Schema Properties for Users and Computers
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::ForestSchemaPropertiesComputers)) {
+        $Data.ForestSchemaPropertiesComputers = Get-WinADForestSchemaPropertiesComputers
+    }
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::ForestSchemaPropertiesUsers)) {
+        $Data.ForestSchemaPropertiesUsers = Get-WinADForestSchemaPropertiesUsers
+    }
     ## Forest Information
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::ForestInformation)) {
-        $Data.ForestInformation = Get-WinADForestInfo -Forest $Data.Forest
+        $Data.ForestInformation = Get-WinADForestInfo -Forest $Forest -RootDSE $Data.RootDSE
     }
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::ForestUPNSuffixes)) {
         Write-Verbose 'Getting forest information - Forest UPNSuffixes'
@@ -95,14 +115,14 @@ function Get-WinADForestInformation {
     $EndTimeForest = Stop-TimeLog -Time $TimeToGenerateForest -Continue
     Write-Verbose "Getting forest information - Time to generate: $EndTimeForest"
     ### Generate Data from Domains
-    $Data.FoundDomains = [ordered]@{ }
-    foreach ($Domain in $Data.Domains) {
+    $Data.FoundDomains = [ordered]@{}
+    foreach ($Domain in $Forest.Domains) {
         $Data.FoundDomains.$Domain = Get-WinADDomainInformation -Domain $Domain `
             -TypesRequired $TypesRequired `
             -PathToPasswords $PathToPasswords `
             -PathToPasswordsHashes $PathToPasswordsHashes `
             -ForestSchemaComputers $Data.ForestSchemaPropertiesComputers  `
-            -ForestSchemaUsers $Data.ForestSchemaPropertiesUsers
+            -ForestSchemaUsers $Data.ForestSchemaPropertiesUsers -PasswordQuality:$PasswordQuality
     }
     $EndTimeAll = Stop-TimeLog -Time $TimeToGenerateForest
     Write-Verbose "Getting all information - Time to generate: $EndTimeAll"
