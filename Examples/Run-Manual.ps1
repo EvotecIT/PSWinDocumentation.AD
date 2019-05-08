@@ -1,6 +1,6 @@
 Import-Module .\PSWinDocumentation.AD.psd1 -Force
 
-$Forest = Get-WinADForestInformation -Verbose -PasswordQuality -TypesRequired ForestRootDSE
+$Forest = Get-WinADForestInformation -Verbose -PasswordQuality -TypesRequired DomainInformation -DontRemoveSupportData
 $Forest
 
 Write-Color 'Ad.evotec.xyz' -Color Red

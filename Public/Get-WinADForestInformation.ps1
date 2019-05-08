@@ -63,6 +63,8 @@ function Get-WinADForestInformation {
         [PSWinDocumentation.ActiveDirectory]::ForestSchemaPropertiesUsers
         [PSWinDocumentation.ActiveDirectory]::DomainUsersFullList
     )
+
+
     ## Forest Information
     $Data.ForestUPNSuffixes = Get-DataInformation -Text 'Getting forest information - ForestUPNSuffixes' {
         Get-WinADForestUPNSuffixes -Forest $Data.Forest
@@ -150,7 +152,7 @@ function Get-WinADForestInformation {
 
     $EndTimeForest = Stop-TimeLog -Time $TimeToGenerateForest -Continue
 
-    $Data.FoundDomains = Get-DataInformation -Text 'Getting forest information - ForestOptionalFeatures' {
+    $Data.FoundDomains = Get-DataInformation -Text 'Getting forest information - Domains' {
         ### Generate Data from Domains
         $FoundDomains = @{}
         foreach ($Domain in $Forest.Domains) {
