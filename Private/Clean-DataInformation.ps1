@@ -1,12 +1,18 @@
 ﻿function Clear-DataInformation {
     [CmdletBinding()]
     param(
-        $Data
+        [System.Collections.IDictionary] $Data,
+        [Array] $TypesRequired,
+        [switch] $DontRemoveSupportData
     )
     # Check each domain for empty values and remove if empty
     foreach ($Domain in $Data.FoundDomains.Keys) {
         $RemoveDomainKeys = foreach ($Key in $Data.FoundDomains.$Domain.Keys) {
             if ($null -eq $Data.FoundDomains.$Domain.$Key) {
+                $Key
+                continue
+            }
+            if ($Key -notin $TypesRequired -and $DontRemoveSupportData -eq $false) {
                 $Key
             }
         }
@@ -34,6 +40,10 @@
     # Remove empty keys in Forest
     $RemoveKeys = foreach ($Key in $Data.Keys) {
         if ($null -eq $Data.$Key) {
+            $Key
+            continue
+        }
+        if ($Key -notin $TypesRequired -and $DontRemoveSupportData -eq $false) {
             $Key
         }
     }

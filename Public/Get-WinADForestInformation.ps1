@@ -5,7 +5,8 @@ function Get-WinADForestInformation {
         [switch] $RequireTypes,
         [string] $PathToPasswords,
         [string] $PathToPasswordsHashes,
-        [switch] $PasswordQuality
+        [switch] $PasswordQuality,
+        [switch] $DontRemoveSupportData
     )
 
     Write-Verbose -Message "Getting all information - Start"
@@ -23,8 +24,6 @@ function Get-WinADForestInformation {
         Write-Warning "Getting forest information - Failed to get information."
         return
     }
-
-
     # Start of building data
     $Data = [ordered] @{}
 
@@ -65,87 +64,114 @@ function Get-WinADForestInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainUsersFullList
     )
     ## Forest Information
-    $Data.ForestUPNSuffixes = Get-DataInformation -Text 'Getting forest information - Forest UPNSuffixes' {
+    $Data.ForestUPNSuffixes = Get-DataInformation -Text 'Getting forest information - ForestUPNSuffixes' {
         Get-WinADForestUPNSuffixes -Forest $Data.Forest
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::ForestUPNSuffixes
     )
 
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::ForestGlobalCatalogs)) {
-        Write-Verbose 'Getting forest information - Forest GlobalCatalogs'
-        $Data.ForestGlobalCatalogs = $Data.Forest.GlobalCatalogs
-    }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::ForestSPNSuffixes)) {
-        Write-Verbose 'Getting forest information - Forest SPNSuffixes'
-        $Data.ForestSPNSuffixes = $Data.Forest.SPNSuffixes
-    }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::ForestFSMO)) {
-        Write-Verbose 'Getting forest information - Forest FSMO'
-        $Data.ForestFSMO = [ordered] @{
-            'Domain Naming Master' = $Data.Forest.DomainNamingMaster
-            'Schema Master'        = $Data.Forest.SchemaMaster
-        }
-    }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::ForestDomainControllers)) {
+    $Data.ForestSPNSuffixes = Get-DataInformation -Text 'Getting forest information - ForestSPNSuffixes' {
+        Get-WinADForestSPNSuffixes -Forest $Data.Forest
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::ForestSPNSuffixes
+    )
+
+    # Forest DC GC - Review if required
+    $Data.ForestGlobalCatalogs = Get-DataInformation -Text 'Getting forest information - ForestGlobalCatalogs' {
+        $Forest.GlobalCatalogs
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::ForestGlobalCatalogs
+    )
+
+    $Data.ForestFSMO = Get-DataInformation -Text 'Getting forest information - ForestFSMO' {
+        Get-WinADForestFSMO -Forest $Forest
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::ForestFSMO
+    )
+
+    $Data.ForestDomainControllers = Get-DataInformation -Text 'Getting forest information - ForestDomainControllers' {
         # External command from PSSharedGoods
-        $Data.ForestDomainControllers = Get-WinADForestControllers
-    }
+        Get-WinADForestControllers
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::ForestDomainControllers
+    )
+
     # Forest Sites
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::ForestSites, [PSWinDocumentation.ActiveDirectory]::ForestSites1, [PSWinDocumentation.ActiveDirectory]::ForestSites2)) {
-        Write-Verbose 'Getting forest information - Forest Sites'
-        $Data.ForestSites = Get-WinADForestSites
-    }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::ForestSites1)) {
-        Write-Verbose 'Getting forest information - Forest Sites1'
-        $Data.ForestSites1 = Get-WinADForestSites1 -ForestSites $Data.ForestSites
-    }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::ForestSites2)) {
-        Write-Verbose 'Getting forest information - Forest Sites2'
-        $Data.ForestSites2 = Get-WinADForestSites2 -ForestSites $Data.ForestSites
-    }
+    $Data.ForestSites = Get-DataInformation -Text 'Getting forest information - ForestSites' {
+        Get-WinADForestSites
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::ForestSites
+        [PSWinDocumentation.ActiveDirectory]::ForestSites1
+        [PSWinDocumentation.ActiveDirectory]::ForestSites2
+    )
+    $Data.ForestSites1 = Get-DataInformation -Text 'Getting forest information - ForestSites1' {
+        Get-WinADForestSites1 -ForestSites $Data.ForestSites
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::ForestSites1
+    )
+    $Data.ForestSites2 = Get-DataInformation -Text 'Getting forest information - ForestSites2' {
+        Get-WinADForestSites2 -ForestSites $Data.ForestSites
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::ForestSites2
+    )
+
     ## Forest Subnets
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::ForestSubnet , [PSWinDocumentation.ActiveDirectory]::ForestSubnets1, [PSWinDocumentation.ActiveDirectory]::ForestSubnets2)) {
-        Write-Verbose 'Getting forest information - Forest Subnets'
-        $Data.ForestSubnets = Get-WinADForestSubnets
-    }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::ForestSubnets1)) {
-        Write-Verbose 'Getting forest information - Forest Subnets1'
-        $Data.ForestSubnets1 = Get-WinADForestSubnets1 -ForestSubnets $Data.ForestSubnets
-    }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::ForestSubnets2)) {
-        Write-Verbose 'Getting forest information - Forest Subnets2'
-        $Data.ForestSubnets2 = Get-WinADForestSubnets2 -ForestSubnets $Data.ForestSubnets
-    }
+    $Data.ForestSubnets = Get-DataInformation -Text 'Getting forest information - ForestSubnets' {
+        Get-WinADForestSubnets
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::ForestSubnets
+        [PSWinDocumentation.ActiveDirectory]::ForestSubnets1
+        [PSWinDocumentation.ActiveDirectory]::ForestSubnets2
+    )
+    $Data.ForestSubnets1 = Get-DataInformation -Text 'Getting forest information - ForestSubnets1' {
+        Get-WinADForestSubnets1 -ForestSubnets $Data.ForestSubnets
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::ForestSubnets1
+    )
+    $Data.ForestSubnets2 = Get-DataInformation -Text 'Getting forest information - ForestSubnets2' {
+        Get-WinADForestSubnets2 -ForestSubnets $Data.ForestSubnets
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::ForestSubnets2
+    )
+
     ## Forest Site Links
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::ForestSiteLinks)) {
-        Write-Verbose 'Getting forest information - Forest SiteLinks'
-        $Data.ForestSiteLinks = Get-WinADForestSiteLinks
-    }
+    $Data.ForestSiteLinks = Get-DataInformation -Text 'Getting forest information - ForestSiteLinks' {
+        Get-WinADForestSiteLinks
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::ForestSiteLinks
+    )
+
     ## Forest Optional Features
-    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::ForestOptionalFeatures)) {
-        Write-Verbose 'Getting forest information - Forest Optional Features'
-        $Data.ForestOptionalFeatures = Get-WinADForestOptionalFeatures
-    }
+    $Data.ForestOptionalFeatures = Get-DataInformation -Text 'Getting forest information - ForestOptionalFeatures' {
+        Get-WinADForestOptionalFeatures
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::ForestOptionalFeatures
+    )
+
     $EndTimeForest = Stop-TimeLog -Time $TimeToGenerateForest -Continue
 
+    $Data.FoundDomains = Get-DataInformation -Text 'Getting forest information - ForestOptionalFeatures' {
+        ### Generate Data from Domains
+        $FoundDomains = @{}
+        foreach ($Domain in $Forest.Domains) {
+            $FoundDomains.$Domain = Get-WinADDomainInformation -Domain $Domain `
+                -TypesRequired $TypesRequired `
+                -PathToPasswords $PathToPasswords `
+                -PathToPasswordsHashes $PathToPasswordsHashes `
+                -ForestSchemaComputers $Data.ForestSchemaPropertiesComputers  `
+                -ForestSchemaUsers $Data.ForestSchemaPropertiesUsers -PasswordQuality:$PasswordQuality
+        }
+        $FoundDomains
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory].GetEnumValues() | Where-Object { $_ -like 'Domain*' }
+    )
 
-    ### Generate Data from Domains
-    $Data.FoundDomains = [ordered]@{}
-    foreach ($Domain in $Forest.Domains) {
-        $Data.FoundDomains.$Domain = Get-WinADDomainInformation -Domain $Domain `
-            -TypesRequired $TypesRequired `
-            -PathToPasswords $PathToPasswords `
-            -PathToPasswordsHashes $PathToPasswordsHashes `
-            -ForestSchemaComputers $Data.ForestSchemaPropertiesComputers  `
-            -ForestSchemaUsers $Data.ForestSchemaPropertiesUsers -PasswordQuality:$PasswordQuality
-    }
     $EndTimeAll = Stop-TimeLog -Time $TimeToGenerateForest
-
     # cleans up empty fields created during gathering process
-    Clear-DataInformation -Data $Data
+    Clear-DataInformation -Data $Data -TypesRequired $TypesRequired -DontRemoveSupportData:$DontRemoveSupportData
 
+    # final output
     Write-Verbose "Getting forest information - Stop - Time to generate: $EndTimeForest"
     Write-Verbose "Getting all information - Stop - Time to generate: $EndTimeAll"
-
     return $Data
 }
