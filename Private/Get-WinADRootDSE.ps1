@@ -3,23 +3,23 @@ function Get-WinADRootDSE {
     param(
         [string] $Domain = ($Env:USERDNSDOMAIN).ToLower()
     )
-    $Time = Start-TimeLog
+    #  $Time = Start-TimeLog
     try {
         if ($Domain -ne '') {
-            Write-Verbose "Getting domain information - $Domain DomainRootDSE"
+            #Write-Verbose "Getting domain information - $Domain DomainRootDSE"
             Get-ADRootDSE -Properties * -Server $Domain
         } else {
-            Write-Verbose 'Getting forest information - RootDSE'
+            # Write-Verbose 'Getting forest information - RootDSE'
             Get-ADRootDSE -Properties *  #| Select-Object -Property * -ExcludeProperty PropertyNames, AddedProperties, RemovedProperties, ModifiedProperties, PropertyCount
         }
     } catch {
-        Write-Warning "Getting domain information - $Domain DomainRootDSE Error: $($_.Error)"
+        Write-Warning "Getting forest/domain information - $Domain RootDSE Error: $($_.Error)"
     }
-    $EndTime = Stop-TimeLog -Time $Time -Option OneLiner
+    # $EndTime = Stop-TimeLog -Time $Time -Option OneLiner
 
     if ($Domain -ne '') {
-        Write-Verbose "Getting domain information - $Domain DomainRootDSE Time: $EndTime"
+        #Write-Verbose "Getting domain information - $Domain DomainRootDSE Time: $EndTime"
     } else {
-        Write-Verbose "Getting forest information - RootDSE Time: $EndTime"
+        #Write-Verbose "Getting forest information - RootDSE Time: $EndTime"
     }
 }

@@ -2,7 +2,7 @@ function Get-WinADForestInfo {
     [CmdletBinding()]
     param(
         [PSCustomObject] $Forest,
-        $RootDSE
+        [Microsoft.ActiveDirectory.Management.ADRootDSE] $RootDSE
     )
     $Time = Start-TimeLog
     Write-Verbose 'Getting forest information - Forest Information'

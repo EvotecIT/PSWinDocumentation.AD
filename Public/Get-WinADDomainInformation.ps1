@@ -10,7 +10,9 @@ function Get-WinADDomainInformation {
         [Array] $ForestSchemaUsers,
         [switch] $PasswordQuality
     )
-    if ([string]::IsNullOrEmpty($Domain)) {
+    $Data = [ordered] @{ }
+
+    if ($Domain -eq '') {
         Write-Warning 'Get-WinADDomainInformation - $Domain parameter is empty. Try your domain name like ad.evotec.xyz. Skipping for now...'
         return
     }
@@ -23,26 +25,86 @@ function Get-WinADDomainInformation {
     # this is required to make sure certain properties are used in domain, such as LAPS, EXCHANGE and so on.
     # this prevents errors of asking for wrong property
     if ($null -eq $ForestSchemaComputers) {
-        $ForestSchemaComputers = Get-WinADForestSchemaPropertiesComputers
+        if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @(
+                [PSWinDocumentation.ActiveDirectory]::DomainComputersFullList
+                [PSWinDocumentation.ActiveDirectory]::DomainComputersAll
+                [PSWinDocumentation.ActiveDirectory]::DomainComputersAllCount
+                [PSWinDocumentation.ActiveDirectory]::DomainServers
+                [PSWinDocumentation.ActiveDirectory]::DomainServersCount
+                [PSWinDocumentation.ActiveDirectory]::DomainComputers
+                [PSWinDocumentation.ActiveDirectory]::DomainComputersCount
+                [PSWinDocumentation.ActiveDirectory]::DomainComputersUnknown
+                [PSWinDocumentation.ActiveDirectory]::DomainComputersUnknownCount
+                [PSWinDocumentation.ActiveDirectory]::DomainBitlocker
+                [PSWinDocumentation.ActiveDirectory]::DomainLAPS
+            )) {
+            $ForestSchemaComputers = Get-WinADForestSchemaPropertiesComputers
+        }
     }
     if ($null -eq $ForestSchemaUsers) {
-        $ForestSchemaUsers = Get-WinADForestSchemaPropertiesUsers
+        if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @(
+                [PSWinDocumentation.ActiveDirectory]::DomainUsersFullList
+            )) {
+            $ForestSchemaUsers = Get-WinADForestSchemaPropertiesUsers
+        }
     }
 
     #$CurrentDate = Get-Date
 
-    $Data = [ordered] @{ }
-    $Data.DomainRootDSE = Get-WinADRootDSE -Domain $Domain
-    Write-Verbose "Getting domain information - $Domain DomainInformation"
-    $Data.DomainInformation = Get-WinADDomain -Domain $Domain
-    if ($null -eq $Data.DomainInformation -or $null -eq $Data.DomainRootDSE) {
-        return
+
+    # Domain Root DSE - Complete TypesNeeded
+    $Data.DomainRootDSE = Get-DataInformation -Text "Getting domain information - $Domain DomainInformation" {
+        Get-WinADRootDSE -Domain $Domain
+    } -TypesRequired $TypesRequied -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::DomainRootDSE
+        [PSWinDocumentation.ActiveDirectory]::DomainGUIDS
+        [PSWinDocumentation.ActiveDirectory]::DomainOrganizationalUnitsBasicACL
+        [PSWinDocumentation.ActiveDirectory]::DomainOrganizationalUnitsExtended
+    )
+
+    $Data.DomainInformation = Get-DataInformation -Text "Getting domain information - $Domain DomainInformation" {
+        Get-WinADDomain -Domain $Domain
+    } -TypesRequired $TypesRequied -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::DomainInformation
+        [PSWinDocumentation.ActiveDirectory]::DomainRIDs
+    )
+
+
+
+
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @(
+            [PSWinDocumentation.ActiveDirectory]::DomainGroupsFullList
+        )) {
+        $Data.DomainGroupsFullList = Get-WinADDomainGroupsFullList -Domain $Domain
     }
-
-    $Data.DomainGroupsFullList = Get-WinADDomainGroupsFullList -Domain $Domain
-    $Data.DomainUsersFullList = Get-WinADDomainUsersFullList -Domain $Domain -Extended:$Extended -ForestSchemaUsers $ForestSchemaUsers
-    $Data.DomainComputersFullList = Get-WinADDomainComputersFullList -Domain $Domain -ForestSchemaComputers $ForestSchemaComputers
-
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @(
+            [PSWinDocumentation.ActiveDirectory]::DomainUsersFullList
+            [PSWinDocumentation.ActiveDirectory]::DomainUsers
+            [PSWinDocumentation.ActiveDirectory]::DomainUsersAll
+            [PSWinDocumentation.ActiveDirectory]::DomainUsersSystemAccounts
+            [PSWinDocumentation.ActiveDirectory]::DomainUsersNeverExpiring
+            [PSWinDocumentation.ActiveDirectory]::DomainUsersNeverExpiringInclDisabled
+            [PSWinDocumentation.ActiveDirectory]::DomainUsersExpiredInclDisabled
+            [PSWinDocumentation.ActiveDirectory]::DomainUsersExpiredExclDisabled
+            [PSWinDocumentation.ActiveDirectory]::DomainUsersCount
+        )) {
+        $Data.DomainUsersFullList = Get-WinADDomainUsersFullList -Domain $Domain -Extended:$Extended -ForestSchemaUsers $ForestSchemaUsers
+    }
+    if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @(
+            [PSWinDocumentation.ActiveDirectory]::DomainComputersFullList
+            [PSWinDocumentation.ActiveDirectory]::DomainComputersAll
+            [PSWinDocumentation.ActiveDirectory]::DomainComputersAllCount
+            [PSWinDocumentation.ActiveDirectory]::DomainServers
+            [PSWinDocumentation.ActiveDirectory]::DomainServersCount
+            [PSWinDocumentation.ActiveDirectory]::DomainComputers
+            [PSWinDocumentation.ActiveDirectory]::DomainComputersCount
+            [PSWinDocumentation.ActiveDirectory]::DomainComputersUnknown
+            [PSWinDocumentation.ActiveDirectory]::DomainComputersUnknownCount
+            [PSWinDocumentation.ActiveDirectory]::DomainBitlocker
+            [PSWinDocumentation.ActiveDirectory]::DomainLAPS
+        )) {
+        $Data.DomainComputersFullList = Get-WinADDomainComputersFullList -Domain $Domain -ForestSchemaComputers $ForestSchemaComputers
+    }
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @(
             [PSWinDocumentation.ActiveDirectory]::DomainComputersAll,
             [PSWinDocumentation.ActiveDirectory]::DomainComputersAllCount,
@@ -86,12 +148,20 @@ function Get-WinADDomainInformation {
         $Data.DomainComputersUnknownCount = $Data.DomainComputersUnknown | Group-Object -Property OperatingSystem | Select-Object @{ L = 'System Name'; Expression = { if ($_.Name -ne '') { $_.Name } else { 'Unknown' } } } , @{ L = 'System Count'; Expression = { $_.Count } }
     }
 
-    if ($TypesRequired -contains [PSWinDocumentation.ActiveDirectory]::DomainRIDs) {
-        $Data.DomainRIDs = Get-WinADDomainRIDs -DomainInformation $Data.DomainInformation -Domain $Domain
-    }
-    if (Find-TypesNeeded -TypesRequired $TypesRequired @([PSWinDocumentation.ActiveDirectory]::DomainGUIDS, [PSWinDocumentation.ActiveDirectory]::DomainOrganizationalUnitsBasicACL, [PSWinDocumentation.ActiveDirectory]::DomainOrganizationalUnitsExtended)) {
-        $Data.DomainGUIDS = Get-WinADDomainGUIDs -RootDSE $Data.DomainRootDSE -Domain $Domain
-    }
+    $Data.DomainRIDs = Get-DataInformation -Text "Getting domain information - DomainRIDs" {
+        Get-WinADDomainRIDs -DomainInformation $Data.DomainInformation -Domain $Domain
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::DomainRIDs
+    )
+
+    $Data.DomainGUIDS = Get-DataInformation -Text "Getting domain information - DomainGUIDS" {
+        Get-WinADDomainGUIDs -RootDSE $Data.DomainRootDSE -Domain $Domain
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::DomainGUIDS
+        [PSWinDocumentation.ActiveDirectory]::DomainOrganizationalUnitsBasicACL
+        [PSWinDocumentation.ActiveDirectory]::DomainOrganizationalUnitsExtended
+    )
+
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded @([PSWinDocumentation.ActiveDirectory]::DomainAuthenticationPolicies)) {
         Write-Verbose "Getting domain information - $Domain DomainAuthenticationPolicies"
         $Data.DomainAuthenticationPolicies = $(Get-ADAuthenticationPolicy -Server $Domain -LDAPFilter '(name=AuthenticationPolicy*)')

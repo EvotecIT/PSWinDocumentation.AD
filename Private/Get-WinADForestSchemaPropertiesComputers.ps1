@@ -3,15 +3,15 @@ function Get-WinADForestSchemaPropertiesComputers {
     param(
 
     )
-    Write-Verbose "Getting forest information - ForestSchemaPropertiesComputers"
-    $Time = Start-TimeLog
+    #Write-Verbose "Getting forest information - ForestSchemaPropertiesComputers"
+    #$Time = Start-TimeLog
     $Schema = [directoryservices.activedirectory.activedirectoryschema]::GetCurrentSchema()
     @(
         $Schema.FindClass("computer").mandatoryproperties | Select-Object name, commonname, description, syntax
         $Schema.FindClass("computer").optionalproperties | Select-Object name, commonname, description, syntax #| Where-Object { $_.Name -eq 'ms-Mcs-AdmPwd' } # ft -AutoSize
     )
-    $EndTime = Stop-TimeLog -Time $Time -Option OneLiner
-    Write-Verbose "Getting domain information - ForestSchemaPropertiesComputers Time: $EndTime"
+    #$EndTime = Stop-TimeLog -Time $Time -Option OneLiner
+   # Write-Verbose "Getting domain information - ForestSchemaPropertiesComputers Time: $EndTime"
 }
 
 
