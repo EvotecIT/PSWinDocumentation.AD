@@ -67,13 +67,13 @@ function Get-WinADForestInformation {
 
     ## Forest Information
     $Data.ForestUPNSuffixes = Get-DataInformation -Text 'Getting forest information - ForestUPNSuffixes' {
-        Get-WinADForestUPNSuffixes -Forest $Data.Forest
+        Get-WinADForestUPNSuffixes -Forest $Forest
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::ForestUPNSuffixes
     )
 
     $Data.ForestSPNSuffixes = Get-DataInformation -Text 'Getting forest information - ForestSPNSuffixes' {
-        Get-WinADForestSPNSuffixes -Forest $Data.Forest
+        Get-WinADForestSPNSuffixes -Forest $Forest
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::ForestSPNSuffixes
     )

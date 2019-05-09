@@ -15,15 +15,15 @@ function Get-WinUsers {
             'Display Name'                      = $U.DisplayName
             'Given Name'                        = $U.GivenName
             'Surname'                           = $U.Surname
-            'EmailAddress'                      = $U.EmailAddress
-            'PasswordExpired'                   = $U.PasswordExpired
-            'PasswordLastSet'                   = $U.PasswordLastSet
-            'Password Last Changed'             = if ($null -ne $U.PasswordLastSet) { "$(-$($U.PasswordLastSet - $CurrentDate).Days) days" } else { 'N/A'}
-            'PasswordNotRequired'               = $U.PasswordNotRequired
-            'PasswordNeverExpires'              = $U.PasswordNeverExpires
+            'Email Address'                     = $U.EmailAddress
+            'Password Expired'                  = $U.PasswordExpired
+            'Password Last Set'                 = $U.PasswordLastSet
+            'Password Last Changed (Days)'      = if ($null -ne $U.PasswordLastSet) { "$(-$($U.PasswordLastSet - $CurrentDate).Days)" } else { }
+            'Password Not Required'             = $U.PasswordNotRequired
+            'Password Never Expires'            = $U.PasswordNeverExpires
             'Enabled'                           = $U.Enabled
             'Manager'                           = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalogUsers -DistinguishedName $U.Manager).Name
-            'Manager Email'                     = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalogUsers -DistinguishedName $U.Manager).EmailAddress
+            'ManagerEmail'                      = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalogUsers -DistinguishedName $U.Manager).EmailAddress
             'DateExpiry'                        = Convert-ToDateTime -Timestring $($U."msDS-UserPasswordExpiryTimeComputed") -Verbose
             "DaysToExpire"                      = (Convert-TimeToDays -StartTime $CurrentDate -EndTime (Convert-ToDateTime -Timestring $($U."msDS-UserPasswordExpiryTimeComputed")))
             "AccountExpirationDate"             = $U.AccountExpirationDate
@@ -48,7 +48,6 @@ function Get-WinUsers {
             "Member Of"                         = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalog -DistinguishedName $U.MemberOf -Type 'SamAccountName' -Splitter ', ')
             "Domain"                            = $Domain
         }
-
     }
     return $UserList
 }
