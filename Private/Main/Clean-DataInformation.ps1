@@ -19,9 +19,7 @@
         foreach ($Key in $RemoveDomainKeys) {
             $Data.FoundDomains.$Domain.Remove($Key)
         }
-
     }
-
 
     # Remove domains if empty
     $RemoveDomains = foreach ($Domain in $Data.FoundDomains.Keys) {
@@ -39,6 +37,10 @@
 
     # Remove empty keys in Forest
     $RemoveKeys = foreach ($Key in $Data.Keys) {
+        if ($Key -eq 'FoundDomains') {
+            # Skip this key
+            continue
+        }
         if ($null -eq $Data.$Key) {
             $Key
             continue

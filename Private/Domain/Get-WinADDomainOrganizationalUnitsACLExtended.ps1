@@ -7,8 +7,8 @@ function Get-WinADDomainOrganizationalUnitsACLExtended {
         [string] $RootDomainNamingContext,
         $GUID
     )
-    Write-Verbose -Message "Getting domain information - $Domain DomainOrganizationalUnitsExtended"
-    $Time = Start-TimeLog
+    #Write-Verbose -Message "Getting domain information - $Domain DomainOrganizationalUnitsExtended"
+    #$Time = Start-TimeLog
     $OUs = @(
         #@{ Name = 'Root'; Value = $RootDomainNamingContext }
         foreach ($OU in $DomainOrganizationalUnitsClean) {
@@ -64,8 +64,8 @@ function Get-WinADDomainOrganizationalUnitsACLExtended {
 
         }
     )
-    $EndTime = Stop-TimeLog -Time $Time -Option OneLiner
-    Write-Verbose -Message "Getting domain information - $Domain DomainOrganizationalUnitsExtended Time: $EndTime"
+    #$EndTime = Stop-TimeLog -Time $Time -Option OneLiner
+    #Write-Verbose -Message "Getting domain information - $Domain DomainOrganizationalUnitsExtended Time: $EndTime"
 }
 
 <#

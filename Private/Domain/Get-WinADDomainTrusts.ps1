@@ -6,8 +6,8 @@ function Get-WinADDomainTrusts {
         [Array] $Trusts
     )
 
-    Write-Verbose "Getting domain information - $Domain DomainTrusts"
-    $Time = Start-TimeLog
+    #Write-Verbose "Getting domain information - $Domain DomainTrusts"
+    #$Time = Start-TimeLog
 
     if ($null -eq $Trusts) {
         $Trusts = Get-ADTrust -Server $Domain -Filter * -Properties *
@@ -68,8 +68,8 @@ function Get-WinADDomainTrusts {
             'UplevelOnly'                = $Trust.UplevelOnly
             'UsesAESKeys'                = $Trust.UsesAESKeys
             'UsesRC4Encryption'          = $Trust.UsesRC4Encryption
-            'Trust Source DC'            = if ($null -ne $TrustWMI) { $TrustWMI.PSComputerName } else { 'N/A' }
-            'Trust Target DC'            = if ($null -ne $TrustWMI) { $TrustWMI.TrustedDCName.Replace('\\', '') } else { 'N/A' }
+            'Trust Source DC'            = if ($null -ne $TrustWMI) { $TrustWMI.PSComputerName } else { '' }
+            'Trust Target DC'            = if ($null -ne $TrustWMI) { $TrustWMI.TrustedDCName.Replace('\\', '') } else { '' }
             'Trust Source DN'            = $Trust.Source
             'ObjectGUID'                 = $Trust.ObjectGUID
             'Created'                    = $Trust.Created
@@ -81,8 +81,8 @@ function Get-WinADDomainTrusts {
         }
     }
 
-    $EndTime = Stop-TimeLog -Time $Time -Option OneLiner
-    Write-Verbose "Getting domain information - $Domain DomainTrusts Time: $EndTime"
+    #$EndTime = Stop-TimeLog -Time $Time -Option OneLiner
+    #Write-Verbose "Getting domain information - $Domain DomainTrusts Time: $EndTime"
 
     return $ReturnData
 

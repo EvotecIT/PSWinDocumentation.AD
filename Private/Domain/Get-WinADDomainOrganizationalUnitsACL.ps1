@@ -6,8 +6,8 @@ function Get-WinADDomainOrganizationalUnitsACL {
         [string] $NetBiosName,
         [string] $RootDomainNamingContext
     )
-    Write-Verbose -Message "Getting domain information - $Domain DomainOrganizationalUnitsBasicACL"
-    $Time = Start-TimeLog
+   # Write-Verbose -Message "Getting domain information - $Domain DomainOrganizationalUnitsBasicACL"
+    #$Time = Start-TimeLog
     $OUs = @(
         #@{ Name = 'Root'; Value = $RootDomainNamingContext }
         foreach ($OU in $DomainOrganizationalUnitsClean) {
@@ -44,6 +44,6 @@ function Get-WinADDomainOrganizationalUnitsACL {
             #>
         }
     )
-    $EndTime = Stop-TimeLog -Time $Time -Option OneLiner
-    Write-Verbose -Message "Getting domain information - $Domain DomainOrganizationalUnitsBasicACL Time: $EndTime"
+    #$EndTime = Stop-TimeLog -Time $Time -Option OneLiner
+   # Write-Verbose -Message "Getting domain information - $Domain DomainOrganizationalUnitsBasicACL Time: $EndTime"
 }

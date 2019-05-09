@@ -5,8 +5,8 @@ function Get-WinADDomainUsersFullList {
         [switch] $Extended,
         [Array] $ForestSchemaUsers
     )
-    Write-Verbose "Getting domain information - $Domain DomainUsersFullList"
-    $TimeUsers = Start-TimeLog
+    #Write-Verbose "Getting domain information - $Domain DomainUsersFullList"
+    #$TimeUsers = Start-TimeLog
     if ($Extended) {
         [string] $Properties = '*'
     } else {
@@ -66,6 +66,6 @@ function Get-WinADDomainUsersFullList {
 
     Get-ADUser -Server $Domain -ResultPageSize 500000 -Filter * -Properties $Properties #| Select-Object -Property $Properties -ExcludeProperty $ExcludeProperty
 
-    $EndUsers = Stop-TimeLog -Time $TimeUsers -Option OneLiner
-    Write-Verbose "Getting domain information - $Domain DomainUsersFullList Time: $EndUsers"
+    #$EndUsers = Stop-TimeLog -Time $TimeUsers -Option OneLiner
+    #Write-Verbose "Getting domain information - $Domain DomainUsersFullList Time: $EndUsers"
 }

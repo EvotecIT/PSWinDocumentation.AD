@@ -4,11 +4,11 @@ function Get-WinADDomainOrganizationalUnits {
         [string] $Domain = $Env:USERDNSDOMAIN,
         [Array] $OrgnaizationalUnits
     )
-    Write-Verbose -Message "Getting domain information - $Domain DomainOrganizationalUnits"
+   # Write-Verbose -Message "Getting domain information - $Domain DomainOrganizationalUnits"
     if ($null -eq $OrgnaizationalUnits) {
         $OrgnaizationalUnits = $(Get-ADOrganizationalUnit -Server $Domain -Properties * -Filter * )
     }
-    $TimeOU = Start-TimeLog
+   # $TimeOU = Start-TimeLog
     $Output = foreach ($O in $OrgnaizationalUnits) {
         [PSCustomObject] @{
             'Canonical Name'  = $O.CanonicalName
@@ -29,8 +29,8 @@ function Get-WinADDomainOrganizationalUnits {
         }
     }
     $Output | Sort-Object 'Canonical Name'
-    $EndOU = Stop-TimeLog -Time $TimeOU -Option OneLiner
-    Write-Verbose -Message "Getting domain information - $Domain DomainOrganizationalUnits Time: $EndOU"
+   # $EndOU = Stop-TimeLog -Time $TimeOU -Option OneLiner
+    #Write-Verbose -Message "Getting domain information - $Domain DomainOrganizationalUnits Time: $EndOU"
     <#
         $Time44 = Start-TimeLog
     for ($i = 1; $i -lt 1000; $i++) {
