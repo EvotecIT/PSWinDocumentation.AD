@@ -1,6 +1,6 @@
 Import-Module .\PSWinDocumentation.AD.psd1 -Force
 
-$Forest = Get-WinADForestInformation -Verbose -PasswordQuality #-DontRemoveSupportData
+$Forest = Get-WinADForestInformation -Verbose -PasswordQuality -DontRemoveSupportData -TypesRequired DomainPasswordDuplicatePasswordGroups
 $Forest
 
 Write-Color 'Ad.evotec.xyz' -Color Red

@@ -3,13 +3,16 @@
     param(
         [System.Collections.IDictionary] $Data,
         [Array] $TypesRequired,
-        [switch] $DontRemoveSupportData
+        [switch] $DontRemoveSupportData,
+        [switch] $DontRemoveEmpty
     )
     # Check each domain for empty values and remove if empty
     foreach ($Domain in $Data.FoundDomains.Keys) {
         $RemoveDomainKeys = foreach ($Key in $Data.FoundDomains.$Domain.Keys) {
             if ($null -eq $Data.FoundDomains.$Domain.$Key) {
-                $Key
+                if (-not $DontRemoveEmpty) {
+                    $Key
+                }
                 continue
             }
             if ($Key -notin $TypesRequired -and $DontRemoveSupportData -eq $false) {
@@ -42,7 +45,9 @@
             continue
         }
         if ($null -eq $Data.$Key) {
-            $Key
+            if (-not $DontRemoveEmpty) {
+                $Key
+            }
             continue
         }
         if ($Key -notin $TypesRequired -and $DontRemoveSupportData -eq $false) {

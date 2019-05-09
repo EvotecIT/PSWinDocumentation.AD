@@ -75,7 +75,27 @@ function Get-WinADDomainInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainAdministratorsRecursive
         [PSWinDocumentation.ActiveDirectory]::DomainEnterpriseAdministrators
         [PSWinDocumentation.ActiveDirectory]::DomainEnterpriseAdministratorsRecursive
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDataUsers
+
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDataPasswords,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordClearTextPassword,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordLMHash,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordEmptyPassword,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPassword,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordEnabled,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordDisabled,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordList,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDefaultComputerPassword,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordPasswordNotRequired,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordPasswordNeverExpires,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordAESKeysMissing,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordPreAuthNotRequired,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDESEncryptionOnly,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDelegatableAdmins,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDuplicatePasswordGroups,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordStats,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPassword,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordEnabled,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordDisabled
     )
 
     # Groups
@@ -588,7 +608,7 @@ function Get-WinADDomainInformation {
     # PASSWORD QUALITY SECTION
 
     $Data.DomainPasswordDataUsers = Get-DataInformation -Text "Getting domain information - $Domain DomainPasswordDataUsers" {
-        Get-WinADDomainPassword -DnsRoot $Data.DomainInformation.DnsRoot -DistinguishedName $Data.DomainInformation.DistinguishedName
+        Get-WinADDomainPassword -DnsRoot $Data.DomainInformation.DNSRoot -DistinguishedName $Data.DomainInformation.DistinguishedName
     } -TypesRequired $TypesRequired -TypesNeeded @(
 
         [PSWinDocumentation.ActiveDirectory]::DomainPasswordDataUsers,
@@ -620,7 +640,7 @@ function Get-WinADDomainInformation {
             -DomainComputersAll $Data.DomainComputersAll `
             -DomainUsersAll $Data.DomainUsersAll `
             -DomainDistinguishedName $Data.DomainInformation.DistinguishedName `
-            -DnsRoot $DomainInformation.DnsRoot `
+            -DnsRoot $Data.DomainInformation.DnsRoot `
             -Verbose:$false `
             -PasswordQualityUsers $Data.DomainPasswordDataUsers `
             -PasswordQuality:$PasswordQuality

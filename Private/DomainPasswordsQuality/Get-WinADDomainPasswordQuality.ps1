@@ -12,14 +12,14 @@ function Get-WinADDomainPasswordQuality {
         [switch] $PasswordQuality
     )
     if ($FilePath -eq '' -and $PasswordQuality.IsPresent -eq $true) {
-        $FilePath = "$PSScriptRoot\..\Resources\PasswordList.txt"
+        $FilePath = "$PSScriptRoot\..\..\Resources\PasswordList.txt"
     }
 
     if ($FilePath -eq '') {
         Write-Verbose "Get-WinADDomainPasswordQuality - File path not given, using hashes set to $UseHashes"
         return $null
     }
-    if (-not (Test-Path -Path $FilePath)) {
+    if (-not (Test-Path -LiteralPath $FilePath)) {
         Write-Verbose "Get-WinADDomainPasswordQuality - File path doesn't exists, using hashes set to $UseHashes"
         return $null
     }

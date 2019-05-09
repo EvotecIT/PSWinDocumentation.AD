@@ -6,7 +6,8 @@ function Get-WinADForestInformation {
         [string] $PathToPasswords,
         [string] $PathToPasswordsHashes,
         [switch] $PasswordQuality,
-        [switch] $DontRemoveSupportData
+        [switch] $DontRemoveSupportData,
+        [switch] $DontRemoveEmpty
     )
 
     Write-Verbose -Message "Getting all information - Start"
@@ -170,7 +171,7 @@ function Get-WinADForestInformation {
 
     $EndTimeAll = Stop-TimeLog -Time $TimeToGenerateForest
     # cleans up empty fields created during gathering process
-    Clear-DataInformation -Data $Data -TypesRequired $TypesRequired -DontRemoveSupportData:$DontRemoveSupportData
+    Clear-DataInformation -Data $Data -TypesRequired $TypesRequired -DontRemoveSupportData:$DontRemoveSupportData -DontRemoveEmpty:$DontRemoveEmpty
 
     # final output
     Write-Verbose "Getting forest information - Stop - Time to generate: $EndTimeForest"
