@@ -1,14 +1,13 @@
 function Get-WinADDomainTrustsClean {
     [CmdletBinding()]
     param(
-        [string] $Domain = $Env:USERDNSDOMAIN,
-        [Array] $TypesRequired
+        [string] $Domain = $Env:USERDNSDOMAIN
     )
-    Write-Verbose "Getting domain information - $Domain DomainTrustsClean"
-    $Time = Start-TimeLog
+    #Write-Verbose "Getting domain information - $Domain DomainTrustsClean"
+    # $Time = Start-TimeLog
 
     Get-ADTrust -Server $Domain -Filter * -Properties * -ErrorAction SilentlyContinue
 
-    $EndTime = Stop-TimeLog -Time $Time -Option OneLiner
-    Write-Verbose "Getting domain information - $Domain DomainTrustsClean Time: $EndTime"
+    #$EndTime = Stop-TimeLog -Time $Time -Option OneLiner
+    #Write-Verbose "Getting domain information - $Domain DomainTrustsClean Time: $EndTime"
 }

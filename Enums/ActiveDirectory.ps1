@@ -48,7 +48,7 @@ Add-Type -TypeDefinition @"
             DomainGroupPoliciesACL,
             DomainOrganizationalUnits,
             DomainOrganizationalUnitsBasicACL,
-            DomainOrganizationalUnitsExtended,
+            DomainOrganizationalUnitsExtendedACL,
             DomainContainers,
             DomainTrustsClean,
             DomainTrusts,
