@@ -6,8 +6,8 @@ function Get-WinADDomainFineGrainedPoliciesUsersExtended {
         [Array] $DomainGroupsFullList,
         [string] $Domain = ($Env:USERDNSDOMAIN).ToLower()
     )
-    $Time = Start-TimeLog
-    Write-Verbose "Getting domain information - $Domain DomainFineGrainedPoliciesUsersExtended"
+   # $Time = Start-TimeLog
+    #Write-Verbose "Getting domain information - $Domain DomainFineGrainedPoliciesUsersExtended"
     $PolicyUsers = @(
         foreach ($Policy in $DomainFineGrainedPolicies) {
             $Users = foreach ($U in $Policy.'Applies To') {
@@ -108,7 +108,7 @@ function Get-WinADDomainFineGrainedPoliciesUsersExtended {
             }
         }
     )
-    $EndTime = Stop-TimeLog -Time $Time -Option OneLiner
-    Write-Verbose "Getting domain information - $Domain DomainFineGrainedPoliciesUsersExtended Time: $EndTime"
+   # $EndTime = Stop-TimeLog -Time $Time -Option OneLiner
+    #Write-Verbose "Getting domain information - $Domain DomainFineGrainedPoliciesUsersExtended Time: $EndTime"
     return $PolicyUsers
 }

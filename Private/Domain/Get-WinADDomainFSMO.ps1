@@ -4,8 +4,8 @@ function Get-WinADDomainFSMO {
         [string] $Domain = $Env:USERDNSDOMAIN,
         [Microsoft.ActiveDirectory.Management.ADDomain] $DomainInformation
     )
-    Write-Verbose "Getting domain information - $Domain DomainFSMO"
-    $Time = Start-TimeLog
+    #Write-Verbose "Getting domain information - $Domain DomainFSMO"
+    #$Time = Start-TimeLog
     # required for multiple use cases FSMO/DomainTrusts
     [ordered] @{
         'PDC Emulator'          = $DomainInformation.PDCEmulator
@@ -13,6 +13,6 @@ function Get-WinADDomainFSMO {
         'Infrastructure Master' = $DomainInformation.InfrastructureMaster
     }
 
-    $EndTime = Stop-TimeLog -Time $Time -Option OneLiner
-    Write-Verbose "Getting domain information - $Domain DomainFSMO Time: $EndTime"
+    #$EndTime = Stop-TimeLog -Time $Time -Option OneLiner
+    #Write-Verbose "Getting domain information - $Domain DomainFSMO Time: $EndTime"
 }

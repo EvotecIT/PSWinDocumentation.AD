@@ -4,8 +4,8 @@ function Get-WinADDomainComputersFullList {
         [string] $Domain = $Env:USERDNSDOMAIN,
         [Array] $ForestSchemaComputers
     )
-    Write-Verbose "Getting domain information - $Domain DomainComputersFullList"
-    $TimeUsers = Start-TimeLog
+    #Write-Verbose "Getting domain information - $Domain DomainComputersFullList"
+    #$TimeUsers = Start-TimeLog
 
     if ($Extended) {
         [string] $Properties = '*'
@@ -29,6 +29,6 @@ function Get-WinADDomainComputersFullList {
 
     Get-ADComputer -Server $Domain -Filter * -ResultPageSize 500000 -Properties $Properties -ErrorAction SilentlyContinue #| Select-Object -Property $Properties -ExcludeProperty $ExcludeProperty
 
-    $EndUsers = Stop-TimeLog -Time $TimeUsers -Option OneLiner
-    Write-Verbose "Getting domain information - $Domain DomainComputersFullList Time: $EndUsers"
+    #$EndUsers = Stop-TimeLog -Time $TimeUsers -Option OneLiner
+    # Write-Verbose "Getting domain information - $Domain DomainComputersFullList Time: $EndUsers"
 }

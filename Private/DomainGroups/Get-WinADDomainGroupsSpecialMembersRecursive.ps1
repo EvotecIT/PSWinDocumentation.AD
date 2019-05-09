@@ -1,0 +1,6 @@
+﻿function Get-WinADDomainGroupsSpecialMembersRecursive {
+    param(
+        [Array] $DomainGroupsMembersRecursive
+    )
+    $DomainGroupsMembersRecursive | Where-Object { ($_.'Group SID').Length -eq 12 } | Select-Object * #-Exclude Group*, 'High Privileged Group'
+}

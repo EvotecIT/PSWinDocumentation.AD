@@ -8,7 +8,7 @@ function Get-WinADDomainGUIDs {
     if ($null -eq $RootDSE) {
         $RootDSE = Get-ADRootDSE -Server $Domain
     }
-    Write-Verbose "Getting domain information - $Domain DomainGUIDS"
+    #Write-Verbose "Getting domain information - $Domain DomainGUIDS"
     <#
     $GUID = @{ }
     Get-ADObject -SearchBase $RootDSE.schemaNamingContext -LDAPFilter '(schemaIDGUID=*)' -Properties name, schemaIDGUID | ForEach-Object {
@@ -37,7 +37,7 @@ function Get-WinADDomainGUIDs {
             $GUID.add([System.GUID]$S.rightsGUID, $S.name)
         }
     }
-    $EndTime = Stop-TimeLog -Time $Time -Option OneLiner
-    Write-Verbose "Getting domain information - $Domain DomainGUIDS Time: $EndTime"
+    #$EndTime = Stop-TimeLog -Time $Time -Option OneLiner
+    # #Write-Verbose "Getting domain information - $Domain DomainGUIDS Time: $EndTime"
     return $GUID
 }

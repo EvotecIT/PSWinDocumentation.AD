@@ -5,8 +5,8 @@ function Get-WinADDomainRIDs {
         [string] $Domain = $Env:USERDNSDOMAIN
     )
     # Critical for RID Pool Depletion: https://blogs.technet.microsoft.com/askds/2011/09/12/managing-rid-pool-depletion/
-    $Time = Start-TimeLog
-    Write-Verbose "Getting domain information - $Domain DomainRIDs"
+    #$Time = Start-TimeLog
+    #rite-Verbose "Getting domain information - $Domain DomainRIDs"
 
     if ($null -eq $DomainInformation) {
         $DomainInformation = Get-ADDomain -Server $Domain
@@ -26,7 +26,7 @@ function Get-WinADDomainRIDs {
     $rID.'rIDs Remaining' = $RidsRemaining
     $rID.'rIDs Percentage' = if ($RidsRemaining -eq 0) { $RidsRemaining.ToString("P") } else { ($currentRIDPoolCount / $RidsRemaining * 100).ToString("P") }
 
-    $EndTime = Stop-TimeLog -Time $Time -Option OneLiner
-    Write-Verbose "Getting domain information - $Domain DomainRIDs Time: $EndTime"
+    #$EndTime = Stop-TimeLog -Time $Time -Option OneLiner
+    #Write-Verbose "Getting domain information - $Domain DomainRIDs Time: $EndTime"
     return $rID
 }
