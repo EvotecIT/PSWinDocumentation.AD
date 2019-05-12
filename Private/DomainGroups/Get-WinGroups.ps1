@@ -3,13 +3,15 @@ function Get-WinGroups {
     param (
         [System.Object[]] $Groups,
         [System.Object[]] $Users,
-        [string] $Domain = $Env:USERDNSDOMAIN
+        [string] $Domain = $Env:USERDNSDOMAIN,
+        [string] $Splitter
     )
     $ReturnGroups = foreach ($Group in $Groups) {
         #$User = $Users | & { process { if ($_.DistinguishedName -eq $Group.ManagedBy ) { $_ } } } # | Where-Object { $_.DistinguishedName -eq $Group.ManagedBy }
         $User = foreach ($_ in $Users) {
             if ($_.DistinguishedName -eq $Group.ManagedBy) { $_ }
         }
+
         [PsCustomObject][ordered] @{
             'Group Name'            = $Group.Name
             #'Group Display Name' = $Group.DisplayName
@@ -21,8 +23,8 @@ function Get-WinGroups {
             'MemberOf Count'        = $Group.MemberOf.Count
             'Manager'               = $User.Name
             'Manager Email'         = $User.EmailAddress
-            'Group Members'         = (Get-ADObjectFromDistingusishedName -ADCatalog $Data.DomainUsersFullList, $Data.DomainComputersFullList, $Data.DomainGroupsFullList -DistinguishedName $Group.Members -Type 'SamAccountName')
-            'Group Members DN'      = $Group.Members
+            'Group Members'         = (Get-ADObjectFromDistingusishedName -Splitter $Splitter -ADCatalog $Data.DomainUsersFullList, $Data.DomainComputersFullList, $Data.DomainGroupsFullList -DistinguishedName $Group.Members -Type 'SamAccountName')
+            'Group Members DN'      = if ($Splitter -ne '') { $Group.Members -join $Splitter } else { $Group.Members }
             "Domain"                = $Domain
         }
     }

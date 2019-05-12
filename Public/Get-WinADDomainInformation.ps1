@@ -8,7 +8,8 @@ function Get-WinADDomainInformation {
         [switch] $Extended,
         [Array] $ForestSchemaComputers,
         [Array] $ForestSchemaUsers,
-        [switch] $PasswordQuality
+        [switch] $PasswordQuality,
+        [alias('Joiner')][string] $Splitter
     )
     $Data = [ordered] @{ }
 
@@ -512,7 +513,7 @@ function Get-WinADDomainInformation {
     )
 
     $Data.DomainGroups = Get-DataInformation -Text "Getting domain information - $Domain DomainGroups" {
-        Get-WinGroups -Groups $Data.DomainGroupsFullList -Users $Data.DomainUsersFullList -Domain $Domain
+        Get-WinGroups -Groups $Data.DomainGroupsFullList -Users $Data.DomainUsersFullList -Domain $Domain -Splitter $Splitter
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainGroups
 

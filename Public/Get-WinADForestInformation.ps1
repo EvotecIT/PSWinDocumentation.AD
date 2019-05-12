@@ -7,7 +7,8 @@ function Get-WinADForestInformation {
         [string] $PathToPasswordsHashes,
         [switch] $PasswordQuality,
         [switch] $DontRemoveSupportData,
-        [switch] $DontRemoveEmpty
+        [switch] $DontRemoveEmpty,
+        [string] $Splitter
     )
 
     Write-Verbose -Message "Getting all information - Start"
@@ -162,7 +163,7 @@ function Get-WinADForestInformation {
                 -PathToPasswords $PathToPasswords `
                 -PathToPasswordsHashes $PathToPasswordsHashes `
                 -ForestSchemaComputers $Data.ForestSchemaPropertiesComputers  `
-                -ForestSchemaUsers $Data.ForestSchemaPropertiesUsers -PasswordQuality:$PasswordQuality
+                -ForestSchemaUsers $Data.ForestSchemaPropertiesUsers -PasswordQuality:$PasswordQuality -Splitter $Splitter
         }
         $FoundDomains
     } -TypesRequired $TypesRequired -TypesNeeded @(

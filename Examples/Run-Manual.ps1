@@ -1,7 +1,11 @@
 Import-Module .\PSWinDocumentation.AD.psd1 -Force
 
-$Forest = Get-WinADForestInformation -Verbose -PasswordQuality -DontRemoveSupportData -TypesRequired DomainPasswordDuplicatePasswordGroups
-$Forest
+$Forest = Get-WinADForestInformation -Verbose -PasswordQuality -DontRemoveSupportData -TypesRequired DomainGroups -Splitter "`r`n"
+
+
+$Forest.FoundDomains.'ad.evotec.xyz'.DomainGroups | Out-HtmlView
+
+return
 
 Write-Color 'Ad.evotec.xyz' -Color Red
 
