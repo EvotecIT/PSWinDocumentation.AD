@@ -25,11 +25,25 @@
 Install-Module PSWinDocumentation.AD -Force
 ```
 
-### Example
-
+### Small code sample 1:
 
 ```powershell
 $Forest = Get-WinADForestInformation -Verbose -PasswordQuality
+$Forest
+```
+
+### Small code sample 2:
+
+```powershell
+$Forest = Get-WinADForestInformation -Verbose -PasswordQuality
+$Forest.FoundDomains
+$Forest.FoundDomains.'ad.evotec.xyz'
+```
+
+### Small code sample 3:
+
+```powershell
+$Forest = Get-WinADForestInformation -Verbose -PasswordQuality -DontRemoveSupportData -TypesRequired DomainGroups -Splitter "`r`n"
 $Forest
 ```
 
@@ -141,6 +155,6 @@ $Forest
 
 Example outputs:
 
-HTML Version: https://evotec.xyz/wp-content/uploads/2019/05/DashboardActiveDirectory.html
-DocX Version: https://evotec.xyz/wp-content/uploads/2019/05/Starter-AD.docx
-Xlsx Version: https://evotec.xyz/wp-content/uploads/2019/05/Run-Demo02-1.xlsx
+- [x] HTML Version: https://evotec.xyz/wp-content/uploads/2019/05/DashboardActiveDirectory.html
+- [x] DocX Version: https://evotec.xyz/wp-content/uploads/2019/05/Starter-AD.docx
+- [x] Xlsx Version: https://evotec.xyz/wp-content/uploads/2019/05/Run-Demo02-1.xlsx
