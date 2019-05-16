@@ -1,7 +1,7 @@
 function Get-WinADAccounts {
     [CmdletBinding()]
     param(
-        [Object] $UserNameList,
+        [Array] $UserNameList,
         [Array[]] $ADCatalog
     )
     $Accounts = foreach ($User in $UserNameList) {
