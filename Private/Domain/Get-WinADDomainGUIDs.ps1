@@ -4,7 +4,6 @@ function Get-WinADDomainGUIDs {
         [string] $Domain = $Env:USERDNSDOMAIN,
         [Microsoft.ActiveDirectory.Management.ADEntity] $RootDSE
     )
-    $Time = Start-TimeLog
     if ($null -eq $RootDSE) {
         $RootDSE = Get-ADRootDSE -Server $Domain
     }
