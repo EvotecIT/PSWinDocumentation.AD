@@ -2,7 +2,8 @@
     [CmdletBinding()]
     param(
         [Array] $GroupPolicies,
-        [string] $Domain = $Env:USERDNSDOMAIN
+        [string] $Domain = $Env:USERDNSDOMAIN,
+        [string] $Splitter
     )
     if ($null -eq $GroupPolicies) {
         $GroupPolicies = Get-GPO -Domain $Domain -All
@@ -48,7 +49,7 @@
             'WMI Filter Description' = $GPO.WmiFilter.Description
             'Path'                   = $GPO.Path
             'GUID'                   = $GPO.Id
-            'SDDL'                   = $XmlGPReport.GPO.SecurityDescriptor.SDDL.'#text'
+            'SDDL'                   = if ($Splitter -ne '') { $XmlGPReport.GPO.SecurityDescriptor.SDDL.'#text' -join $Splitter } else { $XmlGPReport.GPO.SecurityDescriptor.SDDL.'#text' }
             #'ACLs'                   = $XmlGPReport.GPO.SecurityDescriptor.Permissions.TrusteePermissions | ForEach-Object -Process {
             #    New-Object -TypeName PSObject -Property @{
             #        'User'            = $_.trustee.name.'#Text'

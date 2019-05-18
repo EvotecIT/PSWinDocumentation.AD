@@ -329,7 +329,7 @@ function Get-WinADDomainInformation {
     )
 
     $Data.DomainGroupPoliciesDetails = Get-DataInformation -Text "Getting domain information - $Domain DomainGroupPoliciesDetails" {
-        Get-WinADDomainGroupPoliciesDetails -GroupPolicies $Data.DomainGroupPoliciesClean -Domain $Domain
+        Get-WinADDomainGroupPoliciesDetails -GroupPolicies $Data.DomainGroupPoliciesClean -Domain $Domain -Splitter $Splitter
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainGroupPoliciesDetails
     )
@@ -428,7 +428,7 @@ function Get-WinADDomainInformation {
 #>
 
     $Data.DomainUsers = Get-DataInformation -Text "Getting domain information - $Domain DomainUsers" {
-        Get-WinUsersHash -Users $Data.DomainUsersFullList -Domain $Domain -DomainObjects $Data.DomainObjects
+        Get-WinUsersHash -Users $Data.DomainUsersFullList -Domain $Domain -DomainObjects $Data.DomainObjects -Splitter $Splitter
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainUsers
 

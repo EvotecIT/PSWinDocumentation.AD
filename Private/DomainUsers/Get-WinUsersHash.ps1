@@ -3,7 +3,8 @@
     param(
         [Array] $Users,
         [string] $Domain = $Env:USERDNSDOMAIN,
-        [HashTable] $DomainObjects
+        [HashTable] $DomainObjects,
+        [string] $Splitter
     )
     [DateTime] $CurrentDate = Get-Date
     $UserList = foreach ($U in $Users) {
@@ -45,7 +46,7 @@
             "Protected"                         = $U.ProtectedFromAccidentalDeletion
 
             "Primary Group"                     = (Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $U.PrimaryGroup -Type 'SamAccountName')
-            "Member Of"                         = (Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $U.MemberOf -Type 'SamAccountName' -Splitter ', ')
+            "Member Of"                         = (Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $U.MemberOf -Type 'SamAccountName' -Splitter $Splitter)
             "Domain"                            = $Domain
         }
     }

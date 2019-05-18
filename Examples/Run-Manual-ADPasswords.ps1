@@ -1,20 +1,10 @@
 #Clear-Host
 Import-Module PSWinDocumentation.AD
 
-#$PathToPasswords = 'C:\Users\pklys\OneDrive - Evotec\Support\GitHub\PSWinDocumentation\Ignore\Passwords.txt'
-#$PathToPasswordsHashes = 'C:\Users\pklys\Downloads\pwned-passwords-ntlm-ordered-by-count\pwned-passwords-ntlm-ordered-by-count.txt'
+$PathToPasswords = 'C:\Users\pklys\OneDrive - Evotec\Support\GitHub\PSWinDocumentation\Ignore\Passwords.txt'
+$PathToPasswordsHashes = 'C:\Users\pklys\Downloads\pwned-passwords-ntlm-ordered-by-count\pwned-passwords-ntlm-ordered-by-count.txt'
 
-#$Forest = Get-WinADForestInformation -Verbose -PathToPasswords $PathToPasswords
-$Forest.RootDSE
-
-$Forest.ForestInformation | ft -AutoSize
-
-return
-#$Forest.FoundDomains.'ad.evotec.pl'
-#$Forest.FoundDomains.'ad.evotec.pl'.DomainFineGrainedPoliciesUsers | Format-Table -AutoSize
-#$Forest.FoundDomains.'ad.evotec.xyz'.DomainRIDs | Format-Table -AutoSize
-
-# Alternatively ask for domain directly
+$Forest = Get-WinADForestInformation -Verbose -PathToPasswords $PathToPasswords
 
 $Domain = Get-WinADDomainInformation -Domain 'ad.evotec.xyz' -Verbose -PathToPasswords $PathToPasswords #-PathToPasswordsHashes $PathToPasswordsHashes
 $Domain.DomainPasswordClearTextPassword | Format-Table -Autosize

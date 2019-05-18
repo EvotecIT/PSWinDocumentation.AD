@@ -23,12 +23,5 @@
             $V | Select-Object Address, IPAddress, IP4Address, Name, Type, DataLength, TTL
         }
     }
-
-    #$ReturnData = @{
-    # QueryType, Target, NameTarget, Priority, Weight, Port, Name, Type, CharacterSet, Section
-    #    SRV = $DnsSrv | Select-Object Target, NameTarget, Priority, Weight, Port, Name # Type, QueryType, CharacterSet, Section
-    # Address, IPAddress, QueryType, IP4Address, Name, Type, CharacterSet, Section, DataLength, TTL
-    #    A   = $DnsA | Select-Object Address, IPAddress, IP4Address, Name, Type, DataLength, TTL # QueryType, CharacterSet, Section
-    #}
     return $ReturnData
 }

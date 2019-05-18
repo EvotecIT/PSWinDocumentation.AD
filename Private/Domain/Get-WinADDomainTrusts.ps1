@@ -5,10 +5,6 @@ function Get-WinADDomainTrusts {
         [string] $DomainPDC,
         [Array] $Trusts
     )
-
-    #Write-Verbose "Getting domain information - $Domain DomainTrusts"
-    #$Time = Start-TimeLog
-
     if ($null -eq $Trusts) {
         $Trusts = Get-ADTrust -Server $Domain -Filter * -Properties *
     }

@@ -3,11 +3,5 @@ function Get-WinADDomainTrustsClean {
     param(
         [string] $Domain = $Env:USERDNSDOMAIN
     )
-    #Write-Verbose "Getting domain information - $Domain DomainTrustsClean"
-    # $Time = Start-TimeLog
-
     Get-ADTrust -Server $Domain -Filter * -Properties * -ErrorAction SilentlyContinue
-
-    #$EndTime = Stop-TimeLog -Time $Time -Option OneLiner
-    #Write-Verbose "Getting domain information - $Domain DomainTrustsClean Time: $EndTime"
 }
