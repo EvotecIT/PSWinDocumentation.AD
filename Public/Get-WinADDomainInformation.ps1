@@ -554,8 +554,8 @@ function Get-WinADDomainInformation {
             -Domain $Domain `
             -Option Standard `
             -DomainObjects $Data.DomainObjects
-            #-ADCatalog $Data.DomainUsersFullList, $Data.DomainComputersFullList, $Data.DomainGroupsFullList `
-           # -ADCatalogUsers $Data.DomainUsersFullList `
+        #-ADCatalog $Data.DomainUsersFullList, $Data.DomainComputersFullList, $Data.DomainGroupsFullList `
+        # -ADCatalogUsers $Data.DomainUsersFullList `
 
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsMembers
@@ -571,8 +571,8 @@ function Get-WinADDomainInformation {
             -Domain $Domain `
             -Option Recursive `
             -DomainObjects $Data.DomainObjects
-           # -ADCatalog $Data.DomainUsersFullList, $Data.DomainComputersFullList, $Data.DomainGroupsFullList `
-           # -ADCatalogUsers $Data.DomainUsersFullList `
+        # -ADCatalog $Data.DomainUsersFullList, $Data.DomainComputersFullList, $Data.DomainGroupsFullList `
+        # -ADCatalogUsers $Data.DomainUsersFullList `
 
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsMembersRecursive
