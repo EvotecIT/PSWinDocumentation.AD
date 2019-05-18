@@ -1,4 +1,5 @@
 ﻿function Get-WinADDomainAllUsersCount {
+    [CmdletBinding()]
     param(
         [Array] $DomainUsers,
         [Array] $DomainUsersAll,

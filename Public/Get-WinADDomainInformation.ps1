@@ -161,7 +161,7 @@ function Get-WinADDomainInformation {
     )
 
     $Data.DomainComputersAll = Get-DataInformation -Text "Getting domain information - $Domain DomainComputersAll" {
-        Get-WinADDomainComputersAll -DomainComputersFullList $Data.DomainComputersFullList
+        Get-WinADDomainComputersAll -DomainComputersFullList $Data.DomainComputersFullList -Splitter $Splitter -DomainObjects $Data.DomainObjects
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainComputersAll
         [PSWinDocumentation.ActiveDirectory]::DomainComputersAllCount
@@ -347,7 +347,7 @@ function Get-WinADDomainInformation {
     )
 
     $Data.DomainLAPS = Get-DataInformation -Text "Getting domain information - $Domain DomainLAPS" {
-        Get-WinADDomainLAPS -Domain $Domain -Computers $Data.DomainComputersFullList
+        Get-WinADDomainLAPS -Domain $Domain -Computers $Data.DomainComputersFullList -Splitter $Splitter
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainLAPS
     )
@@ -428,7 +428,7 @@ function Get-WinADDomainInformation {
 #>
 
     $Data.DomainUsers = Get-DataInformation -Text "Getting domain information - $Domain DomainUsers" {
-        Get-WinUsersHash -Users $Data.DomainUsersFullList -Domain $Domain -DomainObjects $Data.DomainObjects -Splitter $Splitter
+        Get-WinADDomainUsersAll -Users $Data.DomainUsersFullList -Domain $Domain -DomainObjects $Data.DomainObjects -Splitter $Splitter
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainUsers
 
@@ -439,14 +439,13 @@ function Get-WinADDomainInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainUsersExpiredInclDisabled
         [PSWinDocumentation.ActiveDirectory]::DomainUsersExpiredExclDisabled
         [PSWinDocumentation.ActiveDirectory]::DomainUsersCount
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDataPasswords
     )
 
     $Data.DomainUsersAll = Get-DataInformation -Text "Getting domain information - $Domain DomainUsersAll" {
-        Get-WinADDomainUsersAll -DomainUsers $Data.DomainUsers
+        Get-WinADDomainUsersAllFiltered -DomainUsers $Data.DomainUsers
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainUsersAll
-
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDataPasswords
     )
 
     $Data.DomainUsersSystemAccounts = Get-DataInformation -Text "Getting domain information - $Domain DomainUsersSystemAccounts" {

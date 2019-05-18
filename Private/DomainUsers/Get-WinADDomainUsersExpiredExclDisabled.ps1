@@ -1,4 +1,5 @@
 ﻿function Get-WinADDomainUsersExpiredExclDisabled {
+    [CmdletBinding()]
     param(
         [Array] $DomainUsers
     )

@@ -9,7 +9,9 @@
     if (Find-TypesNeeded -TypesRequired $TypesRequired -TypesNeeded $TypesNeeded) {
         Write-Verbose -Message $Text
         $Time = Start-TimeLog
-        Invoke-Command -ScriptBlock $Content
+        if ($null -ne $Content) {
+            & $Content
+        }
         $EndTime = Stop-TimeLog -Time $Time -Option OneLiner
         Write-Verbose "$Text - Time: $EndTime"
     }

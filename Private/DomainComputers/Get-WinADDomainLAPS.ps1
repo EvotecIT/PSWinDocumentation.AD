@@ -2,7 +2,8 @@ function Get-WinADDomainLAPS {
     [CmdletBinding()]
     param(
         [string] $Domain = $Env:USERDNSDOMAIN,
-        [Array] $Computers
+        [Array] $Computers,
+        [string] $Splitter
     )
     $Properties = @(
         'Name',
@@ -18,12 +19,12 @@ function Get-WinADDomainLAPS {
     }
     foreach ($Computer in $Computers) {
         [PSCustomObject] @{
-            'Name'                 = $Computer.Name
-            'Operating System'     = $Computer.'OperatingSystem'
-            'Laps Password'        = $Computer.'ms-Mcs-AdmPwd'
-            'Laps Expire (days)'   = Convert-TimeToDays -StartTime ($CurrentDate) -EndTime (Convert-ToDateTime -Timestring ($Computer.'ms-Mcs-AdmPwdExpirationTime'))
-            'Laps Expiration Time' = Convert-ToDateTime -Timestring ($Computer.'ms-Mcs-AdmPwdExpirationTime')
-            'DistinguishedName'    = $Computer.'DistinguishedName'
+            'Name'               = $Computer.Name
+            'Operating System'   = $Computer.'OperatingSystem'
+            'LapsPassword'       = if ($Splitter -ne '') { $Computer.'ms-Mcs-AdmPwd' -join $Splitter } else { $Computer.'ms-Mcs-AdmPwd' } # For some reason it's an array Laps Password        : {}
+            'LapsExpire(days)'   = Convert-TimeToDays -StartTime ($CurrentDate) -EndTime (Convert-ToDateTime -Timestring ($Computer.'ms-Mcs-AdmPwdExpirationTime'))
+            'LapsExpirationTime' = Convert-ToDateTime -Timestring ($Computer.'ms-Mcs-AdmPwdExpirationTime')
+            'DistinguishedName'  = $Computer.'DistinguishedName'
         }
     }
 }

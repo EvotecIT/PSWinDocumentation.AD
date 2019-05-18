@@ -1,4 +1,5 @@
 ﻿function Get-WinADDomainAdministratorsRecursive {
+    [CmdletBinding()]
     param(
         [Array] $DomainGroupsMembersRecursive,
         $DomainInformation

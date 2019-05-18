@@ -20,7 +20,7 @@ function Get-WinADDomainComputersFullList {
             'PasswordNotRequired', 'UserPrincipalName',
             'LastLogonDate', 'LockedOut', 'LogonCount',
             'CanonicalName', 'SID', 'Created', 'Modified',
-            'Deleted', 'MemberOf'
+            'Deleted', 'MemberOf', 'PrimaryGroup', 'ProtectedFromAccidentalDeletion'
             if ($ForestSchemaComputers.Name -contains 'ms-Mcs-AdmPwd') {
                 'ms-Mcs-AdmPwd'
                 'ms-Mcs-AdmPwdExpirationTime'

@@ -6,7 +6,6 @@ Import-Module .\PSWinDocumentation.AD.psd1 -Force
     $DataSetForest = Get-WinADForestInformation -Verbose -PasswordQuality -DontRemoveEmpty -Parallel
 #}
 
-
 Dashboard -Name 'Dashimo Test' -FilePath $PSScriptRoot\DashboardActiveDirectory.html -Show {
     Tab -Name 'Forest' {
         foreach ($ForestKey in $DataSetForest.Keys | Where-Object { $_ -ne 'FoundDomains' }) {

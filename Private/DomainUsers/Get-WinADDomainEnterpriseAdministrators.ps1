@@ -1,4 +1,5 @@
 ﻿function Get-WinADDomainEnterpriseAdministrators {
+    [CmdletBinding()]
     param(
         [Array] $DomainGroupsMembers,
         $DomainInformation
