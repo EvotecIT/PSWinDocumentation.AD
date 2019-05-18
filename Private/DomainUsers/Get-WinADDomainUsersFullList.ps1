@@ -3,7 +3,9 @@ function Get-WinADDomainUsersFullList {
     param(
         [string] $Domain = $Env:USERDNSDOMAIN,
         [switch] $Extended,
-        [Array] $ForestSchemaUsers
+        [Array] $ForestSchemaUsers,
+        [HashTable] $DomainObjects,
+        [int] $ResultPageSize = 500000
     )
     #Write-Verbose "Getting domain information - $Domain DomainUsersFullList"
     #$TimeUsers = Start-TimeLog
@@ -64,8 +66,11 @@ function Get-WinADDomainUsersFullList {
 
     #[string[]] $ExcludeProperty = '*Certificate', 'PropertyNames', '*Properties', 'PropertyCount', 'Certificates', 'nTSecurityDescriptor'
 
-    Get-ADUser -Server $Domain -ResultPageSize 500000 -Filter * -Properties $Properties #| Select-Object -Property $Properties -ExcludeProperty $ExcludeProperty
-
+    $Users = Get-ADUser -Server $Domain -ResultPageSize $ResultPageSize -Filter * -Properties $Properties #| Select-Object -Property $Properties -ExcludeProperty $ExcludeProperty
+    foreach ($_ in $Users) {
+        $DomainObjects.$($_.DistinguishedName) = $_
+    }
+    $Users
     #$EndUsers = Stop-TimeLog -Time $TimeUsers -Option OneLiner
     #Write-Verbose "Getting domain information - $Domain DomainUsersFullList Time: $EndUsers"
 }

@@ -9,7 +9,9 @@ function Get-WinADDomainInformation {
         [Array] $ForestSchemaComputers,
         [Array] $ForestSchemaUsers,
         [switch] $PasswordQuality,
-        [alias('Joiner')][string] $Splitter
+        [alias('Joiner')][string] $Splitter,
+        [switch] $Parallel,
+        [int] $ResultPageSize = 500000
     )
     $Data = [ordered] @{ }
 
@@ -51,6 +53,8 @@ function Get-WinADDomainInformation {
             [PSWinDocumentation.ActiveDirectory]::DomainUsersFullList
         )
     }
+
+    $Data.DomainObjects = @{}
 
     # Domain Root DSE - Complete TypesNeeded
     $Data.DomainRootDSE = Get-DataInformation -Text "Getting domain information - $Domain DomainRootDSE" {
@@ -101,7 +105,7 @@ function Get-WinADDomainInformation {
 
     # Groups
     $Data.DomainGroupsFullList = Get-DataInformation -Text "Getting domain information - $Domain DomainGroupsFullList" {
-        Get-WinADDomainGroupsFullList -Domain $Domain
+        Get-WinADDomainGroupsFullList -Domain $Domain -DomainObjects $Data.DomainObjects -ResultPageSize $ResultPageSize
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsFullList
 
@@ -116,7 +120,7 @@ function Get-WinADDomainInformation {
 
     # Users
     $Data.DomainUsersFullList = Get-DataInformation -Text "Getting domain information - $Domain DomainUsersFullList" {
-        Get-WinADDomainUsersFullList -Domain $Domain -Extended:$Extended -ForestSchemaUsers $ForestSchemaUsers
+        Get-WinADDomainUsersFullList -Domain $Domain -Extended:$Extended -ForestSchemaUsers $ForestSchemaUsers -DomainObjects $Data.DomainObjects -ResultPageSize $ResultPageSize
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainUsersFullList
         [PSWinDocumentation.ActiveDirectory]::DomainUsers
@@ -137,7 +141,7 @@ function Get-WinADDomainInformation {
     )
 
     $Data.DomainComputersFullList = Get-DataInformation -Text "Getting domain information - $Domain DomainComputersFullList" {
-        Get-WinADDomainComputersFullList -Domain $Domain -ForestSchemaComputers $ForestSchemaComputers
+        Get-WinADDomainComputersFullList -Domain $Domain -ForestSchemaComputers $ForestSchemaComputers -DomainObjects $Data.DomainObjects -ResultPageSize $ResultPageSize
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainComputersFullList
         [PSWinDocumentation.ActiveDirectory]::DomainComputersAll
@@ -365,7 +369,7 @@ function Get-WinADDomainInformation {
     )
 
     $Data.DomainOrganizationalUnits = Get-DataInformation -Text "Getting domain information - $Domain DomainOrganizationalUnits" {
-        Get-WinADDomainOrganizationalUnits -Domain $Domain -OrgnaizationalUnits $Data.DomainOrganizationalUnitsClean
+        Get-WinADDomainOrganizationalUnits -Domain $Domain -OrgnaizationalUnits $Data.DomainOrganizationalUnitsClean -DomainObjects $Data.DomainObjects
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainOrganizationalUnits
     )
@@ -403,8 +407,28 @@ function Get-WinADDomainInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainOrganizationalUnitsExtendedACL
     )
 
+    <#
     $Data.DomainUsers = Get-DataInformation -Text "Getting domain information - $Domain DomainUsers" {
-        Get-WinUsers -Users $Data.DomainUsersFullList -Domain $Domain -ADCatalog $Data.DomainUsersFullList, $Data.DomainComputersFullList, $Data.DomainGroupsFullList -ADCatalogUsers $Data.DomainUsersFullList
+        Get-WinUsers `
+            -Users $Data.DomainUsersFullList `
+            -Domain $Domain `
+            -ADCatalog $Data.DomainUsersFullList, $Data.DomainComputersFullList, $Data.DomainGroupsFullList `
+            -ADCatalogUsers $Data.DomainUsersFullList
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::DomainUsers
+
+        [PSWinDocumentation.ActiveDirectory]::DomainUsersAll
+        [PSWinDocumentation.ActiveDirectory]::DomainUsersSystemAccounts
+        [PSWinDocumentation.ActiveDirectory]::DomainUsersNeverExpiring
+        [PSWinDocumentation.ActiveDirectory]::DomainUsersNeverExpiringInclDisabled
+        [PSWinDocumentation.ActiveDirectory]::DomainUsersExpiredInclDisabled
+        [PSWinDocumentation.ActiveDirectory]::DomainUsersExpiredExclDisabled
+        [PSWinDocumentation.ActiveDirectory]::DomainUsersCount
+    )
+#>
+
+    $Data.DomainUsers = Get-DataInformation -Text "Getting domain information - $Domain DomainUsers" {
+        Get-WinUsersHash -Users $Data.DomainUsersFullList -Domain $Domain -DomainObjects $Data.DomainObjects
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainUsers
 
@@ -469,6 +493,7 @@ function Get-WinADDomainInformation {
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainUsersCount
 
+        <#
         [PSWinDocumentation.ActiveDirectory]::DomainUsers
         [PSWinDocumentation.ActiveDirectory]::DomainUsersAll
         [PSWinDocumentation.ActiveDirectory]::DomainUsersSystemAccounts
@@ -476,6 +501,7 @@ function Get-WinADDomainInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainUsersNeverExpiringInclDisabled
         [PSWinDocumentation.ActiveDirectory]::DomainUsersExpiredInclDisabled
         [PSWinDocumentation.ActiveDirectory]::DomainUsersExpiredExclDisabled
+        #>
     )
 
     $Data.DomainControllers = Get-DataInformation -Text "Getting domain information - $Domain DomainControllers" {
@@ -493,10 +519,10 @@ function Get-WinADDomainInformation {
     )
 
     $Data.DomainFineGrainedPoliciesUsers = Get-DataInformation -Text "Getting domain information - $Domain DomainFineGrainedPoliciesUsers" {
-        Get-WinADDomainFineGrainedPoliciesUsers `
-            -DomainFineGrainedPolicies $Data.DomainFineGrainedPolicies `
-            -DomainUsersFullList $Data.DomainUsersFullList `
-            -DomainGroupsFullList $Data.DomainGroupsFullList
+        Get-WinADDomainFineGrainedPoliciesUsers -DomainFineGrainedPolicies $Data.DomainFineGrainedPolicies -DomainObjects $Data.DomainObjects
+        #-DomainUsersFullList $Data.DomainUsersFullList `
+        # -DomainGroupsFullList $Data.DomainGroupsFullList `
+
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainFineGrainedPoliciesUsers
     )
@@ -513,7 +539,7 @@ function Get-WinADDomainInformation {
     )
 
     $Data.DomainGroups = Get-DataInformation -Text "Getting domain information - $Domain DomainGroups" {
-        Get-WinGroups -Groups $Data.DomainGroupsFullList -Users $Data.DomainUsersFullList -Domain $Domain -Splitter $Splitter
+        Get-WinGroups -Groups $Data.DomainGroupsFullList -Domain $Domain -Splitter $Splitter -DomainObjects $Data.DomainObjects
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainGroups
 

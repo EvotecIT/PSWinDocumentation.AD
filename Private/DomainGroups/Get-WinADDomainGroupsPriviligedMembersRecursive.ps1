@@ -1,4 +1,5 @@
 ﻿function Get-WinADDomainGroupsPriviligedMembersRecursive {
+    [CmdletBinding()]
     param(
         [Array] $DomainGroupsMembersRecursive,
         [Array] $DomainGroupsPriviliged

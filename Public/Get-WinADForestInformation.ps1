@@ -8,9 +8,10 @@ function Get-WinADForestInformation {
         [switch] $PasswordQuality,
         [switch] $DontRemoveSupportData,
         [switch] $DontRemoveEmpty,
-        [string] $Splitter
+        [string] $Splitter,
+        [switch] $Parallel,
+        [int] $ResultPageSize = 500000
     )
-
     Write-Verbose -Message "Getting all information - Start"
     Write-Verbose -Message "Getting forest information - Start"
     $TimeToGenerateForest = Start-TimeLog
@@ -163,7 +164,7 @@ function Get-WinADForestInformation {
                 -PathToPasswords $PathToPasswords `
                 -PathToPasswordsHashes $PathToPasswordsHashes `
                 -ForestSchemaComputers $Data.ForestSchemaPropertiesComputers  `
-                -ForestSchemaUsers $Data.ForestSchemaPropertiesUsers -PasswordQuality:$PasswordQuality -Splitter $Splitter
+                -ForestSchemaUsers $Data.ForestSchemaPropertiesUsers -PasswordQuality:$PasswordQuality -Splitter $Splitter -Parallel:$Parallel -ResultPageSize $ResultPageSize
         }
         $FoundDomains
     } -TypesRequired $TypesRequired -TypesNeeded @(

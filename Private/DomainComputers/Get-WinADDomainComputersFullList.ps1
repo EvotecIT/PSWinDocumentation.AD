@@ -2,7 +2,9 @@ function Get-WinADDomainComputersFullList {
     [cmdletbinding()]
     param(
         [string] $Domain = $Env:USERDNSDOMAIN,
-        [Array] $ForestSchemaComputers
+        [Array] $ForestSchemaComputers,
+        [HashTable] $DomainObjects,
+        [int] $ResultPageSize = 500000
     )
     #Write-Verbose "Getting domain information - $Domain DomainComputersFullList"
     #$TimeUsers = Start-TimeLog
@@ -27,8 +29,11 @@ function Get-WinADDomainComputersFullList {
     }
     # [string[]] $ExcludeProperty = '*Certificate', 'PropertyNames', '*Properties', 'PropertyCount', 'Certificates', 'nTSecurityDescriptor'
 
-    Get-ADComputer -Server $Domain -Filter * -ResultPageSize 500000 -Properties $Properties -ErrorAction SilentlyContinue #| Select-Object -Property $Properties -ExcludeProperty $ExcludeProperty
-
+    $Computers = Get-ADComputer -Server $Domain -Filter * -ResultPageSize $ResultPageSize -Properties $Properties -ErrorAction SilentlyContinue #| Select-Object -Property $Properties -ExcludeProperty $ExcludeProperty
+    foreach ($_ in $Computers) {
+        $DomainObjects.$($_.DistinguishedName) = $_
+    }
+    $Computers
     #$EndUsers = Stop-TimeLog -Time $TimeUsers -Option OneLiner
     # Write-Verbose "Getting domain information - $Domain DomainComputersFullList Time: $EndUsers"
 }

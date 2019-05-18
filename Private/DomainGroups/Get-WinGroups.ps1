@@ -1,16 +1,20 @@
 function Get-WinGroups {
     [CmdletBinding()]
     param (
-        [System.Object[]] $Groups,
-        [System.Object[]] $Users,
+        [Array] $Groups,
+        # [System.Object[]] $Users,
         [string] $Domain = $Env:USERDNSDOMAIN,
-        [string] $Splitter
+        [string] $Splitter,
+        [hashtable] $DomainObjects
     )
     $ReturnGroups = foreach ($Group in $Groups) {
         #$User = $Users | & { process { if ($_.DistinguishedName -eq $Group.ManagedBy ) { $_ } } } # | Where-Object { $_.DistinguishedName -eq $Group.ManagedBy }
-        $User = foreach ($_ in $Users) {
-            if ($_.DistinguishedName -eq $Group.ManagedBy) { $_ }
-        }
+        #$User = foreach ($_ in $Users) {
+        #    if ($_.DistinguishedName -eq $Group.ManagedBy) { $_ }
+        #}
+        $Manager = Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $Group.ManagedBy
+        # $GroupMembers = (Get-ADObjectFromDistingusishedName -Splitter $Splitter -ADCatalog $Data.DomainUsersFullList, $Data.DomainComputersFullList, $Data.DomainGroupsFullList -DistinguishedName $Group.Members -Type 'SamAccountName')
+        #$GroupMembers = Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $Group.Members -Splitter $Splitter -Type 'SamAccountName'
 
         [PsCustomObject][ordered] @{
             'Group Name'            = $Group.Name
@@ -21,9 +25,9 @@ function Get-WinGroups {
             'High Privileged Group' = if ($Group.adminCount -eq 1) { $True } else { $False }
             'Member Count'          = $Group.Members.Count
             'MemberOf Count'        = $Group.MemberOf.Count
-            'Manager'               = $User.Name
-            'Manager Email'         = $User.EmailAddress
-            'Group Members'         = (Get-ADObjectFromDistingusishedName -Splitter $Splitter -ADCatalog $Data.DomainUsersFullList, $Data.DomainComputersFullList, $Data.DomainGroupsFullList -DistinguishedName $Group.Members -Type 'SamAccountName')
+            'Manager'               = $Manager.Name
+            'Manager Email'         = $Manager.EmailAddress
+            'Group Members'         = Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $Group.Members -Splitter $Splitter -Type 'SamAccountName'
             'Group Members DN'      = if ($Splitter -ne '') { $Group.Members -join $Splitter } else { $Group.Members }
             "Domain"                = $Domain
         }

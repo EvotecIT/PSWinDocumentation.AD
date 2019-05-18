@@ -2,26 +2,30 @@
     [CmdletBinding()]
     param(
         [Array] $DomainFineGrainedPolicies,
-        [Array] $DomainUsersFullList,
-        [Array] $DomainGroupsFullList
+        #[Array] $DomainUsersFullList,
+        #[Array] $DomainGroupsFullList,
+        [hashtable] $DomainObjects
     )
 
     $PolicyUsers = foreach ($Policy in $DomainFineGrainedPolicies) {
-        $Users = foreach ($U in $Policy.'Applies To') {
-            Get-ADObjectFromDistingusishedName -ADCatalog $DomainUsersFullList -DistinguishedName $U
+        $AllObjects = foreach ($U in $Policy.'Applies To') {
+            Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $U
+            #Get-ADObjectFromDistingusishedName -ADCatalog $DomainUsersFullList -DistinguishedName $U
         }
-        $Groups = foreach ($U in $Policy.'Applies To') {
-            Get-ADObjectFromDistingusishedName -ADCatalog $DomainGroupsFullList -DistinguishedName $U
-        }
-        foreach ($User in $Users) {
+        #$Groups = foreach ($U in $Policy.'Applies To') {
+        #    Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $U
+            #Get-ADObjectFromDistingusishedName -ADCatalog $DomainGroupsFullList -DistinguishedName $U
+        #}
+        foreach ($_ in $AllObjects) {
             [pscustomobject][ordered] @{
                 'Policy Name'  = $Policy.Name
-                Name           = $User.Name
-                SamAccountName = $User.SamAccountName
-                Type           = $User.ObjectClass
-                SID            = $User.SID
+                Name           = $_.Name
+                SamAccountName = $_.SamAccountName
+                Type           = $_.ObjectClass
+                SID            = $_.SID
             }
         }
+        <#
         foreach ($Group in $Groups) {
             [pscustomobject][ordered] @{
                 'Policy Name'  = $Policy.Name
@@ -31,6 +35,7 @@
                 SID            = $Group.SID
             }
         }
+        #>
     }
     #Get-AdFineGrainedPassowrdPolicySubject
     #Get-AdresultantPasswordPolicy -Identity <user>

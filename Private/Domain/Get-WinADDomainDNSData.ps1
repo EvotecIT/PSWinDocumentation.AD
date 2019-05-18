@@ -1,4 +1,5 @@
 ﻿function Get-WinADDomainDNSData {
+    [CmdletBinding()]
     param(
         [string] $Domain = $Env:USERDNSDOMAIN
     )

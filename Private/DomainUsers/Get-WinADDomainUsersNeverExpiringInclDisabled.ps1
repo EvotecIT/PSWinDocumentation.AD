@@ -1,4 +1,5 @@
 ﻿function Get-WinADDomainUsersNeverExpiringInclDisabled {
+    [CmdletBinding()]
     param(
         [Array] $DomainUsers
     )

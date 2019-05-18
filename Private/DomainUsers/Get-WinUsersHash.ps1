@@ -1,13 +1,13 @@
-function Get-WinUsers {
+﻿function Get-WinUsersHash {
     [CmdletBinding()]
     param(
-        [System.Object[]] $Users,
-        [System.Object[]] $ADCatalog,
-        [System.Object[]] $ADCatalogUsers,
-        [string] $Domain = $Env:USERDNSDOMAIN
+        [Array] $Users,
+        [string] $Domain = $Env:USERDNSDOMAIN,
+        [HashTable] $DomainObjects
     )
-    [DateTime] $CurrentDate = Get-Date # [DateTime]::Today
+    [DateTime] $CurrentDate = Get-Date
     $UserList = foreach ($U in $Users) {
+        $Manager = Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $U.Manager
         [PsCustomObject][Ordered] @{
             'Name'                              = $U.Name
             'UserPrincipalName'                 = $U.UserPrincipalName
@@ -22,9 +22,9 @@ function Get-WinUsers {
             'Password Not Required'             = $U.PasswordNotRequired
             'Password Never Expires'            = $U.PasswordNeverExpires
             'Enabled'                           = $U.Enabled
-            'Manager'                           = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalogUsers -DistinguishedName $U.Manager).Name
-            'ManagerEmail'                      = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalogUsers -DistinguishedName $U.Manager).EmailAddress
-            'DateExpiry'                        = Convert-ToDateTime -Timestring $($U."msDS-UserPasswordExpiryTimeComputed") -Verbose
+            'Manager'                           = $Manager.Name
+            'ManagerEmail'                      = $Manager.EmailAddress
+            'DateExpiry'                        = Convert-ToDateTime -Timestring $($U."msDS-UserPasswordExpiryTimeComputed")
             "DaysToExpire"                      = (Convert-TimeToDays -StartTime $CurrentDate -EndTime (Convert-ToDateTime -Timestring $($U."msDS-UserPasswordExpiryTimeComputed")))
             "AccountExpirationDate"             = $U.AccountExpirationDate
             "AccountLockoutTime"                = $U.AccountLockoutTime
@@ -44,18 +44,10 @@ function Get-WinUsers {
             "Modified"                          = $U.Modified
             "Protected"                         = $U.ProtectedFromAccidentalDeletion
 
-            "Primary Group"                     = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalog -DistinguishedName $U.PrimaryGroup -Type 'SamAccountName')
-            "Member Of"                         = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalog -DistinguishedName $U.MemberOf -Type 'SamAccountName' -Splitter ', ')
+            "Primary Group"                     = (Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $U.PrimaryGroup -Type 'SamAccountName')
+            "Member Of"                         = (Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $U.MemberOf -Type 'SamAccountName' -Splitter ', ')
             "Domain"                            = $Domain
         }
     }
     return $UserList
 }
-
-<# List of fields
-'Name', 'UserPrincipalName', 'SamAccountName', 'Enabled', 'PasswordLastSet,'Password Last Changed', 'PasswordExpired', 'PasswordNeverExpires', 'PasswordNotRequired',
-'EmailAddress', 'Display Name', 'Given Name', 'Surname', 'Manager', 'Manager Email',
-'DateExpiry', "DaysToExpire", "AccountExpirationDate", "AccountLockoutTime", "AllowReversiblePasswordEncryption", "BadLogonCount",
-"CannotChangePassword", "CanonicalName", "Description", "DistinguishedName", "EmployeeID", "EmployeeNumber", "LastBadPasswordAttempt",
-"LastLogonDate", "Created", "Modified", "Protected", "Primary Group", "Member Of", "Domain"
-#>

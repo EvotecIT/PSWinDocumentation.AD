@@ -11,7 +11,7 @@ return
 
 # Below some options are show how to get specific information.
 
-$User = $Forest.FoundDomains.'ad.evotec.xyz'.DomainUsers[20] | Select *
+$User = $Forest.FoundDomains.'ad.evotec.xyz'.DomainUsers[20] | Select-Object *
 $User | Select-Object DisplayName, PasswordLastSet
 
 

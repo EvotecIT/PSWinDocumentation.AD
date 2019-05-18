@@ -1,4 +1,5 @@
 ﻿function Get-WinADDomainGroupsSpecialMembers {
+    [CmdletBinding()]
     param(
         [Array] $DomainGroupsMembers
     )

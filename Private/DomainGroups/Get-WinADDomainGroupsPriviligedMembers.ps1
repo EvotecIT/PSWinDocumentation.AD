@@ -1,4 +1,5 @@
 ﻿function Get-WinADDomainGroupsPriviligedMembers {
+    [CmdletBinding()]
     param(
         [Array] $DomainGroupsMembers,
         [Array] $DomainGroupsPriviliged
