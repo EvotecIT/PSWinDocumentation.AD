@@ -24,7 +24,7 @@ function Get-WinADForestInformation {
     # Forest is required to get all domains
     $Forest = Get-WinADForest
     if ($null -eq $Forest) {
-        Write-Warning "Getting forest information - Failed to get information."
+        Write-Warning "Getting forest information - Failed to get information. This may mean that RSAT is not available or you can't connect to Active Directory."
         return
     }
     # Start of building data
