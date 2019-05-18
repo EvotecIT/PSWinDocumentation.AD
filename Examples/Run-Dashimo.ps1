@@ -3,7 +3,7 @@ Import-Module Dashimo -Force
 Import-Module .\PSWinDocumentation.AD.psd1 -Force
 
 #if ($null -eq $DataSetForest) {
-    $DataSetForest = Get-WinADForestInformation -Verbose -PasswordQuality -DontRemoveEmpty -Parallel
+$DataSetForest = Get-WinADForestInformation -Verbose -PasswordQuality -DontRemoveEmpty -Parallel -Splitter "`r`n"
 #}
 
 Dashboard -Name 'Dashimo Test' -FilePath $PSScriptRoot\DashboardActiveDirectory.html -Show {

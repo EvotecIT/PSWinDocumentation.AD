@@ -1,11 +1,13 @@
 function Get-WinGroupMembers {
     [CmdletBinding()]
     param(
-        [System.Object[]] $Groups,
+        [Array] $Groups,
         [string] $Domain = $Env:USERDNSDOMAIN,
-        [System.Object[]] $ADCatalog,
-        [System.Object[]] $ADCatalogUsers,
-        [ValidateSet("Recursive", "Standard")][String] $Option
+        #[System.Object[]] $ADCatalog,
+        #[System.Object[]] $ADCatalogUsers,
+        [ValidateSet("Recursive", "Standard")][String] $Option,
+        [hashtable] $DomainObjects,
+        [string] $Splitter
     )
     [DateTime] $CurrentDate = Get-Date
     if ($Option -eq 'Recursive') {
@@ -18,7 +20,10 @@ function Get-WinGroupMembers {
                 continue
             }
             foreach ($Member in $GroupMembership) {
-                $Object = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalog -DistinguishedName $Member.DistinguishedName)
+                # $Object = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalog -DistinguishedName $Member.DistinguishedName)
+                $Object = Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName  $Member.DistinguishedName
+                $Manager = Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $Object.Manager
+
                 [PSCustomObject][ordered] @{
                     'Group Name'                        = $Group.'Group Name'
                     'Group SID'                         = $Group.'Group SID'
@@ -36,8 +41,11 @@ function Get-WinGroupMembers {
                     'PasswordNeverExpires'              = $Object.PasswordNeverExpires
                     'Enabled'                           = $Object.Enabled
                     'SID'                               = $Member.SID.Value
-                    'Manager'                           = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalogUsers -DistinguishedName $Object.Manager).Name
-                    'ManagerEmail'                      = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalogUsers -DistinguishedName $Object.Manager).EmailAddress
+                    #'Manager'                           = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalogUsers -DistinguishedName $Object.Manager).Name
+                    #'ManagerEmail'                      = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalogUsers -DistinguishedName $Object.Manager).EmailAddress
+                    'Manager'                           = $Manager.Name
+                    'ManagerEmail'                      = if ($Splitter -ne '') { $Manager.EmailAddress -join $Splitter } else { $Manager.EmailAddress }
+
                     'DateExpiry'                        = Convert-ToDateTime -Timestring $($Object."msDS-UserPasswordExpiryTimeComputed") # -Verbose
                     "DaysToExpire"                      = (Convert-TimeToDays -StartTime $CurrentDate -EndTime (Convert-ToDateTime -Timestring $($Object."msDS-UserPasswordExpiryTimeComputed")))
                     "AccountExpirationDate"             = $Object.AccountExpirationDate
@@ -73,7 +81,9 @@ function Get-WinGroupMembers {
     if ($Option -eq 'Standard') {
         [Array] $GroupMembersDirect = foreach ($Group in $Groups) {
             foreach ($Member in $Group.'Group Members DN') {
-                $Object = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalog -DistinguishedName $Member)
+                $Object = Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName  $Member
+                $Manager = Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $Object.Manager
+
                 [PSCustomObject][ordered] @{
                     'Group Name'                        = $Group.'Group Name'
                     'Group SID'                         = $Group.'Group SID'
@@ -89,8 +99,11 @@ function Get-WinGroupMembers {
                     'PasswordNotRequired'               = $Object.PasswordNotRequired
                     'PasswordNeverExpires'              = $Object.PasswordNeverExpires
                     'Enabled'                           = $Object.Enabled
-                    'Manager'                           = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalogUsers -DistinguishedName $Object.Manager).Name
-                    'ManagerEmail'                      = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalogUsers -DistinguishedName $Object.Manager).EmailAddress
+                    # 'Manager'                           = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalogUsers -DistinguishedName $Object.Manager).Name
+                    # 'ManagerEmail'                      = (Get-ADObjectFromDistingusishedName -ADCatalog $ADCatalogUsers -DistinguishedName $Object.Manager).EmailAddress
+
+                    'Manager'                           = $Manager.Name
+                    'ManagerEmail'                      = if ($Splitter -ne '') { $Manager.EmailAddress -join $Splitter } else { $Manager.EmailAddress }
                     'DateExpiry'                        = Convert-ToDateTime -Timestring $($Object."msDS-UserPasswordExpiryTimeComputed") #-Verbose
                     "DaysToExpire"                      = (Convert-TimeToDays -StartTime $CurrentDate -EndTime (Convert-ToDateTime -Timestring $($Object."msDS-UserPasswordExpiryTimeComputed")))
                     "AccountExpirationDate"             = $Object.AccountExpirationDate

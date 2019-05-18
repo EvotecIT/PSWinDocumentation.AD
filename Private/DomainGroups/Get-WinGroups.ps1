@@ -28,7 +28,7 @@ function Get-WinGroups {
             'Manager'               = $Manager.Name
             'Manager Email'         = if ($Splitter -ne '') { $Manager.EmailAddress -join $Splitter } else { $Manager.EmailAddress }
             'Group Members'         = Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $Group.Members -Splitter $Splitter -Type 'SamAccountName'
-            'Group Members DN'      = if ($Splitter -ne '') { $Group.Members -join $Splitter } else { $Group.Members }
+            'Group Members DN'      = $Group.Members #if ($Splitter -ne '') { $Group.Members -join $Splitter } else { $Group.Members }
             "Domain"                = $Domain
         }
     }

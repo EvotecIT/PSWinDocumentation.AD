@@ -537,6 +537,9 @@ function Get-WinADDomainInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainFineGrainedPoliciesUsersExtended
     )
 
+
+
+
     $Data.DomainGroups = Get-DataInformation -Text "Getting domain information - $Domain DomainGroups" {
         Get-WinGroups -Groups $Data.DomainGroupsFullList -Domain $Domain -Splitter $Splitter -DomainObjects $Data.DomainObjects
     } -TypesRequired $TypesRequired -TypesNeeded @(
@@ -547,7 +550,13 @@ function Get-WinADDomainInformation {
     )
 
     $Data.DomainGroupsMembers = Get-DataInformation -Text "Getting domain information - $Domain DomainGroupsMembers" {
-        Get-WinGroupMembers -Groups $Data.DomainGroups -Domain $Domain -ADCatalog $Data.DomainUsersFullList, $Data.DomainComputersFullList, $Data.DomainGroupsFullList -ADCatalogUsers $Data.DomainUsersFullList -Option Standard
+        Get-WinGroupMembers -Groups $Data.DomainGroups `
+            -Domain $Domain `
+            -Option Standard `
+            -DomainObjects $Data.DomainObjects
+            #-ADCatalog $Data.DomainUsersFullList, $Data.DomainComputersFullList, $Data.DomainGroupsFullList `
+           # -ADCatalogUsers $Data.DomainUsersFullList `
+
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsMembers
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsSpecialMembers
@@ -558,7 +567,13 @@ function Get-WinADDomainInformation {
     )
 
     $Data.DomainGroupsMembersRecursive = Get-DataInformation -Text "Getting domain information - $Domain DomainGroupsMembersRecursive" {
-        Get-WinGroupMembers -Groups $Data.DomainGroups -Domain $Domain -ADCatalog $Data.DomainUsersFullList, $Data.DomainComputersFullList, $Data.DomainGroupsFullList -ADCatalogUsers $Data.DomainUsersFullList -Option Recursive
+        Get-WinGroupMembers -Groups $Data.DomainGroups `
+            -Domain $Domain `
+            -Option Recursive `
+            -DomainObjects $Data.DomainObjects
+           # -ADCatalog $Data.DomainUsersFullList, $Data.DomainComputersFullList, $Data.DomainGroupsFullList `
+           # -ADCatalogUsers $Data.DomainUsersFullList `
+
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsMembersRecursive
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsSpecialMembersRecursive

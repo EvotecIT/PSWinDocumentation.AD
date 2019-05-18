@@ -5,9 +5,6 @@ function Get-WinADDomainGroupsFullList {
         [HashTable] $DomainObjects,
         [int] $ResultPageSize = 500000
     )
-    #[string[]] $Properties = '*'
-    #[string[]] $ExcludeProperty = '*Certificate', 'PropertyNames', '*Properties', 'PropertyCount', 'Certificates', 'nTSecurityDescriptor'
-
     if ($Extended) {
         [string] $Properties = '*'
     } else {
@@ -55,7 +52,7 @@ function Get-WinADDomainGroupsFullList {
             'whenCreated'
         )
     }
-    $Groups = Get-ADGroup -Server $Domain -Filter * -ResultPageSize $ResultPageSize -Properties $Properties #| Select-Object -Property $Properties -ExcludeProperty $ExcludeProperty
+    $Groups = Get-ADGroup -Server $Domain -Filter * -ResultPageSize $ResultPageSize -Properties $Properties
     foreach ($_ in $Groups) {
         $DomainObjects.$($_.DistinguishedName) = $_
     }
