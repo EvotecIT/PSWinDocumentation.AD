@@ -34,7 +34,7 @@ function Get-WinADDomainGroupsFullList {
             'Modified'
             'modifyTimeStamp'
             'Name'
-            'nTSecurityDescriptor'
+            #'nTSecurityDescriptor'
             'ObjectCategory'
             'ObjectClass'
             'ObjectGUID'
