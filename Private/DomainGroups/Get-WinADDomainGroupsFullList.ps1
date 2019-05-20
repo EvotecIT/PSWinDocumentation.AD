@@ -54,7 +54,8 @@ function Get-WinADDomainGroupsFullList {
     }
     $Groups = Get-ADGroup -Server $Domain -Filter * -ResultPageSize $ResultPageSize -Properties $Properties
     foreach ($_ in $Groups) {
-        $DomainObjects.$($_.DistinguishedName) = $_
+        #  $DomainObjects.$($_.DistinguishedName) = $_
+        $DomainObjects.Add($_.DistinguishedName, $_)
     }
     $Groups
 }

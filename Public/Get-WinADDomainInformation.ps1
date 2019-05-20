@@ -528,11 +528,10 @@ function Get-WinADDomainInformation {
 
 
     $Data.DomainFineGrainedPoliciesUsersExtended = Get-DataInformation -Text "Getting domain information - $Domain DomainFineGrainedPoliciesUsersExtended" {
-        Get-WinADDomainFineGrainedPoliciesUsersExtended `
-            -DomainFineGrainedPolicies $Data.DomainFineGrainedPoliciesUsers `
-            -DomainUsersFullList $Data.DomainUsersFullList `
-            -DomainGroupsFullList $Data.DomainGroupsFullList `
-            -Domain $Domain
+        Get-WinADDomainFineGrainedPoliciesUsersExtended -DomainFineGrainedPolicies $Data.DomainFineGrainedPolicies -Domain $Domain -DomainObjects $Data.DomainObjects
+        #    -DomainUsersFullList $Data.DomainUsersFullList `
+        #    -DomainGroupsFullList $Data.DomainGroupsFullList `
+
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainFineGrainedPoliciesUsersExtended
     )

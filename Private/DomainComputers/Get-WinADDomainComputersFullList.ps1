@@ -31,7 +31,8 @@ function Get-WinADDomainComputersFullList {
 
     $Computers = Get-ADComputer -Server $Domain -Filter * -ResultPageSize $ResultPageSize -Properties $Properties -ErrorAction SilentlyContinue #| Select-Object -Property $Properties -ExcludeProperty $ExcludeProperty
     foreach ($_ in $Computers) {
-        $DomainObjects.$($_.DistinguishedName) = $_
+        #$DomainObjects.$($_.DistinguishedName) = $_
+        $DomainObjects.Add($_.DistinguishedName, $_)
     }
     $Computers
     #$EndUsers = Stop-TimeLog -Time $TimeUsers -Option OneLiner

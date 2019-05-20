@@ -68,7 +68,8 @@ function Get-WinADDomainUsersFullList {
 
     $Users = Get-ADUser -Server $Domain -ResultPageSize $ResultPageSize -Filter * -Properties $Properties #| Select-Object -Property $Properties -ExcludeProperty $ExcludeProperty
     foreach ($_ in $Users) {
-        $DomainObjects.$($_.DistinguishedName) = $_
+        #$DomainObjects.$($_.DistinguishedName) = $_
+        $DomainObjects.Add($_.DistinguishedName, $_)
     }
     $Users
     #$EndUsers = Stop-TimeLog -Time $TimeUsers -Option OneLiner

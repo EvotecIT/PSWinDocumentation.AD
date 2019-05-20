@@ -20,5 +20,5 @@ $Domain.DomainPasswordDESEncryptionOnly | Format-Table -Autosize
 $Domain.DomainPasswordDelegatableAdmins | Format-Table -Autosize
 $Domain.DomainPasswordDuplicatePasswordGroups | Format-Table -Autosize
 $Domain.DomainPasswordHashesWeakPassword | Format-Table -Autosize
-$Domain.DomainPasswordStats | ft -a
-$Domain.DomainPasswordHashesStats | ft -a
+$Domain.DomainPasswordStats | Format-Table -a
+$Domain.DomainPasswordHashesStats | Format-Table -a

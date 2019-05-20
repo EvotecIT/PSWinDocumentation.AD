@@ -1,11 +1,11 @@
 function Get-WinADDomainOrganizationalUnitsACLExtended {
     [cmdletbinding()]
     param(
-        $DomainOrganizationalUnitsClean,
+        [Array] $DomainOrganizationalUnitsClean,
         [string] $Domain = $Env:USERDNSDOMAIN,
         [string] $NetBiosName,
         [string] $RootDomainNamingContext,
-        $GUID
+        [hashtable] $GUID
     )
     #Write-Verbose -Message "Getting domain information - $Domain DomainOrganizationalUnitsExtended"
     #$Time = Start-TimeLog

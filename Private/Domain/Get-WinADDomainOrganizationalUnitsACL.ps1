@@ -1,7 +1,7 @@
 function Get-WinADDomainOrganizationalUnitsACL {
     [cmdletbinding()]
     param(
-        $DomainOrganizationalUnitsClean,
+        [Array] $DomainOrganizationalUnitsClean,
         [string] $Domain = $Env:USERDNSDOMAIN,
         [string] $NetBiosName,
         [string] $RootDomainNamingContext
