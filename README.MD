@@ -21,6 +21,10 @@
 
 ### ChangeLog
 
+- 0.1.1 - 28.05.2019
+  - Peformance update (up to 10x faster in larger domains)
+  - Small tweaks
+
 - 0.0.7 - 12.05.2019
   - First public release
 
