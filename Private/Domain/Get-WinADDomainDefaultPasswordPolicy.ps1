@@ -7,12 +7,12 @@
 
     [ordered] @{
         'Complexity Enabled'            = $Policy.ComplexityEnabled
-        'Lockout Duration'              = $Policy.LockoutDuration
-        'Lockout Observation Window'    = $Policy.LockoutObservationWindow
+        'Lockout Duration'              = ($Policy.LockoutDuration).TotalMinutes
+        'Lockout Observation Window'    = ($Policy.LockoutObservationWindow).TotalMinutes
         'Lockout Threshold'             = $Policy.LockoutThreshold
-        'Max Password Age'              = $Policy.MaxPasswordAge
+        'Max Password Age'              = $($Policy.MaxPasswordAge).TotalDays
         'Min Password Length'           = $Policy.MinPasswordLength
-        'Min Password Age'              = $Policy.MinPasswordAge
+        'Min Password Age'              = $($Policy.MinPasswordAge).TotalDays
         'Password History Count'        = $Policy.PasswordHistoryCount
         'Reversible Encryption Enabled' = $Policy.ReversibleEncryptionEnabled
         'Distinguished Name'            = $Policy.DistinguishedName

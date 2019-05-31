@@ -21,6 +21,9 @@
 
 ### ChangeLog
 
+- 0.1.3 - 31.05.2019
+  - Small changes to Default Password Policy Output (converted TimeSpan into Days/Minutes)
+
 - 0.1.1 - 28.05.2019
   - Peformance update (up to 10x faster in larger domains)
   - Small tweaks
