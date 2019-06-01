@@ -6,9 +6,9 @@
 
 <p align="center">
 <a href="https://www.powershellgallery.com/packages/PSWinDocumentation.AD"><img src="https://img.shields.io/powershellgallery/p/PSWinDocumentation.AD.svg"></a>
-<a href=""><img src="https://img.shields.io/github/languages/top/evotecit/PSWinDocumentation.AD.svg"></a>
-<a href=""><img src="https://img.shields.io/github/languages/code-size/evotecit/PSWinDocumentation.AD.svg"></a>
-<a href=""><img src="https://img.shields.io/powershellgallery/dt/PSWinDocumentation.AD.svg"></a>
+<a href="https://github.com/EvotecIT/PSWinDocumentation.AD"><img src="https://img.shields.io/github/languages/top/evotecit/PSWinDocumentation.AD.svg"></a>
+<a href="https://github.com/EvotecIT/PSWinDocumentation.AD"><img src="https://img.shields.io/github/languages/code-size/evotecit/PSWinDocumentation.AD.svg"></a>
+<a href="https://github.com/EvotecIT/PSWinDocumentation.AD"><img src="https://img.shields.io/powershellgallery/dt/PSWinDocumentation.AD.svg"></a>
 </p>
 
 # PSWinDocumentation.AD - PowerShell Module
