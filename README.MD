@@ -21,6 +21,9 @@
 
 ### ChangeLog
 
+- 0.1.4 - 1.06.2019
+  - Added ForestReplication data set (thanx Ronnie Smith)
+
 - 0.1.3 - 31.05.2019
   - Small changes to Default Password Policy Output (converted TimeSpan into Days/Minutes)
 

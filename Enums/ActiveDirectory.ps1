@@ -23,6 +23,7 @@ Add-Type -TypeDefinition @"
             ForestRootDSE,
             ForestSchemaPropertiesUsers,
             ForestSchemaPropertiesComputers,
+            ForestReplication,
 
             // Domain Information - Section Main
             DomainRootDSE,

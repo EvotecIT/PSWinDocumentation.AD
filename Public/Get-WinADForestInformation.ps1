@@ -10,6 +10,7 @@ function Get-WinADForestInformation {
         [switch] $DontRemoveEmpty,
         [string] $Splitter,
         [switch] $Parallel,
+        [switch] $Extended,
         [int] $ResultPageSize = 500000
     )
     Write-Verbose -Message "Getting all information - Start"
@@ -151,6 +152,12 @@ function Get-WinADForestInformation {
         Get-WinADForestOptionalFeatures
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::ForestOptionalFeatures
+    )
+
+    $Data.ForestReplication = Get-DataInformation -Text 'Getting forest information - ForestReplication' {
+        Get-WinADForestReplicationPartnerMetaData -Extended:$Extended
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::ForestReplication
     )
 
     $EndTimeForest = Stop-TimeLog -Time $TimeToGenerateForest -Continue
