@@ -1,15 +1,15 @@
-<center>
 
-[![PowerShellGallery Version](https://img.shields.io/powershellgallery/v/PSWinDocumentation.AD.svg)](https://www.powershellgallery.com/packages/PSWinDocumentation.AD)
+<p align="center">
+<a href="https://www.powershellgallery.com/packages/PSWinDocumentation.AD"><img src="https://img.shields.io/powershellgallery/v/PSWinDocumentation.AD.svg"></a>
+<a href="https://www.powershellgallery.com/packages/PSWinDocumentation.AD"><img src="https://img.shields.io/powershellgallery/vpre/PSWinDocumentation.AD.svg?label=powershell%20gallery%20preview&colorB=yellow"></a>
+</p>
 
-[![PowerShellGallery Platform](https://img.shields.io/powershellgallery/p/PSWinDocumentation.AD.svg)](https://www.powershellgallery.com/packages/PSWinDocumentation.AD)
-[![PowerShellGallery Preview Version](https://img.shields.io/powershellgallery/vpre/PSWinDocumentation.AD.svg?label=powershell%20gallery%20preview&colorB=yellow)](https://www.powershellgallery.com/packages/PSWinDocumentation.AD)
-
-![Top Language](https://img.shields.io/github/languages/top/evotecit/PSWinDocumentation.AD.svg)
-![Code](https://img.shields.io/github/languages/code-size/evotecit/PSWinDocumentation.AD.svg)
-[![PowerShellGallery Downloads](https://img.shields.io/powershellgallery/dt/PSWinDocumentation.AD.svg)](https://www.powershellgallery.com/packages/PSWinDocumentation.AD)
-
-</center>
+<p align="center">
+<a href="https://www.powershellgallery.com/packages/PSWinDocumentation.AD"><img src="https://img.shields.io/powershellgallery/p/PSWinDocumentation.AD.svg"></a>
+<a href=""><img src="https://img.shields.io/github/languages/top/evotecit/PSWinDocumentation.AD.svg"></a>
+<a href=""><img src="https://img.shields.io/github/languages/code-size/evotecit/PSWinDocumentation.AD.svg"></a>
+<a href=""><img src="https://img.shields.io/powershellgallery/dt/PSWinDocumentation.AD.svg"></a>
+</p>
 
 # PSWinDocumentation.AD - PowerShell Module
 
