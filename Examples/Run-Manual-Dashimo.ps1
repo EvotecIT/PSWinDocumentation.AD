@@ -1,11 +1,13 @@
 ﻿
 Import-Module Dashimo -Force
-Import-Module .\PSWinDocumentation.AD.psd1 -Force
-Import-Module PSWinReporting
+Import-Module PSWinDocumentation.AD -Force
+Import-Module PSWinReportingV2
 
 if ($null -eq $DataSetForest) {
     $DataSetForest = Get-WinADForestInformation -Verbose
 }
+return
+
 if ($null -eq $DataSetEvents) {
     $DataSetEvents = Find-Events -Report ADUserChangesDetailed, ADUserChanges, ADUserLockouts, ADUserStatus, ADGroupChanges -Servers 'AD1', 'AD2' -DatesRange Last7days -Quiet
 }
