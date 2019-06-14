@@ -24,6 +24,7 @@
             OperatingSystemVersion      = $_.OperatingSystemVersion
             OperatingSystemHotfix       = $_.OperatingSystemHotfix
             OperatingSystemServicePack  = $_.OperatingSystemServicePack
+            OperatingSystemBuild        = ConvertTo-OperatingSystem -OperatingSystem $_.OperatingSystem -OperatingSystemVersion $_.OperatingSystemVersion
             PasswordNeverExpires        = $_.PasswordNeverExpires
             PasswordNotRequired         = $_.PasswordNotRequired
             UserPrincipalName           = $_.UserPrincipalName
