@@ -54,7 +54,7 @@ function Get-WinADDomainInformation {
         )
     }
 
-    $Data.DomainObjects = @{}
+    $Data.DomainObjects = @{ }
 
     # Domain Root DSE - Complete TypesNeeded
     $Data.DomainRootDSE = Get-DataInformation -Text "Getting domain information - $Domain DomainRootDSE" {
@@ -75,32 +75,31 @@ function Get-WinADDomainInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainOrganizationalUnitsDN
         [PSWinDocumentation.ActiveDirectory]::DomainOrganizationalUnitsBasicACL
         [PSWinDocumentation.ActiveDirectory]::DomainOrganizationalUnitsExtendedACL
-
         [PSWinDocumentation.ActiveDirectory]::DomainAdministrators
         [PSWinDocumentation.ActiveDirectory]::DomainAdministratorsRecursive
         [PSWinDocumentation.ActiveDirectory]::DomainEnterpriseAdministrators
         [PSWinDocumentation.ActiveDirectory]::DomainEnterpriseAdministratorsRecursive
-
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDataPasswords,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordClearTextPassword,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordLMHash,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordEmptyPassword,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPassword,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordEnabled,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordDisabled,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordList,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDefaultComputerPassword,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordPasswordNotRequired,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordPasswordNeverExpires,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordAESKeysMissing,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordPreAuthNotRequired,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDESEncryptionOnly,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDelegatableAdmins,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDuplicatePasswordGroups,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordStats,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPassword,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordEnabled,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDataPasswords
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordClearTextPassword
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordLMHash
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordEmptyPassword
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPassword
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordEnabled
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordDisabled
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordList
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDefaultComputerPassword
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordPasswordNotRequired
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordPasswordNeverExpires
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordAESKeysMissing
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordPreAuthNotRequired
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDESEncryptionOnly
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDelegatableAdmins
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDuplicatePasswordGroups
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordStats
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPassword
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordEnabled
         [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordDisabled
+        [PSWinDocumentation.ActiveDirectory]::DomainGroupsPriviliged
     )
 
     # Groups
@@ -108,11 +107,11 @@ function Get-WinADDomainInformation {
         Get-WinADDomainGroupsFullList -Domain $Domain -DomainObjects $Data.DomainObjects -ResultPageSize $ResultPageSize
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsFullList
-
         [PSWinDocumentation.ActiveDirectory]::DomainUsers
         [PSWinDocumentation.ActiveDirectory]::DomainFineGrainedPoliciesUsers
         [PSWinDocumentation.ActiveDirectory]::DomainFineGrainedPoliciesUsersExtended
         [PSWinDocumentation.ActiveDirectory]::DomainGroups
+        [PSWinDocumentation.ActiveDirectory]::DomainGroupsPriviliged
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsMembers
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsMembersRecursive
     )
@@ -131,7 +130,6 @@ function Get-WinADDomainInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainUsersExpiredInclDisabled
         [PSWinDocumentation.ActiveDirectory]::DomainUsersExpiredExclDisabled
         [PSWinDocumentation.ActiveDirectory]::DomainUsersCount
-
         [PSWinDocumentation.ActiveDirectory]::DomainFineGrainedPoliciesUsers
         [PSWinDocumentation.ActiveDirectory]::DomainFineGrainedPoliciesUsersExtended
         [PSWinDocumentation.ActiveDirectory]::DomainGroups
@@ -543,7 +541,6 @@ function Get-WinADDomainInformation {
         Get-WinGroups -Groups $Data.DomainGroupsFullList -Domain $Domain -Splitter $Splitter -DomainObjects $Data.DomainObjects
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainGroups
-
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsPriviliged
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsSpecial
     )
@@ -560,7 +557,6 @@ function Get-WinADDomainInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsMembers
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsSpecialMembers
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsPriviligedMembers
-
         [PSWinDocumentation.ActiveDirectory]::DomainAdministrators
         [PSWinDocumentation.ActiveDirectory]::DomainEnterpriseAdministrators
     )
@@ -577,7 +573,6 @@ function Get-WinADDomainInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsMembersRecursive
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsSpecialMembersRecursive
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsPriviligedMembersRecursive
-
         [PSWinDocumentation.ActiveDirectory]::DomainAdministratorsRecursive
         [PSWinDocumentation.ActiveDirectory]::DomainEnterpriseAdministratorsRecursive
     )

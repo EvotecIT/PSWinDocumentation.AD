@@ -29,7 +29,7 @@ function Get-WinADForestInformation {
         return
     }
     # Start of building data
-    $Data = [ordered] @{}
+    $Data = [ordered] @{ }
 
     $Data.ForestRootDSE = Get-DataInformation -Text 'Getting forest information - ForestRootDSE' {
         Get-WinADRootDSE
@@ -60,6 +60,7 @@ function Get-WinADForestInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainComputersUnknownCount
         [PSWinDocumentation.ActiveDirectory]::DomainBitlocker
         [PSWinDocumentation.ActiveDirectory]::DomainLAPS
+        [PSWinDocumentation.ActiveDirectory]::ForestOptionalFeatures
     )
     $Data.ForestSchemaPropertiesUsers = Get-DataInformation -Text "Getting forest information - ForestSchemaPropertiesUsers" {
         Get-WinADForestSchemaPropertiesUsers
@@ -149,7 +150,7 @@ function Get-WinADForestInformation {
 
     ## Forest Optional Features
     $Data.ForestOptionalFeatures = Get-DataInformation -Text 'Getting forest information - ForestOptionalFeatures' {
-        Get-WinADForestOptionalFeatures
+        Get-WinADForestOptionalFeatures -ComputerProperties $ForestSchemaPropertiesComputers
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::ForestOptionalFeatures
     )
@@ -164,7 +165,7 @@ function Get-WinADForestInformation {
 
     $Data.FoundDomains = Get-DataInformation -Text 'Getting forest information - Domains' {
         ### Generate Data from Domains
-        $FoundDomains = @{}
+        $FoundDomains = @{ }
         foreach ($Domain in $Forest.Domains) {
             $FoundDomains.$Domain = Get-WinADDomainInformation -Domain $Domain `
                 -TypesRequired $TypesRequired `
