@@ -5,7 +5,7 @@
     )
     $FineGrainedPoliciesData = Get-ADFineGrainedPasswordPolicy -Filter * -Server $Domain
     $FineGrainedPolicies = foreach ($Policy in $FineGrainedPoliciesData) {
-        [PSCustomObject][ordered] @{
+        [PsCustomObject] @{
             'Name'                          = $Policy.Name
             'Complexity Enabled'            = $Policy.ComplexityEnabled
             'Lockout Duration'              = $Policy.LockoutDuration

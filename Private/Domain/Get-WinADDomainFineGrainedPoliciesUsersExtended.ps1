@@ -26,7 +26,7 @@ function Get-WinADDomainFineGrainedPoliciesUsersExtended {
             foreach ($User in $Users) {
                 $Manager = Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $User.Manager
 
-                [pscustomobject][ordered] @{
+                [PsCustomObject] @{
                     'Policy Name'                       = $Policy.Name
                     Name                                = $User.Name
                     SamAccountName                      = $User.SamAccountName
@@ -80,7 +80,7 @@ function Get-WinADDomainFineGrainedPoliciesUsersExtended {
                     # $Object = (Get-ADObjectFromDistingusishedName -ADCatalog $DomainUsersFullList -DistinguishedName $Member.DistinguishedName)
                     $Object = Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $Member.DistinguishedName
                     $Manager = Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $Object.Manager
-                    [pscustomobject][ordered] @{
+                    [PsCustomObject] @{
                         'Policy Name'                       = $Policy.Name
                         Name                                = $Group.Name
                         SamAccountName                      = $Group.SamAccountName

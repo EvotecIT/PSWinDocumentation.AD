@@ -8,7 +8,7 @@
         $GroupPolicies = Get-GPO -Domain $Domain -All
     }
     foreach ($gpo in $GroupPolicies) {
-        [PSCustomObject][ordered] @{
+        [PsCustomObject] @{
             'Display Name'      = $gpo.DisplayName
             'Gpo Status'        = $gpo.GPOStatus
             'Creation Time'     = $gpo.CreationTime

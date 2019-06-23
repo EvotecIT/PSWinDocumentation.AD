@@ -17,7 +17,7 @@
             #Get-ADObjectFromDistingusishedName -ADCatalog $DomainGroupsFullList -DistinguishedName $U
         #}
         foreach ($_ in $AllObjects) {
-            [pscustomobject][ordered] @{
+            [PsCustomObject] @{
                 'Policy Name'  = $Policy.Name
                 Name           = $_.Name
                 SamAccountName = $_.SamAccountName
@@ -27,7 +27,7 @@
         }
         <#
         foreach ($Group in $Groups) {
-            [pscustomobject][ordered] @{
+            [PsCustomObject] @{
                 'Policy Name'  = $Policy.Name
                 Name           = $Group.Name
                 SamAccountName = $Group.SamAccountName

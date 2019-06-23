@@ -5,7 +5,7 @@ function Get-WinADForestSites1 {
     )
     @(
         foreach ($Sites in $ForestSites) {
-            [PSCustomObject][ordered] @{
+            [PsCustomObject] @{
                 'Name'        = $Sites.Name
                 'Description' = $Sites.Description
                 #'sD Rights Effective'                = $Sites.sDRightsEffective

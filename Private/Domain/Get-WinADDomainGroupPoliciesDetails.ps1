@@ -33,7 +33,7 @@
             $ComputerSettingsConfigured = $true
         }
         #Output
-        [PSCustomObject][ordered] @{
+        [PsCustomObject] @{
             'Name'                   = $XmlGPReport.GPO.Name
             'Links'                  = $XmlGPReport.GPO.LinksTo | Select-Object -ExpandProperty SOMPath
             'Has Computer Settings'  = $ComputerSettingsConfigured

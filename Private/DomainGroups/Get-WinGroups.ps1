@@ -16,12 +16,12 @@ function Get-WinGroups {
         # $GroupMembers = (Get-ADObjectFromDistingusishedName -Splitter $Splitter -ADCatalog $Data.DomainUsersFullList, $Data.DomainComputersFullList, $Data.DomainGroupsFullList -DistinguishedName $Group.Members -Type 'SamAccountName')
         #$GroupMembers = Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $Group.Members -Splitter $Splitter -Type 'SamAccountName'
 
-        [PsCustomObject][ordered] @{
-            'Group Name'            = $Group.Name
+        [PsCustomObject] @{
+            'Group Name'            = [string] $Group.Name
             #'Group Display Name' = $Group.DisplayName
-            'Group Category'        = $Group.GroupCategory
-            'Group Scope'           = $Group.GroupScope
-            'Group SID'             = $Group.SID.Value
+            'Group Category'        = [string] $Group.GroupCategory
+            'Group Scope'           = [string] $Group.GroupScope
+            'Group SID'             = [string] $Group.SID.Value
             'High Privileged Group' = if ($Group.adminCount -eq 1) { $True } else { $False }
             'Member Count'          = $Group.Members.Count
             'MemberOf Count'        = $Group.MemberOf.Count

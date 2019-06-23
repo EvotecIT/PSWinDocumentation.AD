@@ -43,7 +43,7 @@ function Get-WinADDomainTrusts {
 
     $ReturnData = foreach ($Trust in $Trusts) {
         $TrustWMI = $TrustStatatuses | & { process { if ($_.TrustedDomain -eq $Trust.Target ) { $_ } } }
-        [PSCustomObject][ordered] @{
+        [PsCustomObject] @{
             'Trust Source'               = $Domain
             'Trust Target'               = $Trust.Target
             'Trust Direction'            = $Trust.Direction

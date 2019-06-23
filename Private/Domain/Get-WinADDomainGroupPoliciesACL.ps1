@@ -11,7 +11,7 @@
         [xml]$XmlGPReport = $GPO.generatereport('xml')
         $ACLs = $XmlGPReport.GPO.SecurityDescriptor.Permissions.TrusteePermissions
         foreach ($ACL in $ACLS) {
-            [PSCustomObject][ordered] @{
+            [PsCustomObject] @{
                 'GPO Name'        = $GPO.DisplayName
                 'User'            = $ACL.trustee.name.'#Text'
                 'Permission Type' = $ACL.type.PermissionType

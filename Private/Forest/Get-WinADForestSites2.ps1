@@ -5,7 +5,7 @@ function Get-WinADForestSites2 {
     )
     @(
         foreach ($Sites in $ForestSites) {
-            [PSCustomObject][ordered] @{
+            [PsCustomObject] @{
                 'Name'                                = $Sites.Name
                 'Topology Cleanup Enabled'            = $Sites.TopologyCleanupEnabled
                 'Topology Detect Stale Enabled'       = $Sites.TopologyDetectStaleEnabled

@@ -9,7 +9,7 @@
     [DateTime] $CurrentDate = Get-Date
     $UserList = foreach ($U in $Users) {
         $Manager = Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $U.Manager
-        [PsCustomObject][Ordered] @{
+        [PsCustomObject] @{
             'Name'                              = $U.Name
             'UserPrincipalName'                 = $U.UserPrincipalName
             'SamAccountName'                    = $U.SamAccountName

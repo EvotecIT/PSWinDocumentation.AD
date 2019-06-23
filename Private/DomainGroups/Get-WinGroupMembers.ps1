@@ -24,7 +24,7 @@ function Get-WinGroupMembers {
                 $Object = Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName  $Member.DistinguishedName
                 $Manager = Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $Object.Manager
 
-                [PSCustomObject][ordered] @{
+                [PsCustomObject] @{
                     'Group Name'                        = $Group.'Group Name'
                     'Group SID'                         = $Group.'Group SID'
                     'Group Category'                    = $Group.'Group Category'
@@ -84,7 +84,7 @@ function Get-WinGroupMembers {
                 $Object = Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName  $Member
                 $Manager = Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $Object.Manager
 
-                [PSCustomObject][ordered] @{
+                [PsCustomObject] @{
                     'Group Name'                        = $Group.'Group Name'
                     'Group SID'                         = $Group.'Group SID'
                     'Group Category'                    = $Group.'Group Category'

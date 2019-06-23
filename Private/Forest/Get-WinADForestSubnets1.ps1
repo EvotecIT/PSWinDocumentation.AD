@@ -4,7 +4,7 @@ function Get-WinADForestSubnets1 {
         [Array] $ForestSubnets
     )
      foreach ($Subnets in $ForestSubnets) {
-        [PSCustomObject][ordered] @{
+        [PsCustomObject] @{
             'Name'        = $Subnets.Name
             'Description' = $Subnets.Description
             'Protected'   = $Subnets.ProtectedFromAccidentalDeletion

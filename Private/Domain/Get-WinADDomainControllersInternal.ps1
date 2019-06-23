@@ -4,7 +4,7 @@
     )
     $DomainControllersClean = Get-ADDomainController -Server $Domain -Filter *
     foreach ($DC in $DomainControllersClean) {
-        [PSCustomObject][ordered] @{
+        [PsCustomObject] @{
             'Name'             = $DC.Name
             'Host Name'        = $DC.HostName
             'Operating System' = $DC.OperatingSystem
