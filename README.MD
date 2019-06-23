@@ -21,6 +21,14 @@
 
 ### ChangeLog
 
+- 0.1.5 - Not released yet
+  - [x] ForestOptionalFeatures
+    - Added LAPS detection in Optional Features
+  - [x] DomainGroupsPriviliged
+    - Wouldn't work when asked just for this value
+  - Removed [ordered] from [PSCustomObject] - not needed
+  - Started fixing Enum values so that they are immune to Import-CliXML issues
+
 - 0.1.4 - 1.06.2019
   - Added ForestReplication data set (thanx Ronnie Smith)
 
