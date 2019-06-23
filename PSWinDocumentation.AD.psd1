@@ -51,8 +51,8 @@
     # ProcessorArchitecture = ''
 
     # Modules that must be imported into the global environment prior to importing this module
-    RequiredModules = @(@{ModuleName = 'PSSharedGoods'; GUID = 'ee272aa8-baaa-4edf-9f45-b6d6f7d844fe'; ModuleVersion = '0.0.77'; }, 
-        @{ModuleName = 'DSInternals'; GUID = '766b3ad8-eb78-48e6-84bd-61b31d96b53e'; ModuleVersion = '3.4'; })
+    RequiredModules = @(@{ModuleName = 'PSSharedGoods'; GUID = 'ee272aa8-baaa-4edf-9f45-b6d6f7d844fe'; ModuleVersion = '0.0.79'; }, 
+        @{ModuleName = 'DSInternals'; GUID = '766b3ad8-eb78-48e6-84bd-61b31d96b53e'; ModuleVersion = '3.5'; })
 
     # Assemblies that must be loaded prior to importing this module
     # RequiredAssemblies = @()
