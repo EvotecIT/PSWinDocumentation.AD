@@ -3,13 +3,18 @@
     param(
         [switch] $Extended
     )
-    $Replication = Get-ADReplicationPartnerMetadata -Target * -Partition *
+    $Replication = Get-ADReplicationPartnerMetadata -Target * -Partition * -ErrorAction SilentlyContinue -ErrorVariable ProcessErrors
+    if ($ProcessErrors) {
+        foreach ($_ in $ProcessErrors) {
+            Write-Warning -Message "Get-WinADForestReplicationPartnerMetaData - Error on server $($_.Exception.ServerName): $($_.Exception.Message)"
+        }
+    }
     foreach ($_ in $Replication) {
-        $ServerPartner = (Resolve-DnsName -Name $_.PartnerAddress -Verbose:$false)
-        $ServerInitiating = (Resolve-DnsName -Name $_.Server -Verbose:$false)
+        $ServerPartner = (Resolve-DnsName -Name $_.PartnerAddress -Verbose:$false -ErrorAction SilentlyContinue)
+        $ServerInitiating = (Resolve-DnsName -Name $_.Server -Verbose:$false -ErrorAction SilentlyContinue)
         $ReplicationObject = [ordered] @{
             Server                         = $_.Server
-            ServerIPV4 = $ServerInitiating.IP4Address
+            ServerIPV4                     = $ServerInitiating.IP4Address
             ServerPartner                  = $ServerPartner.NameHost
             ServerPartnerIPV4              = $ServerPartner.IP4Address
             LastReplicationAttempt         = $_.LastReplicationAttempt
