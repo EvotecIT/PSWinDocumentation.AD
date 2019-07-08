@@ -13,6 +13,8 @@ function Get-WinADDomainInformation {
         [switch] $Parallel,
         [int] $ResultPageSize = 500000
     )
+    $PSDefaultParameterValues["Get-DataInformation:Verbose"] = $PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent
+
     $Data = [ordered] @{ }
 
     if ($Domain -eq '') {

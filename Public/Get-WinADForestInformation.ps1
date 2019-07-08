@@ -13,6 +13,8 @@ function Get-WinADForestInformation {
         [switch] $Extended,
         [int] $ResultPageSize = 500000
     )
+    $PSDefaultParameterValues["Get-DataInformation:Verbose"] = $PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent
+
     Write-Verbose -Message "Getting all information - Start"
     Write-Verbose -Message "Getting forest information - Start"
     $TimeToGenerateForest = Start-TimeLog

@@ -21,6 +21,10 @@
 
 ### ChangeLog
 
+- 0.1.6 - 8.07.2019
+  - [x] Get-WinADForestReplicationPartnerMetaData - error optimizations
+  - [x] Updated DSInternals to 3.6
+
 - 0.1.5 - 23.06.2019
   - [x] ForestOptionalFeatures
     - Added LAPS detection in Optional Features
