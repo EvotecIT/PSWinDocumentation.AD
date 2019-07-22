@@ -90,6 +90,7 @@ Add-Type -TypeDefinition @"
             // Domain Information - Computer Data
             DomainComputersFullList, // Contains all data
             DomainComputersAll,
+            DomainComputersAllBuildCount,
             DomainComputersAllCount,
             DomainComputers,
             DomainComputersCount,

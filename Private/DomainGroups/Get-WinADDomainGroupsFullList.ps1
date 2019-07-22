@@ -59,3 +59,19 @@ function Get-WinADDomainGroupsFullList {
     }
     $Groups
 }
+
+<#
+$Groups = Get-ADGroup -Filter *
+$GroupsWithMembers = foreach ($_ in $Groups) {
+    $Members = Get-ADGroupMember -Identity $_ -Recursive
+    foreach ($Member in $Members) {
+        [PSCustomobject] @{
+            'Group Name'               = $_.Name
+            'Member Name'              = $Member.Name
+            'Member SamAccountName'    = $Member.SamAccountName
+            'Member UserPrincipalName' = $Member.UserPrincipalName
+        }
+    }
+}
+$GroupsWithMembers | Format-Table -AutoSize
+#>

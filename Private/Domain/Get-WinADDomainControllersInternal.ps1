@@ -1,4 +1,5 @@
 ﻿function Get-WinADDomainControllersInternal {
+    [CmdletBinding()]
     param(
         [string] $Domain
     )

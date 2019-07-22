@@ -13,6 +13,8 @@ function Get-WinADDomainInformation {
         [switch] $Parallel,
         [int] $ResultPageSize = 500000
     )
+    # temporary set here, will be moved to variables when all functions will support it
+    $Formatted = $true
     $PSDefaultParameterValues["Get-DataInformation:Verbose"] = $PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent
 
     $Data = [ordered] @{ }
@@ -146,6 +148,7 @@ function Get-WinADDomainInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainComputersFullList
         [PSWinDocumentation.ActiveDirectory]::DomainComputersAll
         [PSWinDocumentation.ActiveDirectory]::DomainComputersAllCount
+        [PSWinDocumentation.ActiveDirectory]::DomainComputersAllBuildCount
         [PSWinDocumentation.ActiveDirectory]::DomainServers
         [PSWinDocumentation.ActiveDirectory]::DomainServersCount
         [PSWinDocumentation.ActiveDirectory]::DomainComputers
@@ -165,6 +168,7 @@ function Get-WinADDomainInformation {
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainComputersAll
         [PSWinDocumentation.ActiveDirectory]::DomainComputersAllCount
+        [PSWinDocumentation.ActiveDirectory]::DomainComputersAllBuildCount
         [PSWinDocumentation.ActiveDirectory]::DomainServers
         [PSWinDocumentation.ActiveDirectory]::DomainServersCount
         [PSWinDocumentation.ActiveDirectory]::DomainComputers
@@ -179,7 +183,11 @@ function Get-WinADDomainInformation {
         Get-WinADDomainComputersAllCount -DomainComputersAll $Data.DomainComputersAll
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainComputersAllCount
-        [PSWinDocumentation.ActiveDirectory]::DomainComputersAll
+    )
+    $Data.DomainComputersAllBuildCount = Get-DataInformation -Text "Getting domain information - $Domain DomainComputersAllBuildCount" {
+        Get-WinADDomainComputersAllBuildSummary -DomainComputersAll $Data.DomainComputersAll -Formatted:$Formatted
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::DomainComputersAllBuildCount
     )
 
     $Data.DomainServers = Get-DataInformation -Text "Getting domain information - $Domain DomainServers" {

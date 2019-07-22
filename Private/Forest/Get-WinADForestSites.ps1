@@ -40,12 +40,3 @@ function Get-WinADForestSites {
     )
     return Get-ADReplicationSite -Filter * -Properties $Properties | Select-Object -Property $Properties -ExcludeProperty $ExludedProperties
 }
-
-
-
-
-
-
-
-
-

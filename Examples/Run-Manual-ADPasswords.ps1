@@ -5,7 +5,7 @@ Import-Module PSWinDocumentation.AD
 #$PathToPasswordsHashes = 'C:\Users\pklys\Downloads\pwned-passwords-ntlm-ordered-by-count\pwned-passwords-ntlm-ordered-by-count.txt'
 
 $Forest = Get-WinADForestInformation -Verbose -PathToPasswords $PathToPasswords -PasswordQuality
-
+$Forest
 <#
 $Domain = Get-WinADDomainInformation -Domain 'ad.evotec.xyz' -Verbose -PathToPasswords $PathToPasswords #-PathToPasswordsHashes $PathToPasswordsHashes
 $Domain.DomainPasswordClearTextPassword | Format-Table -Autosize

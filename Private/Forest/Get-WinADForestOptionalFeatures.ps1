@@ -1,16 +1,17 @@
 function Get-WinADForestOptionalFeatures {
     [CmdletBinding()]
     param(
-        $ComputerProperties
+        [Array] $ComputerProperties
     )
-
+    if (-not $ComputerProperties) {
+        $ComputerProperties = Get-WinADForestSchemaPropertiesComputers
+    }
     $LapsProperties = 'ms-Mcs-AdmPwd' #  'ms-Mcs-AdmPwdExpirationTime'
-
-
     $OptionalFeatures = $(Get-ADOptionalFeature -Filter * )
     $Optional = [ordered]@{
-        'Recycle Bin Enabled'                          = 'N/A'
-        'Privileged Access Management Feature Enabled' = 'N/A'
+        'Recycle Bin Enabled'                          = $false
+        'Privileged Access Management Feature Enabled' = $false
+        'Laps Enabled'                                 = ($ComputerProperties -contains $LapsProperties)
     }
     foreach ($Feature in $OptionalFeatures) {
         if ($Feature.Name -eq 'Recycle Bin Feature') {
@@ -20,6 +21,5 @@ function Get-WinADForestOptionalFeatures {
             $Optional.'Privileged Access Management Feature Enabled' = $Feature.EnabledScopes.Count -gt 0
         }
     }
-    $Optional.'Laps Enabled' = ($ComputerProperties -contains $LapsProperties)
     return $Optional
 }
