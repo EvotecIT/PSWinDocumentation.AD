@@ -185,7 +185,7 @@ function Get-WinADDomainInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainComputersAllCount
     )
     $Data.DomainComputersAllBuildCount = Get-DataInformation -Text "Getting domain information - $Domain DomainComputersAllBuildCount" {
-        Get-WinADDomainComputersAllBuildSummary -DomainComputersAll $Data.DomainComputersAll -Formatted:$Formatted
+        Get-WinADDomainComputersAllBuildSummary -DomainComputers $Data.DomainComputersAll -Formatted:$Formatted
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainComputersAllBuildCount
     )
