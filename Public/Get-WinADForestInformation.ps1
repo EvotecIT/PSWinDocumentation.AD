@@ -158,7 +158,7 @@ function Get-WinADForestInformation {
     )
 
     $Data.ForestReplication = Get-DataInformation -Text 'Getting forest information - ForestReplication' {
-        Get-WinADForestReplicationPartnerMetaData -Extended:$Extended
+        Get-WinADForestReplication -Extended:$Extended
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::ForestReplication
     )
