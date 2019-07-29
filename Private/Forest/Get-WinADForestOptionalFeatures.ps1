@@ -11,7 +11,7 @@ function Get-WinADForestOptionalFeatures {
     $Optional = [ordered]@{
         'Recycle Bin Enabled'                          = $false
         'Privileged Access Management Feature Enabled' = $false
-        'Laps Enabled'                                 = ($ComputerProperties -contains $LapsProperties)
+        'Laps Enabled'                                 = ($ComputerProperties.Name -contains $LapsProperties)
     }
     foreach ($Feature in $OptionalFeatures) {
         if ($Feature.Name -eq 'Recycle Bin Feature') {
