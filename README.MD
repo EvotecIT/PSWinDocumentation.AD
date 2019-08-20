@@ -21,6 +21,9 @@
 
 ### ChangeLog
 
+- 0.1.7 - 20.08.2019
+  - [x] Added ForestRoles (FSMO different)
+  - [x] Modified ForestSites, ForestSites1, ForestSites2
 - 0.1.6 - 8.07.2019
   - [x] Get-WinADForestReplicationPartnerMetaData - error optimizations
   - [x] Updated DSInternals to 3.6
@@ -58,6 +61,7 @@ Install-Module PSWinDocumentation.AD -Force
 
 - [x] ForestInformation
 - [x] ForestFSMO
+- [ ] ForestRoles
 - [x] ForestGlobalCatalogs
 - [x] ForestOptionalFeatures
 - [x] ForestUPNSuffixes

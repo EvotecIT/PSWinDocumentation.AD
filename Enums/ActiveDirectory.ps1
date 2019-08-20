@@ -8,6 +8,7 @@ Add-Type -TypeDefinition @"
             // Forest Information - Section Main
             ForestInformation,
             ForestFSMO,
+            ForestRoles,
             ForestGlobalCatalogs,
             ForestOptionalFeatures,
             ForestUPNSuffixes,

@@ -6,6 +6,7 @@ function Get-WinADDomainInformation {
         [string] $PathToPasswords,
         [string] $PathToPasswordsHashes,
         [switch] $Extended,
+        [switch] $Formatted,
         [Array] $ForestSchemaComputers,
         [Array] $ForestSchemaUsers,
         [switch] $PasswordQuality,

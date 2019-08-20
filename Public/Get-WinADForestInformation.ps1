@@ -8,6 +8,7 @@ function Get-WinADForestInformation {
         [switch] $PasswordQuality,
         [switch] $DontRemoveSupportData,
         [switch] $DontRemoveEmpty,
+        [switch] $Formatted,
         [string] $Splitter,
         [switch] $Parallel,
         [switch] $Extended,
@@ -107,19 +108,29 @@ function Get-WinADForestInformation {
 
     # Forest Sites
     $Data.ForestSites = Get-DataInformation -Text 'Getting forest information - ForestSites' {
-        Get-WinADForestSites
+        Get-WinADForestSites -Formatted:$Formatted -Splitter $Splitter
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::ForestSites
         [PSWinDocumentation.ActiveDirectory]::ForestSites1
         [PSWinDocumentation.ActiveDirectory]::ForestSites2
     )
     $Data.ForestSites1 = Get-DataInformation -Text 'Getting forest information - ForestSites1' {
-        Get-WinADForestSites1 -ForestSites $Data.ForestSites
+        if ($Formatted) {
+            $Data.ForestSites | Select-Object -Property Name, Description, Protected, 'Subnets Count', 'Domain Controllers Count', Modified
+        } else {
+            $Data.ForestSites | Select-Object -Property Name, Description, Protected, 'SubnetsCount', 'DomainControllersCount', Modified
+        }
+        #Get-WinADForestSites1 -ForestSites $Data.ForestSites
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::ForestSites1
     )
     $Data.ForestSites2 = Get-DataInformation -Text 'Getting forest information - ForestSites2' {
-        Get-WinADForestSites2 -ForestSites $Data.ForestSites
+        if ($Formatted) {
+            $Data.ForestSites | Select-Object -Property 'Topology Cleanup Enabled', 'Topology DetectStale Enabled', 'Topology MinimumHops Enabled', 'Universal Group Caching Enabled', 'Universal Group Caching Refresh Site'
+        } else {
+            $Data.ForestSites | Select-Object -Property TopologyCleanupEnabled, TopologyDetectStaleEnabled, TopologyMinimumHopsEnabled, UniversalGroupCachingEnabled, UniversalGroupCachingRefreshSite
+        }
+        #Get-WinADForestSites2 -ForestSites $Data.ForestSites
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::ForestSites2
     )
@@ -174,7 +185,7 @@ function Get-WinADForestInformation {
                 -PathToPasswords $PathToPasswords `
                 -PathToPasswordsHashes $PathToPasswordsHashes `
                 -ForestSchemaComputers $Data.ForestSchemaPropertiesComputers  `
-                -ForestSchemaUsers $Data.ForestSchemaPropertiesUsers -PasswordQuality:$PasswordQuality -Splitter $Splitter -Parallel:$Parallel -ResultPageSize $ResultPageSize
+                -ForestSchemaUsers $Data.ForestSchemaPropertiesUsers -PasswordQuality:$PasswordQuality -Splitter $Splitter -Parallel:$Parallel -ResultPageSize $ResultPageSize -Formatted:$formatted
         }
         $FoundDomains
     } -TypesRequired $TypesRequired -TypesNeeded @(

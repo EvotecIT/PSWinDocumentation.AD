@@ -7,6 +7,7 @@ function Get-WinADDomainFineGrainedPoliciesUsersExtended {
         [string] $Domain = ($Env:USERDNSDOMAIN).ToLower(),
         [hashtable] $DomainObjects
     )
+    $CurrentDate = Get-Date
     $PolicyUsers = @(
         foreach ($Policy in $DomainFineGrainedPolicies) {
             $Objects = foreach ($U in $Policy.'Applies To') {
