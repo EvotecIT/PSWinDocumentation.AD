@@ -12,7 +12,7 @@
     RootModule = 'PSWinDocumentation.AD.psm1'
 
     # Version number of this module.
-    ModuleVersion = '0.1.12'
+    ModuleVersion = '0.1.13'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -51,9 +51,9 @@
     # ProcessorArchitecture = ''
 
     # Modules that must be imported into the global environment prior to importing this module
-    RequiredModules = @(@{ModuleName = 'PSSharedGoods'; GUID = 'ee272aa8-baaa-4edf-9f45-b6d6f7d844fe'; RequiredVersion = '0.0.87'; }, 
-        @{ModuleName = 'DSInternals'; GUID = '766b3ad8-eb78-48e6-84bd-61b31d96b53e'; RequiredVersion = '3.6.1'; }, 
-        @{ModuleName = 'ADEssentials'; GUID = '9fc9fd61-7f11-4f4b-a527-084086f1905f'; RequiredVersion = '0.0.8'; })
+    RequiredModules = @(@{ModuleName = 'PSSharedGoods'; GUID = 'ee272aa8-baaa-4edf-9f45-b6d6f7d844fe'; ModuleVersion = '0.0.88'; }, 
+        @{ModuleName = 'DSInternals'; GUID = '766b3ad8-eb78-48e6-84bd-61b31d96b53e'; ModuleVersion = '3.6.1'; }, 
+        @{ModuleName = 'ADEssentials'; GUID = '9fc9fd61-7f11-4f4b-a527-084086f1905f'; ModuleVersion = '0.0.10'; })
 
     # Assemblies that must be loaded prior to importing this module
     # RequiredAssemblies = @()
