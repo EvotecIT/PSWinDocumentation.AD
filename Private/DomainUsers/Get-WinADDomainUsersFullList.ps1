@@ -4,11 +4,24 @@ function Get-WinADDomainUsersFullList {
         [string] $Domain = $Env:USERDNSDOMAIN,
         [switch] $Extended,
         [Array] $ForestSchemaUsers,
-        [HashTable] $DomainObjects,
+        [System.Collections.IDictionary] $DomainObjects,
         [int] $ResultPageSize = 500000
     )
-    #Write-Verbose "Getting domain information - $Domain DomainUsersFullList"
-    #$TimeUsers = Start-TimeLog
+    if ($null -eq $ForestSchemaUsers) {
+        $ForestSchemaUsers = @(
+            $Schema = [directoryservices.activedirectory.activedirectoryschema]::GetCurrentSchema()
+            @(
+                $Schema.FindClass("user").MandatoryProperties #| Select-Object name, commonname, description, syntax #| export-csv user-mandatory-attributes.csv -Delimiter ';'
+                $Schema.FindClass("user").OptionalProperties #| Select-Object name, commonname, description, syntax #| export-csv user-optional-attributes.csv -Delimiter ';'
+                $Schema.FindClass("user").PossibleSuperiors #| Select-Object name, commonname, description, syntax
+                $Schema.FindClass("user").PossibleInferiors #| Select-Object name, commonname, description, syntax
+                $Schema.FindClass("user").AuxiliaryClasses
+            )
+            # $Schema.FindClass("user").FindAllProperties() | Select-Object name, commonname, description, syntax
+        )
+
+    }
+
     if ($Extended) {
         [string] $Properties = '*'
     } else {
@@ -62,16 +75,22 @@ function Get-WinADDomainUsersFullList {
                 'ExtensionAttribute15'
             }
         )
+        <#
+        $Properties = foreach ($_ in $Properties) {
+            if ($ForestSchemaUsers.Name -contains $_ -or $ForestSchemaUsers.CommonName -contains $_) {
+                $_
+            } else {
+                Write-Warning $_
+            }
+        }
+        #>
     }
-
     #[string[]] $ExcludeProperty = '*Certificate', 'PropertyNames', '*Properties', 'PropertyCount', 'Certificates', 'nTSecurityDescriptor'
-
     $Users = Get-ADUser -Server $Domain -ResultPageSize $ResultPageSize -Filter * -Properties $Properties #| Select-Object -Property $Properties -ExcludeProperty $ExcludeProperty
-    foreach ($_ in $Users) {
-        #$DomainObjects.$($_.DistinguishedName) = $_
-        $DomainObjects.Add($_.DistinguishedName, $_)
+    if ($null -ne $DomainObjects) {
+        foreach ($_ in $Users) {
+            $DomainObjects.Add($_.DistinguishedName, $_)
+        }
     }
     $Users
-    #$EndUsers = Stop-TimeLog -Time $TimeUsers -Option OneLiner
-    #Write-Verbose "Getting domain information - $Domain DomainUsersFullList Time: $EndUsers"
 }
