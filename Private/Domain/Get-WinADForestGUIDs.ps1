@@ -1,9 +1,35 @@
 function Get-WinADForestGUIDs {
+    <#
+    .SYNOPSIS
+    Short description
+
+    .DESCRIPTION
+    Long description
+
+    .PARAMETER Domain
+    Parameter description
+
+    .PARAMETER RootDSE
+    Parameter description
+
+    .PARAMETER DisplayNameKey
+    Parameter description
+
+    .EXAMPLE
+    Get-WinADForestGUIDs
+
+    .EXAMPLE
+    Get-WinADForestGUIDs -DisplayNameKey
+
+    .NOTES
+    General notes
+    #>
     [alias('Get-WinADDomainGUIDs')]
     [cmdletbinding()]
     param(
         [string] $Domain = $Env:USERDNSDOMAIN,
-        [Microsoft.ActiveDirectory.Management.ADEntity] $RootDSE
+        [Microsoft.ActiveDirectory.Management.ADEntity] $RootDSE,
+        [switch] $DisplayNameKey
     )
     if ($null -eq $RootDSE) {
         $RootDSE = Get-ADRootDSE -Server $Domain
@@ -17,7 +43,11 @@ function Get-WinADForestGUIDs {
             $GUID.add([System.GUID]$S.schemaIDGUID, $S.name)
         }
         #>
-        $GUID["$(([System.GUID]$S.schemaIDGUID).Guid)"] = $S.name
+        if ($DisplayNameKey) {
+            $GUID["$($S.name)"] = $(([System.GUID]$S.schemaIDGUID).Guid)
+        } else {
+            $GUID["$(([System.GUID]$S.schemaIDGUID).Guid)"] = $S.name
+        }
     }
 
 
@@ -28,7 +58,11 @@ function Get-WinADForestGUIDs {
             $GUID.add([System.GUID]$S.rightsGUID, $S.name)
         }
         #>
-        $GUID["$(([System.GUID]$S.rightsGUID).Guid)"] = $S.name
+        if ($DisplayNameKey) {
+            $GUID["$($S.name)"] = $(([System.GUID]$S.rightsGUID).Guid)
+        } else {
+            $GUID["$(([System.GUID]$S.rightsGUID).Guid)"] = $S.name
+        }
     }
     return $GUID
 }
