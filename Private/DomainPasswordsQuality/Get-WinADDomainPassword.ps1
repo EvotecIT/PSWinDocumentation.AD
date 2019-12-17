@@ -1,11 +1,11 @@
 ﻿function Get-WinADDomainPassword {
     [CmdletBinding()]
     param(
-        $DnsRoot,
-        $DistinguishedName
+        [alias('DnsRoot')][string] $Server,
+        [alias('DomainDN')][string] $DistinguishedName
     )
     try {
-        Get-ADReplAccount -All -Server $DnsRoot -NamingContext $DistinguishedName
+        Get-ADReplAccount -All -Server $Server -NamingContext $DistinguishedName
     } catch {
         $ErrorMessage = $_.Exception.Message -replace "`n", " " -replace "`r", " "
         if ($ErrorMessage -like '*is not recognized as the name of a cmdlet*') {
@@ -15,4 +15,3 @@
         }
     }
 }
-

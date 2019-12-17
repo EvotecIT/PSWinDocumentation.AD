@@ -13,8 +13,6 @@ function Get-WinADDomainOrganizationalUnits {
 
         [PSCustomObject] @{
             'Canonical Name'  = $_.CanonicalName
-            # 'Managed By'      = (Get-ADObjectFromDistingusishedName -ADCatalog $Data.DomainUsersFullList -DistinguishedName $_.ManagedBy -Verbose).Name
-            # 'Manager Email'   = (Get-ADObjectFromDistingusishedName -ADCatalog $Data.DomainUsersFullList -DistinguishedName $_.ManagedBy -Verbose).EmailAddress
             'Managed'         = $Manager.Name
             'Manager Email'   = $Manager.EmailAddress
             'Protected'       = $_.ProtectedFromAccidentalDeletion
