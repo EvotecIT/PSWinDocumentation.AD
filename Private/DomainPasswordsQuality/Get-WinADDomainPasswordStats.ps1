@@ -1,8 +1,8 @@
 ﻿function Get-WinADDomainPasswordStats {
     [CmdletBinding()]
     param(
-        $PasswordsQuality,
-        $TypesRequired,
+        [System.Collections.IDictionary]$PasswordsQuality,
+        [Array] $TypesRequired,
         $DomainPasswordHashesWeakPassword,
         $DomainPasswordHashesWeakPasswordEnabled,
         $DomainPasswordHashesWeakPasswordDisabled
