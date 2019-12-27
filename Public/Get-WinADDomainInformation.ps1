@@ -100,6 +100,7 @@ function Get-WinADDomainInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainPasswordDESEncryptionOnly
         [PSWinDocumentation.ActiveDirectory]::DomainPasswordDelegatableAdmins
         [PSWinDocumentation.ActiveDirectory]::DomainPasswordDuplicatePasswordGroups
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordSmartCardUsersWithPassword
         [PSWinDocumentation.ActiveDirectory]::DomainPasswordStats
         [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPassword
         [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordEnabled
@@ -677,7 +678,8 @@ function Get-WinADDomainInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainPasswordStats,
         [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPassword,
         [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordEnabled,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordDisabled
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordDisabled,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordSmartCardUsersWithPassword
     )
 
     $Data.DomainPasswordDataPasswords = Get-DataInformation -Text "Getting domain information - $Domain DomainPasswordDataPasswords" {
@@ -710,7 +712,8 @@ function Get-WinADDomainInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainPasswordStats,
         [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPassword,
         [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordEnabled,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordDisabled
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordDisabled,
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordSmartCardUsersWithPassword
     )
 
     $Data.DomainPasswordDataPasswordsHashes = Get-DataInformation -Text "Getting domain information - $Domain DomainPasswordDataPasswordsHashes" {
@@ -848,7 +851,11 @@ function Get-WinADDomainInformation {
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordDisabled
     )
-
+    $Data.DomainPasswordSmartCardUsersWithPassword = Get-DataInformation -Text "Getting domain information - $Domain DomainPasswordSmartCardUsersWithPassword" {
+        $Data.DomainPasswordDataPasswordsHashes.DomainPasswordSmartCardUsersWithPassword
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::DomainPasswordSmartCardUsersWithPassword
+    )
     $Data.DomainPasswordStats = Get-DataInformation -Text "Getting domain information - $Domain DomainPasswordStats" {
         Get-WinADDomainPasswordStats -PasswordsQuality $PasswordsQuality -TypesRequired $TypesRequired `
             -DomainPasswordHashesWeakPassword $Data.DomainPasswordHashesWeakPassword `
