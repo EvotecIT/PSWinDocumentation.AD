@@ -34,7 +34,7 @@ function Get-WinADDomainInformation {
     # this prevents errors of asking for wrong property - normally that would be provided by forest
     if ($null -eq $ForestSchemaComputers) {
         $ForestSchemaComputers = Get-DataInformation -Text "Getting domain information - ForestSchemaPropertiesComputers" {
-            Get-WinADForestSchemaPropertiesComputers
+            Get-WinADForestSchemaProperties -Schema 'Computers'
         } -TypesRequired $TypesRequired -TypesNeeded @(
             [PSWinDocumentation.ActiveDirectory]::ForestSchemaPropertiesComputers
             [PSWinDocumentation.ActiveDirectory]::DomainComputersFullList
@@ -52,7 +52,7 @@ function Get-WinADDomainInformation {
     }
     if ($null -eq $ForestSchemaUsers) {
         $ForestSchemaUsers = Get-DataInformation -Text "Getting domain information - ForestSchemaPropertiesUsers" {
-            Get-WinADForestSchemaPropertiesUsers
+            Get-WinADForestSchemaProperties -Schema 'Users'
         } -TypesRequired $TypesRequired -TypesNeeded @(
             [PSWinDocumentation.ActiveDirectory]::ForestSchemaPropertiesUsers
             [PSWinDocumentation.ActiveDirectory]::DomainUsersFullList

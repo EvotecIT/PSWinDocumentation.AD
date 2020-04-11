@@ -116,6 +116,7 @@ Add-Type -TypeDefinition @"
             DomainPasswordDefaultComputerPassword,
             DomainPasswordPasswordNotRequired,
             DomainPasswordPasswordNeverExpires,
+            DomainPasswordSmartCardUsersWithPassword,
             DomainPasswordAESKeysMissing,
             DomainPasswordPreAuthNotRequired,
             DomainPasswordDESEncryptionOnly,

@@ -9,8 +9,21 @@ function Get-WinADDomainPasswordQuality {
         [Array] $PasswordQualityUsers,
         [string] $FilePath,
         [switch] $UseHashes,
-        [switch] $PasswordQuality
+        [switch] $PasswordQuality,
+        [Array] $Properties
     )
+
+    if (-not $Properties) {
+        $Properties = @(
+            'Name', 'UserPrincipalName', 'Enabled', 'Password Last Changed', "DaysToExpire",
+            'PasswordExpired', 'PasswordNeverExpires', 'PasswordNotRequired', 'DateExpiry', 'PasswordLastSet', 'SamAccountName',
+            'EmailAddress', 'Display Name', 'Given Name', 'Surname', 'Manager', 'Manager Email',
+            "AccountExpirationDate", "AccountLockoutTime", "AllowReversiblePasswordEncryption", "BadLogonCount",
+            "CannotChangePassword", "CanonicalName", "Description", "DistinguishedName", "EmployeeID", "EmployeeNumber", "LastBadPasswordAttempt",
+            "LastLogonDate", "Created", "Modified", "Protected", "Primary Group", "Member Of", "Domain"
+        )
+    }
+
     if ($FilePath -eq '' -and $PasswordQuality.IsPresent -eq $true) {
         $FilePath = "$PSScriptRoot\..\..\Resources\PasswordList.txt"
     }
@@ -43,12 +56,7 @@ function Get-WinADDomainPasswordQuality {
     }
     $Data.DomainPasswordClearTextPassword = Invoke-Command -ScriptBlock {
         $ADAccounts = Get-WinADAccounts -UserNameList $Data.PasswordQuality.ClearTextPassword -ADCatalog $DomainUsersAll, $DomainComputersAll
-        return $ADAccounts | Select-Object 'Name', 'UserPrincipalName', 'Enabled', 'Password Last Changed', "DaysToExpire", `
-            'PasswordExpired', 'PasswordNeverExpires', 'PasswordNotRequired', 'DateExpiry', 'PasswordLastSet', 'SamAccountName', `
-            'EmailAddress', 'Display Name', 'Given Name', 'Surname', 'Manager', 'Manager Email', `
-            "AccountExpirationDate", "AccountLockoutTime", "AllowReversiblePasswordEncryption", "BadLogonCount", `
-            "CannotChangePassword", "CanonicalName", "Description", "DistinguishedName", "EmployeeID", "EmployeeNumber", "LastBadPasswordAttempt", `
-            "LastLogonDate", "Created", "Modified", "Protected", "Primary Group", "Member Of", "Domain"
+        return $ADAccounts | Select-Object -Property $Properties
     }
     $Data.DomainPasswordClearTextPasswordEnabled = Invoke-Command -ScriptBlock {
         return $Data.DomainPasswordClearTextPassword | Where-Object { $_.Enabled -eq $true }
@@ -58,32 +66,16 @@ function Get-WinADDomainPasswordQuality {
     }
     $Data.DomainPasswordLMHash = Invoke-Command -ScriptBlock {
         $ADAccounts = Get-WinADAccounts -UserNameList  $Data.PasswordQuality.LMHash  -ADCatalog $DomainUsersAll, $DomainComputersAll
-        return $ADAccounts | Select-Object 'Name', 'UserPrincipalName', 'Enabled', 'Password Last Changed', "DaysToExpire", `
-            'PasswordExpired', 'PasswordNeverExpires', 'PasswordNotRequired', 'DateExpiry', 'PasswordLastSet', 'SamAccountName', `
-            'EmailAddress', 'Display Name', 'Given Name', 'Surname', 'Manager', 'Manager Email', `
-            "AccountExpirationDate", "AccountLockoutTime", "AllowReversiblePasswordEncryption", "BadLogonCount", `
-            "CannotChangePassword", "CanonicalName", "Description", "DistinguishedName", "EmployeeID", "EmployeeNumber", "LastBadPasswordAttempt", `
-            "LastLogonDate", "Created", "Modified", "Protected", "Primary Group", "Member Of", "Domain"
+        return $ADAccounts | Select-Object -Property $Properties
+        $Data.DomainPasswordEmptyPassword = Invoke-Command -ScriptBlock {
+            $ADAccounts = Get-WinADAccounts -UserNameList $Data.PasswordQuality.EmptyPassword  -ADCatalog $DomainUsersAll, $DomainComputersAll
+            return $ADAccounts | Select-Object -Property $Properties
+        }
     }
-    $Data.DomainPasswordEmptyPassword = Invoke-Command -ScriptBlock {
-        $ADAccounts = Get-WinADAccounts -UserNameList $Data.PasswordQuality.EmptyPassword  -ADCatalog $DomainUsersAll, $DomainComputersAll
-        return $ADAccounts | Select-Object 'Name', 'UserPrincipalName', 'Enabled', 'Password Last Changed', "DaysToExpire", `
-            'PasswordExpired', 'PasswordNeverExpires', 'PasswordNotRequired', 'DateExpiry', 'PasswordLastSet', 'SamAccountName', `
-            'EmailAddress', 'Display Name', 'Given Name', 'Surname', 'Manager', 'Manager Email', `
-            "AccountExpirationDate", "AccountLockoutTime", "AllowReversiblePasswordEncryption", "BadLogonCount", `
-            "CannotChangePassword", "CanonicalName", "Description", "DistinguishedName", "EmployeeID", "EmployeeNumber", "LastBadPasswordAttempt", `
-            "LastLogonDate", "Created", "Modified", "Protected", "Primary Group", "Member Of", "Domain"
-    }
-
 
     $Data.DomainPasswordWeakPassword = Invoke-Command -ScriptBlock {
         $ADAccounts = Get-WinADAccounts -UserNameList  $Data.PasswordQuality.WeakPassword  -ADCatalog $DomainUsersAll, $DomainComputersAll
-        return $ADAccounts | Select-Object 'Name', 'UserPrincipalName', 'Enabled', 'Password Last Changed', "DaysToExpire", `
-            'PasswordExpired', 'PasswordNeverExpires', 'PasswordNotRequired', 'DateExpiry', 'PasswordLastSet', 'SamAccountName', `
-            'EmailAddress', 'Display Name', 'Given Name', 'Surname', 'Manager', 'Manager Email', `
-            "AccountExpirationDate", "AccountLockoutTime", "AllowReversiblePasswordEncryption", "BadLogonCount", `
-            "CannotChangePassword", "CanonicalName", "Description", "DistinguishedName", "EmployeeID", "EmployeeNumber", "LastBadPasswordAttempt", `
-            "LastLogonDate", "Created", "Modified", "Protected", "Primary Group", "Member Of", "Domain"
+        return $ADAccounts | Select-Object -Property $Properties
     }
     $Data.DomainPasswordWeakPasswordEnabled = Invoke-Command -ScriptBlock {
         return $Data.DomainPasswordWeakPassword | Where-Object { $_.Enabled -eq $true }
@@ -101,76 +93,36 @@ function Get-WinADDomainPasswordQuality {
     }
     $Data.DomainPasswordAESKeysMissing = Invoke-Command -ScriptBlock {
         $ADAccounts = Get-WinADAccounts -UserNameList  $Data.PasswordQuality.AESKeysMissing  -ADCatalog $DomainUsersAll, $DomainComputersAll
-        return $ADAccounts | Select-Object 'Name', 'UserPrincipalName', 'Enabled', 'Password Last Changed', "DaysToExpire", `
-            'PasswordExpired', 'PasswordNeverExpires', 'PasswordNotRequired', 'DateExpiry', 'PasswordLastSet', 'SamAccountName', `
-            'EmailAddress', 'Display Name', 'Given Name', 'Surname', 'Manager', 'Manager Email', `
-            "AccountExpirationDate", "AccountLockoutTime", "AllowReversiblePasswordEncryption", "BadLogonCount", `
-            "CannotChangePassword", "CanonicalName", "Description", "DistinguishedName", "EmployeeID", "EmployeeNumber", "LastBadPasswordAttempt", `
-            "LastLogonDate", "Created", "Modified", "Protected", "Primary Group", "Member Of", "Domain"
+        return $ADAccounts | Select-Object -Property $Properties
     }
     $Data.DomainPasswordDefaultComputerPassword = Invoke-Command -ScriptBlock {
         $ADAccounts = Get-WinADAccounts -UserNameList  $Data.PasswordQuality.DefaultComputerPassword  -ADCatalog $DomainUsersAll, $DomainComputersAll
-        return $ADAccounts | Select-Object 'Name', 'UserPrincipalName', 'Enabled', 'Password Last Changed', "DaysToExpire", `
-            'PasswordExpired', 'PasswordNeverExpires', 'PasswordNotRequired', 'DateExpiry', 'PasswordLastSet', 'SamAccountName', `
-            'EmailAddress', 'Display Name', 'Given Name', 'Surname', 'Manager', 'Manager Email', `
-            "AccountExpirationDate", "AccountLockoutTime", "AllowReversiblePasswordEncryption", "BadLogonCount", `
-            "CannotChangePassword", "CanonicalName", "Description", "DistinguishedName", "EmployeeID", "EmployeeNumber", "LastBadPasswordAttempt", `
-            "LastLogonDate", "Created", "Modified", "Protected", "Primary Group", "Member Of", "Domain"
+        return $ADAccounts | Select-Object -Property $Properties
     }
     $Data.DomainPasswordPasswordNotRequired = Invoke-Command -ScriptBlock {
         $ADAccounts = Get-WinADAccounts -UserNameList  $Data.PasswordQuality.PasswordNotRequired  -ADCatalog $DomainUsersAll, $DomainComputersAll
-        return $ADAccounts | Select-Object 'Name', 'UserPrincipalName', 'Enabled', 'Password Last Changed', "DaysToExpire", `
-            'PasswordExpired', 'PasswordNeverExpires', 'PasswordNotRequired', 'DateExpiry', 'PasswordLastSet', 'SamAccountName', `
-            'EmailAddress', 'Display Name', 'Given Name', 'Surname', 'Manager', 'Manager Email', `
-            "AccountExpirationDate", "AccountLockoutTime", "AllowReversiblePasswordEncryption", "BadLogonCount", `
-            "CannotChangePassword", "CanonicalName", "Description", "DistinguishedName", "EmployeeID", "EmployeeNumber", "LastBadPasswordAttempt", `
-            "LastLogonDate", "Created", "Modified", "Protected", "Primary Group", "Member Of", "Domain"
+        return $ADAccounts | Select-Object -Property $Properties
     }
     $Data.DomainPasswordPasswordNeverExpires = Invoke-Command -ScriptBlock {
         $ADAccounts = Get-WinADAccounts -UserNameList $Data.PasswordQuality.PasswordNeverExpires  -ADCatalog $DomainUsersAll, $DomainComputersAll
-        return $ADAccounts | Select-Object 'Name', 'UserPrincipalName', 'Enabled', 'Password Last Changed', "DaysToExpire", `
-            'PasswordExpired', 'PasswordNeverExpires', 'PasswordNotRequired', 'DateExpiry', 'PasswordLastSet', 'SamAccountName', `
-            'EmailAddress', 'Display Name', 'Given Name', 'Surname', 'Manager', 'Manager Email', `
-            "AccountExpirationDate", "AccountLockoutTime", "AllowReversiblePasswordEncryption", "BadLogonCount", `
-            "CannotChangePassword", "CanonicalName", "Description", "DistinguishedName", "EmployeeID", "EmployeeNumber", "LastBadPasswordAttempt", `
-            "LastLogonDate", "Created", "Modified", "Protected", "Primary Group", "Member Of", "Domain"
+        return $ADAccounts | Select-Object -Property $Properties
     }
     $Data.DomainPasswordPreAuthNotRequired = Invoke-Command -ScriptBlock {
         $ADAccounts = Get-WinADAccounts -UserNameList $Data.PasswordQuality.PreAuthNotRequired  -ADCatalog $DomainUsersAll, $DomainComputersAll
-        return $ADAccounts | Select-Object 'Name', 'UserPrincipalName', 'Enabled', 'Password Last Changed', "DaysToExpire", `
-            'PasswordExpired', 'PasswordNeverExpires', 'PasswordNotRequired', 'DateExpiry', 'PasswordLastSet', 'SamAccountName', `
-            'EmailAddress', 'Display Name', 'Given Name', 'Surname', 'Manager', 'Manager Email', `
-            "AccountExpirationDate", "AccountLockoutTime", "AllowReversiblePasswordEncryption", "BadLogonCount", `
-            "CannotChangePassword", "CanonicalName", "Description", "DistinguishedName", "EmployeeID", "EmployeeNumber", "LastBadPasswordAttempt", `
-            "LastLogonDate", "Created", "Modified", "Protected", "Primary Group", "Member Of", "Domain"
+        return $ADAccounts | Select-Object -Property $Properties
     }
     $Data.DomainPasswordDESEncryptionOnly = Invoke-Command -ScriptBlock {
         $ADAccounts = Get-WinADAccounts -UserNameList $Data.PasswordQuality.DESEncryptionOnly -ADCatalog $DomainUsersAll, $DomainComputersAll
-        return $ADAccounts | Select-Object 'Name', 'UserPrincipalName', 'Enabled', 'Password Last Changed', "DaysToExpire", `
-            'PasswordExpired', 'PasswordNeverExpires', 'PasswordNotRequired', 'DateExpiry', 'PasswordLastSet', 'SamAccountName', `
-            'EmailAddress', 'Display Name', 'Given Name', 'Surname', 'Manager', 'Manager Email', `
-            "AccountExpirationDate", "AccountLockoutTime", "AllowReversiblePasswordEncryption", "BadLogonCount", `
-            "CannotChangePassword", "CanonicalName", "Description", "DistinguishedName", "EmployeeID", "EmployeeNumber", "LastBadPasswordAttempt", `
-            "LastLogonDate", "Created", "Modified", "Protected", "Primary Group", "Member Of", "Domain"
+        return $ADAccounts | Select-Object -Property $Properties
     }
     $Data.DomainPasswordDelegatableAdmins = Invoke-Command -ScriptBlock {
         $ADAccounts = Get-WinADAccounts -UserNameList $Data.PasswordQuality.DelegatableAdmins  -ADCatalog $DomainUsersAll, $DomainComputersAll
-        return $ADAccounts | Select-Object 'Name', 'UserPrincipalName', 'Enabled', 'Password Last Changed', "DaysToExpire", `
-            'PasswordExpired', 'PasswordNeverExpires', 'PasswordNotRequired', 'DateExpiry', 'PasswordLastSet', 'SamAccountName', `
-            'EmailAddress', 'Display Name', 'Given Name', 'Surname', 'Manager', 'Manager Email', `
-            "AccountExpirationDate", "AccountLockoutTime", "AllowReversiblePasswordEncryption", "BadLogonCount", `
-            "CannotChangePassword", "CanonicalName", "Description", "DistinguishedName", "EmployeeID", "EmployeeNumber", "LastBadPasswordAttempt", `
-            "LastLogonDate", "Created", "Modified", "Protected", "Primary Group", "Member Of", "Domain"
+        return $ADAccounts | Select-Object -Property $Properties
     }
 
     $Data.DomainPasswordSmartCardUsersWithPassword = & {
         $ADAccounts = Get-WinADAccounts -UserNameList $Data.PasswordQuality.SmartCardUsersWithPassword  -ADCatalog $DomainUsersAll, $DomainComputersAll
-        return $ADAccounts | Select-Object 'Name', 'UserPrincipalName', 'Enabled', 'Password Last Changed', "DaysToExpire", `
-            'PasswordExpired', 'PasswordNeverExpires', 'PasswordNotRequired', 'DateExpiry', 'PasswordLastSet', 'SamAccountName', `
-            'EmailAddress', 'Display Name', 'Given Name', 'Surname', 'Manager', 'Manager Email', `
-            "AccountExpirationDate", "AccountLockoutTime", "AllowReversiblePasswordEncryption", "BadLogonCount", `
-            "CannotChangePassword", "CanonicalName", "Description", "DistinguishedName", "EmployeeID", "EmployeeNumber", "LastBadPasswordAttempt", `
-            "LastLogonDate", "Created", "Modified", "Protected", "Primary Group", "Member Of", "Domain"
+        return $ADAccounts | Select-Object -Property $Properties
     }
 
     $Data.DomainPasswordDuplicatePasswordGroups = Invoke-Command -ScriptBlock {
@@ -202,27 +154,7 @@ function Get-WinADDomainPasswordQuality {
             }
         }
         # Added 'Duplicate Group' to standard output of names - without it, it doesn't make sense
-        return $Value | Select-Object 'Duplicate Group', 'Name', 'UserPrincipalName', 'Enabled', 'Password Last Changed', "DaysToExpire", `
-            'PasswordExpired', 'PasswordNeverExpires', 'PasswordNotRequired', 'DateExpiry', 'PasswordLastSet', 'SamAccountName', `
-            'EmailAddress', 'Display Name', 'Given Name', 'Surname', 'Manager', 'Manager Email', `
-            "AccountExpirationDate", "AccountLockoutTime", "AllowReversiblePasswordEncryption", "BadLogonCount", `
-            "CannotChangePassword", "CanonicalName", "Description", "DistinguishedName", "EmployeeID", "EmployeeNumber", "LastBadPasswordAttempt", `
-            "LastLogonDate", "Created", "Modified", "Protected", "Primary Group", "Member Of", "Domain"
+        return $Value | Select-Object -Property $Properties
     }
     return $Data
 }
-
-<#
-AESKeysMissing          Property   System.Collections.Generic.ISet[string] AESKeysMissing {get;set;}
-ClearTextPassword       Property   System.Collections.Generic.ISet[string] ClearTextPassword {get;set;}
-#DefaultComputerPassword Property   System.Collections.Generic.ISet[string] DefaultComputerPassword {get;set;}
-DelegatableAdmins       Property   System.Collections.Generic.ISet[string] DelegatableAdmins {get;set;}
-DESEncryptionOnly       Property   System.Collections.Generic.ISet[string] DESEncryptionOnly {get;set;}
-DuplicatePasswordGroups Property   System.Collections.Generic.IEnumerable[System.Collections.Generic.ISet[string]] DuplicatePasswordGroups {get;set;}
-EmptyPassword           Property   System.Collections.Generic.ISet[string] EmptyPassword {get;set;}
-LMHash                  Property   System.Collections.Generic.ISet[string] LMHash {get;set;}
-#PasswordNeverExpires    Property   System.Collections.Generic.ISet[string] PasswordNeverExpires {get;set;}
-#PasswordNotRequired     Property   System.Collections.Generic.ISet[string] PasswordNotRequired {get;set;}
-#PreAuthNotRequired      Property   System.Collections.Generic.ISet[string] PreAuthNotRequired {get;set;}
-#WeakPassword            Property   System.Collections.Generic.ISet[string] WeakPassword {get;set;}
-#>

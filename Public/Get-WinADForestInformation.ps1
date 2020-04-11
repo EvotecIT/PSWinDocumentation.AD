@@ -49,7 +49,7 @@ function Get-WinADForestInformation {
 
     # This is Forest Schema Properties for Users and Computers
     $Data.ForestSchemaPropertiesComputers = Get-DataInformation -Text "Getting forest information - ForestSchemaPropertiesComputers" {
-        Get-WinADForestSchemaPropertiesComputers
+        Get-WinADForestSchemaProperties -Schema 'Computers'
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::ForestSchemaPropertiesComputers
         [PSWinDocumentation.ActiveDirectory]::DomainComputersFullList
@@ -66,7 +66,7 @@ function Get-WinADForestInformation {
         [PSWinDocumentation.ActiveDirectory]::ForestOptionalFeatures
     )
     $Data.ForestSchemaPropertiesUsers = Get-DataInformation -Text "Getting forest information - ForestSchemaPropertiesUsers" {
-        Get-WinADForestSchemaPropertiesUsers
+        Get-WinADForestSchemaProperties -Schema 'Users'
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::ForestSchemaPropertiesUsers
         [PSWinDocumentation.ActiveDirectory]::DomainUsersFullList
