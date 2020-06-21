@@ -5,7 +5,7 @@
         [string] $Domain = $Env:USERDNSDOMAIN,
         [System.Collections.IDictionary] $DomainObjects,
         [System.Collections.IDictionary] $DomainObjectsNetbios,
-        [Microsoft.ActiveDirectory.Management.ADDomain] $Domaininformation,
+        [Object] $Domaininformation,
         [string] $Splitter
     )
     [DateTime] $CurrentDate = Get-Date

@@ -11,7 +11,6 @@ function Get-WinADDomainPasswordQuality {
         [Array] $Properties,
         [System.Collections.IDictionary] $DomainObjectsNetbios
     )
-
     if (-not $Properties) {
         $Properties = @(
             'Name', 'UserPrincipalName', 'Enabled', 'Password Last Changed', "DaysToExpire",
@@ -24,15 +23,15 @@ function Get-WinADDomainPasswordQuality {
     }
 
     if ($FilePath -eq '' -and $PasswordQuality.IsPresent -eq $true) {
-        $FilePath = "$PSScriptRoot\..\..\Resources\PasswordList.txt"
+        $FilePath = "$PSScriptRoot\..\Resources\PasswordList.txt"
     }
 
     if ($FilePath -eq '') {
-        Write-Verbose "Get-WinADDomainPasswordQuality - File path not given, using hashes set to $UseHashes"
+        Write-Verbose "Get-WinADDomainPasswordQuality - File path not given, using hashes set to $($UseHashes.IsPresent)"
         return $null
     }
-    if (-not (Test-Path -LiteralPath $FilePath)) {
-        Write-Verbose "Get-WinADDomainPasswordQuality - File path doesn't exists, using hashes set to $UseHashes"
+    if (-not (Test-Path -Path $FilePath)) {
+        Write-Verbose "Get-WinADDomainPasswordQuality - File path doesn't exists, using hashes set to $($UseHashes.IsPresent)"
         return $null
     }
     $Data = [ordered] @{ }

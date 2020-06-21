@@ -5,7 +5,7 @@
         [string] $Splitter,
         [System.Collections.IDictionary] $DomainObjects,
         [System.Collections.IDictionary] $DomainObjectsNetbios,
-        [Microsoft.ActiveDirectory.Management.ADDomain] $Domaininformation
+        [Object] $Domaininformation
 
     )
     [DateTime] $CurrentDate = Get-Date
