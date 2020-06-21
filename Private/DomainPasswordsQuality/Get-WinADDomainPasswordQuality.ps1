@@ -2,8 +2,6 @@ function Get-WinADDomainPasswordQuality {
     [CmdletBinding()]
     param (
         [string] $DnsRoot,
-        [Array] $DomainUsersAll,
-        [Array] $DomainComputersAll,
         [string] $DomainDistinguishedName,
 
         [Array] $PasswordQualityUsers,

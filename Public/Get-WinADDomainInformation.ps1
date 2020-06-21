@@ -652,8 +652,6 @@ function Get-WinADDomainInformation {
     $Data.DomainPasswordDataPasswords = Get-DataInformation -Text "Getting domain information - $Domain DomainPasswordDataPasswords" {
         Get-WinADDomainPasswordQuality `
             -FilePath $PathToPasswords `
-            -DomainComputersAll $Data.DomainComputersAll `
-            -DomainUsersAll $Data.DomainUsersAll `
             -DomainDistinguishedName $Data.DomainInformation.DistinguishedName `
             -DnsRoot $Data.DomainInformation.DnsRoot `
             -Verbose:$false `
@@ -667,8 +665,6 @@ function Get-WinADDomainInformation {
     $Data.DomainPasswordDataPasswordsHashes = Get-DataInformation -Text "Getting domain information - $Domain DomainPasswordDataPasswordsHashes" {
         Get-WinADDomainPasswordQuality `
             -FilePath $PathToPasswordsHashes `
-            -DomainComputersAll $Data.DomainComputersAll `
-            -DomainUsersAll $Data.DomainUsersAll `
             -DomainDistinguishedName $Data.DomainInformation.DistinguishedName `
             -DnsRoot $DomainInformation.DnsRoot `
             -UseHashes `
