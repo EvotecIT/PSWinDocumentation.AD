@@ -37,10 +37,6 @@ function Get-WinADDomainPasswordQuality {
         Write-Verbose "Get-WinADDomainPasswordQuality - File path doesn't exists, using hashes set to $UseHashes"
         return $null
     }
-    # if ($null -eq $DomainInformation) {
-    #      Write-Verbose "Get-WinADDomainPasswordQuality - No DomainInformation given, no alternative approach either. Terminating password quality check."
-    #      return $null
-    # }
     $Data = [ordered] @{ }
     if ($PasswordQualityUsers) {
         $Data.PasswordQualityUsers = $PasswordQualityUsers
@@ -56,10 +52,6 @@ function Get-WinADDomainPasswordQuality {
         return $Results
     }
     $Data.DomainPasswordClearTextPassword = Invoke-Command -ScriptBlock {
-        <#
-        $ADAccounts = Get-WinADAccounts -UserNameList $Data.PasswordQuality.ClearTextPassword -ADCatalog $DomainUsersAll, $DomainComputersAll
-        return $ADAccounts | Select-Object -Property $Properties
-        #>
         foreach ($User in $Data.PasswordQuality.ClearTextPassword) {
             if ($DomainObjectsNetbios["$User"]) {
                 $DomainObjectsNetbios["$User"]
@@ -75,8 +67,6 @@ function Get-WinADDomainPasswordQuality {
         return $Data.DomainPasswordClearTextPassword | Where-Object { $_.Enabled -eq $false }
     }
     $Data.DomainPasswordLMHash = Invoke-Command -ScriptBlock {
-        #$ADAccounts = Get-WinADAccounts -UserNameList  $Data.PasswordQuality.LMHash  -ADCatalog $DomainUsersAll, $DomainComputersAll
-        #return $ADAccounts | Select-Object -Property $Properties
         foreach ($User in $Data.PasswordQuality.LMHash) {
             if ($DomainObjectsNetbios["$User"]) {
                 $DomainObjectsNetbios["$User"]
@@ -86,9 +76,6 @@ function Get-WinADDomainPasswordQuality {
         }
     }
     $Data.DomainPasswordEmptyPassword = Invoke-Command -ScriptBlock {
-        #$ADAccounts = Get-WinADAccounts -UserNameList $Data.PasswordQuality.EmptyPassword  -ADCatalog $DomainUsersAll, $DomainComputersAll
-        #return $ADAccounts | Select-Object -Property $Properties
-
         foreach ($User in $Data.PasswordQuality.EmptyPassword) {
             if ($DomainObjectsNetbios["$User"]) {
                 $DomainObjectsNetbios["$User"]
@@ -98,9 +85,6 @@ function Get-WinADDomainPasswordQuality {
         }
     }
     $Data.DomainPasswordWeakPassword = Invoke-Command -ScriptBlock {
-        #$ADAccounts = Get-WinADAccounts -UserNameList  $Data.PasswordQuality.WeakPassword  -ADCatalog $DomainUsersAll, $DomainComputersAll
-        #return $ADAccounts | Select-Object -Property $Properties
-
         foreach ($User in $Data.PasswordQuality.WeakPassword) {
             if ($DomainObjectsNetbios["$User"]) {
                 $DomainObjectsNetbios["$User"]
@@ -124,9 +108,6 @@ function Get-WinADDomainPasswordQuality {
         }
     }
     $Data.DomainPasswordAESKeysMissing = Invoke-Command -ScriptBlock {
-        #$ADAccounts = Get-WinADAccounts -UserNameList  $Data.PasswordQuality.AESKeysMissing  -ADCatalog $DomainUsersAll, $DomainComputersAll
-        #return $ADAccounts | Select-Object -Property $Properties
-
         foreach ($User in $Data.PasswordQuality.AESKeysMissing) {
             if ($DomainObjectsNetbios["$User"]) {
                 $DomainObjectsNetbios["$User"]
@@ -136,9 +117,6 @@ function Get-WinADDomainPasswordQuality {
         }
     }
     $Data.DomainPasswordDefaultComputerPassword = Invoke-Command -ScriptBlock {
-        #$ADAccounts = Get-WinADAccounts -UserNameList  $Data.PasswordQuality.DefaultComputerPassword  -ADCatalog $DomainUsersAll, $DomainComputersAll
-        #return $ADAccounts | Select-Object -Property $Properties
-
         foreach ($User in $Data.PasswordQuality.DefaultComputerPassword) {
             if ($DomainObjectsNetbios["$User"]) {
                 $DomainObjectsNetbios["$User"]
@@ -148,9 +126,6 @@ function Get-WinADDomainPasswordQuality {
         }
     }
     $Data.DomainPasswordPasswordNotRequired = Invoke-Command -ScriptBlock {
-        #$ADAccounts = Get-WinADAccounts -UserNameList  $Data.PasswordQuality.PasswordNotRequired  -ADCatalog $DomainUsersAll, $DomainComputersAll
-        #return $ADAccounts | Select-Object -Property $Properties
-
         foreach ($User in $Data.PasswordQuality.PasswordNotRequired) {
             if ($DomainObjectsNetbios["$User"]) {
                 $DomainObjectsNetbios["$User"]
@@ -160,9 +135,6 @@ function Get-WinADDomainPasswordQuality {
         }
     }
     $Data.DomainPasswordPasswordNeverExpires = Invoke-Command -ScriptBlock {
-        #$ADAccounts = Get-WinADAccounts -UserNameList $Data.PasswordQuality.PasswordNeverExpires  -ADCatalog $DomainUsersAll, $DomainComputersAll
-        #return $ADAccounts | Select-Object -Property $Properties
-
         foreach ($User in $Data.PasswordQuality.PasswordNeverExpires) {
             if ($DomainObjectsNetbios["$User"]) {
                 $DomainObjectsNetbios["$User"]
@@ -172,9 +144,6 @@ function Get-WinADDomainPasswordQuality {
         }
     }
     $Data.DomainPasswordPreAuthNotRequired = Invoke-Command -ScriptBlock {
-        #$ADAccounts = Get-WinADAccounts -UserNameList $Data.PasswordQuality.PreAuthNotRequired  -ADCatalog $DomainUsersAll, $DomainComputersAll
-        #return $ADAccounts | Select-Object -Property $Properties
-
         foreach ($User in $Data.PasswordQuality.PreAuthNotRequired) {
             if ($DomainObjectsNetbios["$User"]) {
                 $DomainObjectsNetbios["$User"]
@@ -184,9 +153,6 @@ function Get-WinADDomainPasswordQuality {
         }
     }
     $Data.DomainPasswordDESEncryptionOnly = Invoke-Command -ScriptBlock {
-        #$ADAccounts = Get-WinADAccounts -UserNameList $Data.PasswordQuality.DESEncryptionOnly -ADCatalog $DomainUsersAll, $DomainComputersAll
-        #return $ADAccounts | Select-Object -Property $Properties
-
         foreach ($User in $Data.PasswordQuality.DESEncryptionOnly) {
             if ($DomainObjectsNetbios["$User"]) {
                 $DomainObjectsNetbios["$User"]
@@ -196,9 +162,6 @@ function Get-WinADDomainPasswordQuality {
         }
     }
     $Data.DomainPasswordDelegatableAdmins = Invoke-Command -ScriptBlock {
-        #$ADAccounts = Get-WinADAccounts -UserNameList $Data.PasswordQuality.DelegatableAdmins  -ADCatalog $DomainUsersAll, $DomainComputersAll
-        #return $ADAccounts | Select-Object -Property $Properties
-
         foreach ($User in $Data.PasswordQuality.DelegatableAdmins) {
             if ($DomainObjectsNetbios["$User"]) {
                 $DomainObjectsNetbios["$User"]
@@ -209,9 +172,6 @@ function Get-WinADDomainPasswordQuality {
     }
 
     $Data.DomainPasswordSmartCardUsersWithPassword = & {
-        #$ADAccounts = Get-WinADAccounts -UserNameList $Data.PasswordQuality.SmartCardUsersWithPassword  -ADCatalog $DomainUsersAll, $DomainComputersAll
-        #return $ADAccounts | Select-Object -Property $Properties
-
         foreach ($User in $Data.PasswordQuality.SmartCardUsersWithPassword) {
             if ($DomainObjectsNetbios["$User"]) {
                 $DomainObjectsNetbios["$User"]
@@ -234,30 +194,8 @@ function Get-WinADDomainPasswordQuality {
                 } else {
                     Write-Warning "Get-WinADDomainPasswordQuality - Couldn't find object $User in cache."
                 }
-                <#
-                $FoundUser = [pscustomobject] @{
-                    'Duplicate Group' = $Name
-                    #'Found User'      = $User
-                }
-                $FullUserInformation = foreach ($_ in $DomainUsersAll) {
-                    if ($_.SamAccountName -eq $User) { $_ }
-                }
-                $FullComputerInformation = foreach ($_ in $DomainComputersAll) {
-                    if ($_.SamAccountName -eq $User) { $_ }
-                }
-                if ($FullUserInformation) {
-                    $MergedObject = Merge-Objects -Object1 $FoundUser -Object2 $FullUserInformation
-                }
-                if ($FullComputerInformation) {
-                    $MergedObject = Merge-Objects -Object1 $MergedObject -Object2 $FullComputerInformation
-                }
-                $MergedObject
-
-                #>
             }
         }
-        # Added 'Duplicate Group' to standard output of names - without it, it doesn't make sense
-        #return $Value | Select-Object -Property $Properties
     }
     return $Data
 }
