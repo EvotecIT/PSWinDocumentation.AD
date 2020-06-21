@@ -3,13 +3,15 @@
     param(
         [Array] $DomainComputersFullList,
         [string] $Splitter,
-        [hashtable] $DomainObjects
+        [System.Collections.IDictionary] $DomainObjects,
+        [System.Collections.IDictionary] $DomainObjectsNetbios,
+        [Microsoft.ActiveDirectory.Management.ADDomain] $Domaininformation
 
     )
     [DateTime] $CurrentDate = Get-Date
     foreach ($_ in $DomainComputersFullList) {
         $Manager = Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $_.ManagedBy
-        [PSCustomObject] @{
+        $Computer = [PSCustomObject] @{
             SamAccountName              = $_.SamAccountName
             Enabled                     = $_.Enabled
             OperatingSystem             = $_.OperatingSystem
@@ -41,5 +43,8 @@
             "PrimaryGroup"              = (Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $_.PrimaryGroup -Type 'SamAccountName')
             "MemberOf"                  = (Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $_.MemberOf -Type 'SamAccountName' -Splitter $Splitter)
         }
+        $Name = -join ($Domaininformation.NetBIOSName, "\", $Computer.SamAccountName)
+        $DomainObjectsNetbios[$Name] = $Computer
+        $Computer
     }
 }

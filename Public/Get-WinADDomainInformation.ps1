@@ -59,7 +59,10 @@ function Get-WinADDomainInformation {
         )
     }
 
+    # This is standard cache
     $Data.DomainObjects = @{ }
+    # this is cache by netbios name such as EVOTEC\SamAccountName
+    $Data.DomainObjectsNetBios = @{}
 
     # Domain Root DSE - Complete TypesNeeded
     $Data.DomainRootDSE = Get-DataInformation -Text "Getting domain information - $Domain DomainRootDSE" {
@@ -84,27 +87,7 @@ function Get-WinADDomainInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainAdministratorsRecursive
         [PSWinDocumentation.ActiveDirectory]::DomainEnterpriseAdministrators
         [PSWinDocumentation.ActiveDirectory]::DomainEnterpriseAdministratorsRecursive
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDataPasswords
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordClearTextPassword
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordLMHash
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordEmptyPassword
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPassword
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordEnabled
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordDisabled
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordList
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDefaultComputerPassword
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordPasswordNotRequired
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordPasswordNeverExpires
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordAESKeysMissing
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordPreAuthNotRequired
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDESEncryptionOnly
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDelegatableAdmins
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDuplicatePasswordGroups
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordSmartCardUsersWithPassword
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordStats
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPassword
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordEnabled
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordDisabled
+        [PSWinDocumentation.ActiveDirectory].GetEnumValues() | Where-Object { $_ -like 'DomainPassword*' }
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsPriviliged
     )
 
@@ -142,6 +125,7 @@ function Get-WinADDomainInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsMembers
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsMembersRecursive
 
+        [PSWinDocumentation.ActiveDirectory].GetEnumValues() | Where-Object { $_ -like 'DomainPassword*' }
     )
 
     $Data.DomainComputersFullList = Get-DataInformation -Text "Getting domain information - $Domain DomainComputersFullList" {
@@ -163,10 +147,12 @@ function Get-WinADDomainInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainUsers
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsMembers
         [PSWinDocumentation.ActiveDirectory]::DomainGroupsMembersRecursive
+
+        [PSWinDocumentation.ActiveDirectory].GetEnumValues() | Where-Object { $_ -like 'DomainPassword*' }
     )
 
     $Data.DomainComputersAll = Get-DataInformation -Text "Getting domain information - $Domain DomainComputersAll" {
-        Get-WinADDomainComputersAll -DomainComputersFullList $Data.DomainComputersFullList -Splitter $Splitter -DomainObjects $Data.DomainObjects
+        Get-WinADDomainComputersAll -DomainComputersFullList $Data.DomainComputersFullList -Splitter $Splitter -DomainObjects $Data.DomainObjects -DomainObjectsNetbios $Data.DomainObjectsNetBios -Domaininformation $Data.DomainInformation
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainComputersAll
         [PSWinDocumentation.ActiveDirectory]::DomainComputersAllCount
@@ -178,7 +164,7 @@ function Get-WinADDomainInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainComputersUnknown
         [PSWinDocumentation.ActiveDirectory]::DomainComputersUnknownCount
 
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDataPasswords
+        [PSWinDocumentation.ActiveDirectory].GetEnumValues() | Where-Object { $_ -like 'DomainPassword*' }
     )
 
     $Data.DomainComputersAllCount = Get-DataInformation -Text "Getting domain information - $Domain DomainComputersAllCount" {
@@ -438,7 +424,7 @@ function Get-WinADDomainInformation {
 #>
 
     $Data.DomainUsers = Get-DataInformation -Text "Getting domain information - $Domain DomainUsers" {
-        Get-WinADDomainUsersAll -Users $Data.DomainUsersFullList -Domain $Domain -DomainObjects $Data.DomainObjects -Splitter $Splitter
+        Get-WinADDomainUsersAll -Users $Data.DomainUsersFullList -Domain $Domain -DomainObjects $Data.DomainObjects -Splitter $Splitter -DomainObjectsNetbios $Data.DomainObjectsNetBios -Domaininformation $Data.DomainInformation
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainUsers
 
@@ -449,13 +435,16 @@ function Get-WinADDomainInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainUsersExpiredInclDisabled
         [PSWinDocumentation.ActiveDirectory]::DomainUsersExpiredExclDisabled
         [PSWinDocumentation.ActiveDirectory]::DomainUsersCount
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDataPasswords
+
+        [PSWinDocumentation.ActiveDirectory].GetEnumValues() | Where-Object { $_ -like 'DomainPassword*' }
     )
 
     $Data.DomainUsersAll = Get-DataInformation -Text "Getting domain information - $Domain DomainUsersAll" {
         Get-WinADDomainUsersAllFiltered -DomainUsers $Data.DomainUsers
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainUsersAll
+
+        [PSWinDocumentation.ActiveDirectory].GetEnumValues() | Where-Object { $_ -like 'DomainPassword*' }
     )
 
     $Data.DomainUsersSystemAccounts = Get-DataInformation -Text "Getting domain information - $Domain DomainUsersSystemAccounts" {
@@ -657,29 +646,7 @@ function Get-WinADDomainInformation {
     $Data.DomainPasswordDataUsers = Get-DataInformation -Text "Getting domain information - $Domain DomainPasswordDataUsers" {
         Get-WinADDomainPassword -DnsRoot $Data.DomainInformation.DNSRoot -DistinguishedName $Data.DomainInformation.DistinguishedName
     } -TypesRequired $TypesRequired -TypesNeeded @(
-
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDataUsers,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDataPasswords,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordClearTextPassword,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordLMHash,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordEmptyPassword,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPassword,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordEnabled,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordDisabled,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordList,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDefaultComputerPassword,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordPasswordNotRequired,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordPasswordNeverExpires,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordAESKeysMissing,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordPreAuthNotRequired,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDESEncryptionOnly,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDelegatableAdmins,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDuplicatePasswordGroups,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordStats,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPassword,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordEnabled,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordDisabled,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordSmartCardUsersWithPassword
+        [PSWinDocumentation.ActiveDirectory].GetEnumValues() | Where-Object { $_ -like 'DomainPassword*' }
     )
 
     $Data.DomainPasswordDataPasswords = Get-DataInformation -Text "Getting domain information - $Domain DomainPasswordDataPasswords" {
@@ -691,29 +658,10 @@ function Get-WinADDomainInformation {
             -DnsRoot $Data.DomainInformation.DnsRoot `
             -Verbose:$false `
             -PasswordQualityUsers $Data.DomainPasswordDataUsers `
-            -PasswordQuality:$PasswordQuality
+            -PasswordQuality:$PasswordQuality `
+            -DomainObjectsNetbios $Data.DomainObjectsNetBios
     } -TypesRequired $TypesRequired -TypesNeeded @(
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDataPasswords,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordClearTextPassword,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordLMHash,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordEmptyPassword,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPassword,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordEnabled,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordDisabled,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordWeakPasswordList,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDefaultComputerPassword,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordPasswordNotRequired,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordPasswordNeverExpires,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordAESKeysMissing,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordPreAuthNotRequired,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDESEncryptionOnly,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDelegatableAdmins,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordDuplicatePasswordGroups,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordStats,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPassword,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordEnabled,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordDisabled,
-        [PSWinDocumentation.ActiveDirectory]::DomainPasswordSmartCardUsersWithPassword
+        [PSWinDocumentation.ActiveDirectory].GetEnumValues() | Where-Object { $_ -like 'DomainPassword*' }
     )
 
     $Data.DomainPasswordDataPasswordsHashes = Get-DataInformation -Text "Getting domain information - $Domain DomainPasswordDataPasswordsHashes" {

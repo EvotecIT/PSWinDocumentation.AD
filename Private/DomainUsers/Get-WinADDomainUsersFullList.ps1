@@ -89,7 +89,8 @@ function Get-WinADDomainUsersFullList {
     $Users = Get-ADUser -Server $Domain -ResultPageSize $ResultPageSize -Filter * -Properties $Properties #| Select-Object -Property $Properties -ExcludeProperty $ExcludeProperty
     if ($null -ne $DomainObjects) {
         foreach ($_ in $Users) {
-            $DomainObjects.Add($_.DistinguishedName, $_)
+            # $DomainObjects.Add($_.DistinguishedName, $_)
+            $DomainObjects[$_.DistinguishedName] = $_
         }
     }
     $Users

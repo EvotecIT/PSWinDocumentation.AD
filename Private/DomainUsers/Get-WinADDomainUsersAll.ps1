@@ -3,13 +3,15 @@
     param(
         [Array] $Users,
         [string] $Domain = $Env:USERDNSDOMAIN,
-        [HashTable] $DomainObjects,
+        [System.Collections.IDictionary] $DomainObjects,
+        [System.Collections.IDictionary] $DomainObjectsNetbios,
+        [Microsoft.ActiveDirectory.Management.ADDomain] $Domaininformation,
         [string] $Splitter
     )
     [DateTime] $CurrentDate = Get-Date
-    $UserList = foreach ($U in $Users) {
+    foreach ($U in $Users) {
         $Manager = Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $U.Manager
-        [PsCustomObject] @{
+        $User = [PsCustomObject] @{
             'Name'                              = $U.Name
             'UserPrincipalName'                 = $U.UserPrincipalName
             'SamAccountName'                    = $U.SamAccountName
@@ -49,6 +51,8 @@
             "Member Of"                         = (Get-ADObjectFromDNHash -ADCatalog $DomainObjects -DistinguishedName $U.MemberOf -Type 'SamAccountName' -Splitter $Splitter)
             "Domain"                            = $Domain
         }
+        $Name = -join ($Domaininformation.NetBIOSName, "\", $User.SamAccountName)
+        $DomainObjectsNetbios[$Name] = $User
+        $User
     }
-    return $UserList
 }
