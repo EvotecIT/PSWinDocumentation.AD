@@ -21,6 +21,13 @@
 
 ### ChangeLog
 
+- 0.1.8 - Unreleased
+  - [x] Fix for PasswordQuality and support for DSInternals 4.3
+    - [ ] At some point DSInternals was updated with different output and I didn't notice.
+  - [x] Improved PasswordQuality speed (conversion to hashtables)
+  - [x] Removed some dead code
+  - [x] Added `Invoke-ADPasswordAnalysis` to simplify PasswordQuality
+
 - 0.1.7 - 20.08.2019
   - [x] Added ForestRoles (FSMO different)
   - [x] Modified ForestSites, ForestSites1, ForestSites2
@@ -163,21 +170,20 @@ Install-Module PSWinDocumentation.AD -Force
 - [x] DomainPasswordHashesWeakPasswordDisabled
 - [x] DomainPasswordStats
 
-
 Example outputs:
 
-- [x] HTML Version: https://evotec.xyz/wp-content/uploads/2019/05/DashboardActiveDirectory.html
-- [x] DocX Version: https://evotec.xyz/wp-content/uploads/2019/05/Starter-AD.docx
-- [x] Xlsx Version: https://evotec.xyz/wp-content/uploads/2019/05/Run-Demo02-1.xlsx
+- [x] HTML Version: <https://evotec.xyz/wp-content/uploads/2019/05/DashboardActiveDirectory.html>
+- [x] DocX Version: <https://evotec.xyz/wp-content/uploads/2019/05/Starter-AD.docx>
+- [x] Xlsx Version: <https://evotec.xyz/wp-content/uploads/2019/05/Run-Demo02-1.xlsx>
 
-### Small code sample 1:
+### Small code sample 1
 
 ```powershell
 $Forest = Get-WinADForestInformation -Verbose -PasswordQuality
 $Forest
 ```
 
-### Small code sample 2:
+### Small code sample 2
 
 ```powershell
 $Forest = Get-WinADForestInformation -Verbose -PasswordQuality
@@ -185,14 +191,14 @@ $Forest.FoundDomains
 $Forest.FoundDomains.'ad.evotec.xyz'
 ```
 
-### Small code sample 3:
+### Small code sample 3
 
 ```powershell
 $Forest = Get-WinADForestInformation -Verbose -PasswordQuality -DontRemoveSupportData -TypesRequired DomainGroups -Splitter "`r`n"
 $Forest
 ```
 
-### Example output while running:
+### Example output while running
 
 ```powershell
 VERBOSE: Loading module from path 'C:\Program Files\WindowsPowerShell\Modules\PSWinDocumentation.AD\0.0.8\PSWinDocumentation.AD.psd1'.

@@ -75,21 +75,10 @@ function Get-WinADDomainUsersFullList {
                 'ExtensionAttribute15'
             }
         )
-        <#
-        $Properties = foreach ($_ in $Properties) {
-            if ($ForestSchemaUsers.Name -contains $_ -or $ForestSchemaUsers.CommonName -contains $_) {
-                $_
-            } else {
-                Write-Warning $_
-            }
-        }
-        #>
     }
-    #[string[]] $ExcludeProperty = '*Certificate', 'PropertyNames', '*Properties', 'PropertyCount', 'Certificates', 'nTSecurityDescriptor'
     $Users = Get-ADUser -Server $Domain -ResultPageSize $ResultPageSize -Filter * -Properties $Properties #| Select-Object -Property $Properties -ExcludeProperty $ExcludeProperty
     if ($null -ne $DomainObjects) {
         foreach ($_ in $Users) {
-            # $DomainObjects.Add($_.DistinguishedName, $_)
             $DomainObjects[$_.DistinguishedName] = $_
         }
     }

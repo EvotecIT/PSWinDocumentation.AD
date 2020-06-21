@@ -1,5 +1,4 @@
-﻿
-Import-Module Dashimo -Force
+﻿Import-Module PSWriteHTML -Force
 Import-Module PSWinDocumentation.AD -Force
 Import-Module PSWinReportingV2
 
