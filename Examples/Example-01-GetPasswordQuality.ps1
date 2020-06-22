@@ -2,7 +2,8 @@
 
 # Using built-in password list (just one password P@ssw0rd!)
 $Passwords = Invoke-ADPasswordAnalysis
-$Passwords.'ad.evotec.xyz'.DomainPasswordDuplicatePasswordGroups | Format-Table -AutoSize
+$Passwords.'ad.evotec.xyz'.DomainPasswordDuplicatePasswordGroups | Format-Table -AutoSize 'Duplicate Group', *
+$Passwords.'ad.evotec.xyz' | Format-Table *
 
 return
 # Using a list of passwords
