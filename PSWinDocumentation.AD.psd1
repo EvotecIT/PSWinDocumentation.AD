@@ -6,7 +6,7 @@
     Description       = 'Useful module that covers extractiong of Active Directory data into a single object that can be later on utilized for reporting or other means.'
     FunctionsToExport = 'Get-WinADDomainInformation', 'Get-WinADForestInformation', 'Invoke-ADPasswordAnalysis'
     GUID              = 'a46f9775-04d2-4423-9631-01cfda42b95d'
-    ModuleVersion     = '0.1.17'
+    ModuleVersion     = '0.1.18'
     PowerShellVersion = '5.1'
     PrivateData       = @{
         PSData = @{

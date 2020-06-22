@@ -21,7 +21,7 @@
 
 ### ChangeLog
 
-- 0.1.8 - Unreleased
+- 0.1.8 - 22.06.2020
   - [x] Fix for PasswordQuality and support for DSInternals 4.3
     - [ ] At some point DSInternals was updated with different output and I didn't notice.
   - [x] Improved PasswordQuality speed (conversion to hashtables)
