@@ -21,7 +21,7 @@
 
 ### ChangeLog
 
-- 0.1.9 - 31.08.2020
+- 0.1.19 - 31.08.2020
   - Types
     - [x] Added `DomainWellKnownFolders`
     - [x] Added `DomainGroupPoliciesACLConsistency`
