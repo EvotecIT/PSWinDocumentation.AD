@@ -21,7 +21,7 @@
 
 ### ChangeLog
 
-- 0.1.9 - Unreleased
+- 0.1.9 - 31.08.2020
   - Types
     - [x] Added `DomainWellKnownFolders`
     - [x] Added `DomainGroupPoliciesACLConsistency`
@@ -29,7 +29,6 @@
     - [x] Added `DomainGroupPoliciesOwners`
     - [x] Added `DomainGroupPoliciesWMI`
     - [x] Added `DomainGroupPoliciesLinksSummary`
-
 - 0.1.8 - 22.06.2020
   - [x] Fix for PasswordQuality and support for DSInternals 4.3
     - [ ] At some point DSInternals was updated with different output and I didn't notice.
