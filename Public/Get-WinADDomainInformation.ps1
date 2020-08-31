@@ -331,9 +331,39 @@ function Get-WinADDomainInformation {
     )
 
     $Data.DomainGroupPoliciesACL = Get-DataInformation -Text "Getting domain information - $Domain DomainGroupPoliciesACL" {
-        Get-WinADDomainGroupPoliciesACL -GroupPolicies $Data.DomainGroupPoliciesClean -Domain $Domain
+        Get-GPOZaurrPermission -Forest $Forest -IncludeDomains $Domain
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainGroupPoliciesACL
+    )
+
+    $Data.DomainGroupPoliciesACLConsistency = Get-DataInformation -Text "Getting domain information - $Domain DomainGroupPoliciesACLConsistency" {
+        Get-GPOZaurrPermissionConsistency -Forest $Forest -IncludeDomains $Domain -VerifyInheritance
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::DomainGroupPoliciesACLConsistency
+    )
+
+    $Data.DomainGroupPoliciesSysVol = Get-DataInformation -Text "Getting domain information - $Domain DomainGroupPoliciesSysVol" {
+        Get-GPOZaurrSysvol -Forest $Forest -IncludeDomains $Domain -GPOs $Data.DomainGroupPoliciesClean
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::DomainGroupPoliciesSysVol
+    )
+
+    $Data.DomainGroupPoliciesOwners = Get-DataInformation -Text "Gettting domain information - $Domain DomainGroupPoliciesOwners" {
+        Get-GPOZaurrOwner -Forest $Forest -IncludeDomains $Domain -IncludeSysvol
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::DomainGroupPoliciesOwners
+    )
+
+    $Data.DomainGroupPoliciesWMI = Get-DataInformation -Text "Gettting domain information - $Domain DomainGroupPoliciesWMI" {
+        Get-GPOZaurrWMI -Forest $Forest -IncludeDomains $Domain
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::DomainGroupPoliciesWMI
+    )
+
+    $Data.DomainGroupPoliciesLinksSummary = Get-DataInformation -Text "Gettting domain information - $Domain DomainGroupPoliciesLinksSummary" {
+        Get-GPOZaurrLinkSummary -Report LinksSummary -Forest $Forest -IncludeDomains $Domain
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::DomainGroupPoliciesLinksSummary
     )
 
     $Data.DomainBitlocker = Get-DataInformation -Text "Getting domain information - $Domain DomainBitlocker" {
@@ -641,6 +671,11 @@ function Get-WinADDomainInformation {
         [PSWinDocumentation.ActiveDirectory]::DomainEnterpriseAdministratorsRecursive
     )
 
+    $Data.DomainWellKnownFolders = Get-DataInformation -Text "Gettting domain information - $Domain DomainWellKnownFolders" {
+        Get-WinADWellKnownFolders -IncludeDomains $Domain
+    } -TypesRequired $TypesRequired -TypesNeeded @(
+        [PSWinDocumentation.ActiveDirectory]::DomainWellKnownFolders
+    )
     # PASSWORD QUALITY SECTION
 
     $Data.DomainPasswordDataUsers = Get-DataInformation -Text "Getting domain information - $Domain DomainPasswordDataUsers" {
@@ -656,7 +691,7 @@ function Get-WinADDomainInformation {
             -DnsRoot $Data.DomainInformation.DnsRoot `
             -Verbose:$false `
             -PasswordQualityUsers $Data.DomainPasswordDataUsers `
-            -PasswordQuality:$PasswordQuality `
+            -PasswordQuality:$PasswordQuality.IsPresent `
             -DomainObjectsNetbios $Data.DomainObjectsNetBios
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory].GetEnumValues() | Where-Object { $_ -like 'DomainPassword*' }
@@ -669,7 +704,9 @@ function Get-WinADDomainInformation {
             -DnsRoot $DomainInformation.DnsRoot `
             -UseHashes `
             -Verbose:$false `
-            -PasswordQualityUsers $Data.DomainPasswordDataUsers
+            -PasswordQualityUsers $Data.DomainPasswordDataUsers `
+            -PasswordQuality:$PasswordQuality.IsPresent `
+            -DomainObjectsNetbios $Data.DomainObjectsNetBios
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPassword,
         [PSWinDocumentation.ActiveDirectory]::DomainPasswordHashesWeakPasswordEnabled,
@@ -809,6 +846,7 @@ function Get-WinADDomainInformation {
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainPasswordStats
     )
+
 
     $EndTime = Stop-TimeLog -Time $TimeToGenerate
     Write-Verbose "Getting domain information - $Domain - Time to generate: $EndTime"

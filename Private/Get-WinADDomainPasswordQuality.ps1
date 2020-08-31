@@ -11,6 +11,11 @@ function Get-WinADDomainPasswordQuality {
         [Array] $Properties,
         [System.Collections.IDictionary] $DomainObjectsNetbios
     )
+    if (-not $DomainObjectsNetbios) {
+        Write-Warning "Get-WinADDomainPasswordQuality - DomainobjectsNetbios not passed. Creating new one, but this will skip tests."
+        $DomainObjectsNetbios = [ordered] @{}
+    }
+
     if (-not $Properties) {
         $Properties = @(
             'Name', 'UserPrincipalName', 'Enabled', 'Password Last Changed', "DaysToExpire",

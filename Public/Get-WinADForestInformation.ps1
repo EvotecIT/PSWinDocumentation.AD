@@ -185,7 +185,7 @@ function Get-WinADForestInformation {
                 -PathToPasswords $PathToPasswords `
                 -PathToPasswordsHashes $PathToPasswordsHashes `
                 -ForestSchemaComputers $Data.ForestSchemaPropertiesComputers  `
-                -ForestSchemaUsers $Data.ForestSchemaPropertiesUsers -PasswordQuality:$PasswordQuality -Splitter $Splitter -Parallel:$Parallel -ResultPageSize $ResultPageSize -Formatted:$formatted
+                -ForestSchemaUsers $Data.ForestSchemaPropertiesUsers -PasswordQuality:$PasswordQuality.IsPresent -Splitter $Splitter -Parallel:$Parallel.IsPresent -ResultPageSize $ResultPageSize -Formatted:$formatted.IsPresent
         }
         $FoundDomains
     } -TypesRequired $TypesRequired -TypesNeeded @(
