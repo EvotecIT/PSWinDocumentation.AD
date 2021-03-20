@@ -343,7 +343,7 @@ function Get-WinADDomainInformation {
     )
 
     $Data.DomainGroupPoliciesSysVol = Get-DataInformation -Text "Getting domain information - $Domain DomainGroupPoliciesSysVol" {
-        Get-GPOZaurrSysvol -Forest $Forest -IncludeDomains $Domain -GPOs $Data.DomainGroupPoliciesClean
+        Get-GPOZaurrBroken -Forest $Forest -IncludeDomains $Domain
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory]::DomainGroupPoliciesSysVol
     )
