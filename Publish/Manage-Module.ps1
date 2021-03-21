@@ -19,7 +19,7 @@ $Configuration = @{
             # Company or vendor of this module
             CompanyName                = 'Evotec'
             # Copyright statement for this module
-            Copyright                  = 'Evotec (c) 2011-2019. All rights reserved.'
+            Copyright                  = "(c) 2011 - $((Get-Date).Year) Przemyslaw Klys @ Evotec. All rights reserved."
             # Description of the functionality provided by this module
             Description                = 'Useful module that covers extractiong of Active Directory data into a single object that can be later on utilized for reporting or other means.'
             # Minimum version of the Windows PowerShell engine required by this module
