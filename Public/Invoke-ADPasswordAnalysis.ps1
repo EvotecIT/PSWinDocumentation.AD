@@ -8,7 +8,6 @@
         [string] $PathToPasswords,
         [switch] $UseNTLMHashes
     )
-    $Forest = Get-ADForest
     $Output = [ordered] @{ }
     $DomainObjectsNetbios = @{}     # Cache
     $ForestInformation = Get-WinADForestDetails -Extended -Forest $Forest -IncludeDomains $IncludeDomains -ExcludeDomains $ExcludeDomains -ExtendedForestInformation $ExtendedForestInformation

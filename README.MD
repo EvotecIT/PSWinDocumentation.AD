@@ -21,6 +21,9 @@
 
 ### ChangeLog
 
+- 0.1.20 - 2021.03.21
+  - [x] Few fixes to get it up and running
+
 - 0.1.19 - 31.08.2020
   - Types
     - [x] Added `DomainWellKnownFolders`
