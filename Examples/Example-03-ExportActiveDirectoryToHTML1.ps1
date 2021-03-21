@@ -3,18 +3,20 @@ Import-Module PSWinDocumentation.AD -Force
 Import-Module PSWinReportingV2
 
 if ($null -eq $DataSetForest) {
-    $DataSetForest = Get-WinADForestInformation -Verbose
+    $DataSetForest = Get-WinADForestInformation
 }
+
 if ($null -eq $DataSetEvents) {
-    $DataSetEvents = Find-Events -Report ADUserChangesDetailed, ADUserChanges, ADUserLockouts, ADUserStatus, ADGroupChanges -Servers 'AD1', 'AD2','AD3' -DatesRange Last7days #-Quiet
+    $DataSetEvents = Find-Events -Report ADUserChangesDetailed, ADUserChanges, ADUserLockouts, ADUserStatus, ADGroupChanges -Servers 'AD1', 'AD2' -DatesRange Last7days -Quiet
 }
+
 if ($null -eq $DataBitlockerLapsSummary) {
     $DataBitlockerLapsSummary = Get-WinADBitlockerLapsSummary
     $Encrypted = $DataBitlockerLapsSummary.Where( { $_.Encrypted -eq $true }, 'split')
     $Systems = $DataBitlockerLapsSummary | Group-Object -Property System
 }
 
-Dashboard -Name 'Dashimo Test' -FilePath $PSScriptRoot\Output\DashboardActiveDirectory.html -ShowHTML {
+Dashboard -Name 'Dashimo Test' -FilePath $PSScriptRoot\Output\DashboardActiveDirectoryAdvanced.html -ShowHTML {
     SectionOption -BorderRadius 0px -RemoveShadow -HeaderBackGroundColor DarkGray
     TabOption -BorderRadius 0px -BackgroundColorActive DarkGray
     TableOption -DataStore JavaScript -ArrayJoin -ArrayJoinString ', '
@@ -36,24 +38,24 @@ Dashboard -Name 'Dashimo Test' -FilePath $PSScriptRoot\Output\DashboardActiveDir
         Section -Name 'Forest Optional Features / UPN Suffixes / SPN Suffixes' -Collapsable {
 
             Panel {
-                Table -HideFooter -DataTable $DataSetForest.ForestOptionalFeatures -Verbose
+                Table -HideFooter -DataTable $DataSetForest.ForestOptionalFeatures
             }
             Panel {
-                Table -HideFooter -DataTable $DataSetForest.ForestUPNSuffixes -Verbose
+                Table -HideFooter -DataTable $DataSetForest.ForestUPNSuffixes
             }
             Panel {
-                Table -HideFooter -DataTable $DataSetForest.ForestSPNSuffixes -Verbose
+                Table -HideFooter -DataTable $DataSetForest.ForestSPNSuffixes
             }
         }
         Section -Name 'Sites / Subnets / SiteLinks' -Collapsable {
             Panel {
-                Table -HideFooter -DataTable $DataSetForest.ForestSites -Verbose
+                Table -HideFooter -DataTable $DataSetForest.ForestSites
             }
             Panel {
-                Table -HideFooter -DataTable $DataSetForest.ForestSubnets -Verbose
+                Table -HideFooter -DataTable $DataSetForest.ForestSubnets
             }
             Panel {
-                Table -HideFooter -DataTable $DataSetForest.ForestSiteLinks -Verbose
+                Table -HideFooter -DataTable $DataSetForest.ForestSiteLinks
             }
         }
     }
@@ -63,23 +65,23 @@ Dashboard -Name 'Dashimo Test' -FilePath $PSScriptRoot\Output\DashboardActiveDir
             Tab -Name 'Overview' {
                 Section -Name 'Domain Controllers / FSMO Roles' {
                     Panel {
-                        Table -HideFooter -DataTable $DataSetForest.FoundDomains.$Domain.DomainControllers -Verbose
+                        Table -HideFooter -DataTable $DataSetForest.FoundDomains.$Domain.DomainControllers
                     }
                     Panel {
-                        Table -HideFooter -DataTable $DataSetForest.FoundDomains.$Domain.DomainFSMO -Verbose
+                        Table -HideFooter -DataTable $DataSetForest.FoundDomains.$Domain.DomainFSMO
                     }
                 }
                 Section -Name 'Password Policies' -Invisible {
                     Section -Name 'Default Password Policy' {
-                        Table -HideFooter -DataTable $DataSetForest.FoundDomains.$Domain.DomainDefaultPasswordPolicy -Verbose
+                        Table -HideFooter -DataTable $DataSetForest.FoundDomains.$Domain.DomainDefaultPasswordPolicy
                     }
 
                     Section -Name 'Domain Fine Grained Policies' {
-                        Table -HideFooter -DataTable $DataSetForest.FoundDomains.$Domain.DomainFineGrainedPolicies -Verbose
+                        Table -HideFooter -DataTable $DataSetForest.FoundDomains.$Domain.DomainFineGrainedPolicies
                     }
                 }
                 Section -Name 'Domain Well Known Folders' -Invisible {
-                    Table -HideFooter -DataTable $DataSetForest.FoundDomains.$Domain.DomainWellKnownFolders -Verbose
+                    Table -HideFooter -DataTable $DataSetForest.FoundDomains.$Domain.DomainWellKnownFolders
                 }
             }
             Tab -Name 'Organizational Units' {
@@ -155,20 +157,35 @@ Dashboard -Name 'Dashimo Test' -FilePath $PSScriptRoot\Output\DashboardActiveDir
                     }
                 }
             }
-        }
-    }
-    Tab -Name 'Changes in Last 7 days' {
-        Section -Name 'Group Changes' -Collapsable {
-            Table -HideFooter -DataTable $DataSetEvents.GroupChanges
-        }
-        Section -Name 'User Status' -Collapsable {
-            Table -HideFooter -DataTable $DataSetEvents.UserStatus
-        }
-        Section -Name 'User Changes' -Collapsable {
-            Table -HideFooter -DataTable $DataSetEvents.GroupChanges
-        }
-        Section -Name 'User Lockouts' -Collapsable {
-            Table -HideFooter -DataTable $DataSetEvents.UserStatus
+            Tab -Name 'Group Policies' {
+                Section -Name 'Group Policies' {
+                    Panel {
+                        Table -HideFooter -DataTable $DataSetForest.FoundDomains.$Domain.DomainGroupPolicies
+                    }
+                    Panel {
+                        Table -HideFooter -DataTable $DataSetForest.FoundDomains.$Domain.DomainGroupPoliciesDetails
+                    }
+                }
+                Section -Name 'Owners' {
+                    Panel {
+                        Table -HideFooter -DataTable $DataSetForest.FoundDomains.$Domain.DomainGroupPoliciesOwners
+                    }
+
+                }
+                Section -Name 'Sysvol' {
+                    Panel {
+                        Table -HideFooter -DataTable $DataSetForest.FoundDomains.$Domain.DomainGroupPoliciesSysVol
+                    }
+                }
+                Section -Name 'ACL' {
+                    Panel {
+                        Table -HideFooter -DataTable $DataSetForest.FoundDomains.$Domain.DomainGroupPoliciesACL
+                    }
+                    Panel {
+                        Table -HideFooter -DataTable $DataSetForest.FoundDomains.$Domain.DomainGroupPoliciesACLConsistency
+                    }
+                }
+            }
         }
     }
 }
