@@ -679,7 +679,9 @@ function Get-WinADDomainInformation {
     # PASSWORD QUALITY SECTION
 
     $Data.DomainPasswordDataUsers = Get-DataInformation -Text "Getting domain information - $Domain DomainPasswordDataUsers" {
-        Get-WinADDomainPassword -DnsRoot $Data.DomainInformation.DNSRoot -DistinguishedName $Data.DomainInformation.DistinguishedName
+        if($PasswordQuality.IsPresent) {
+            Get-WinADDomainPassword -DnsRoot $Data.DomainInformation.DNSRoot -DistinguishedName $Data.DomainInformation.DistinguishedName
+        }
     } -TypesRequired $TypesRequired -TypesNeeded @(
         [PSWinDocumentation.ActiveDirectory].GetEnumValues() | Where-Object { $_ -like 'DomainPassword*' }
     )
